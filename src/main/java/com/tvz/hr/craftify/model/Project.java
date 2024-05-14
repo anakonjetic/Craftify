@@ -33,6 +33,7 @@ public class Project {
     @JoinColumn(name = "complexity_id")
     private Complexity complexity;
 
+    //Images/Videos
     @OneToMany(mappedBy = "project")
     private List<Media> mediaList;
 
