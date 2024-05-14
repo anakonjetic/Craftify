@@ -1,6 +1,7 @@
 package com.tvz.hr.craftify.controller;
 
 import com.tvz.hr.craftify.model.Project;
+import com.tvz.hr.craftify.service.ProjectDTO;
 import com.tvz.hr.craftify.service.ProjectService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ public class ProjectController {
         private final ProjectService projectService;
 
         @GetMapping("/all")
-        public List<Project> getProjects() {
+        public List<ProjectDTO> getProjects() {
             return projectService.getAllProjects();
         }
 

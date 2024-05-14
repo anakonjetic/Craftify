@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProjectService {
-    List<Project> getAllProjects();
+    List<ProjectDTO> getAllProjects();
     Optional<Project> getProjectById(Long id);
     Project createProject(Project project);
     Project updateProject(Project project, Long id);
