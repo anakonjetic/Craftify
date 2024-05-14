@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -17,6 +18,9 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 1000)
+    private String comment;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
@@ -25,11 +29,9 @@ public class Comment {
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
-    private String comment;
-
     @ManyToOne
     @JoinColumn(name = "parent_comment_id")
     private Comment parentComment;
 
-    private Timestamp commentTime;
+    private LocalDateTime commentTime;
 }

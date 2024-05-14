@@ -36,11 +36,14 @@ public class Project {
     @OneToMany(mappedBy = "project")
     private List<Media> mediaList;
 
-    @OneToMany(mappedBy = "project")
-    private List<ProjectSubscribers> projectSubscribers;
+    @ManyToMany(targetEntity = Users.class, mappedBy = "likedProjects")
+    private List<Users> userLikes;
 
-    @OneToMany(mappedBy = "project")
-    private List<ProjectLikes> projectLikes;
+    @ManyToMany(targetEntity = Users.class, mappedBy = "favoriteProjects")
+    private List<Users> favoriteProjects;
+
+    @ManyToMany(targetEntity = Users.class, mappedBy = "followingProjects")
+    private List<Users> projectFollowers;
 
     @OneToMany(mappedBy = "project")
     private List<Comment> comments;
