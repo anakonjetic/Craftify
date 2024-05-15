@@ -1,9 +1,7 @@
 package com.tvz.hr.craftify.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -11,6 +9,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Getter
+@Setter
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +22,14 @@ public class Users {
     @Column(columnDefinition = "BIT")
     @JoinColumn(name = "is_admin")
     private boolean isAdmin;
+
+    public Users(String username, String email, String password, boolean isAdmin, List<Category> userPreferences) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.isAdmin = isAdmin;
+        this.userPreferences = userPreferences;
+    }
 
     @ManyToMany(targetEntity = Category.class)
     @JoinTable(

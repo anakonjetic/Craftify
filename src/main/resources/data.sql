@@ -37,6 +37,20 @@ VALUES ('DIY Fabric Wall Art', 2, 3, 2, 'Create unique fabric wall art to add pe
 insert into favorites(user_id, project_id)
 VALUES(2,1);
 
+insert into user_preferences(user_id, category_id)
+VALUES(1,2);
+insert into user_preferences(user_id, category_id)
+VALUES(1,3);
+insert into user_preferences(user_id, category_id)
+VALUES(1,4);
+
+insert into project_subscribers(user_id, project_id)
+VALUES(1,2);
+insert into user_subscribers(user_id, followed_user_id)
+VALUES(1,2);
+insert into user_project_likes(user_id, project_id)
+VALUES(1,2);
+
 insert into comment (user_id, project_id, comment, comment_time)
 VALUES (1,1,'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed varius diam, sit amet ' ||
             'cursus urna. Morbi tempor elit a lectus ultricies bibendum. Maecenas in dictum massa, ac ' ||

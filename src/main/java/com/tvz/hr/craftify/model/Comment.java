@@ -34,4 +34,12 @@ public class Comment {
     private Comment parentComment;
 
     private LocalDateTime commentTime;
+
+    public Comment(Long id, String comment, Users user, Project project, LocalDateTime commentTime){
+        this.id = id;
+        this.comment = comment;
+        this.user = user;
+        this.project = project;
+        this.commentTime = commentTime;
+    }
 }

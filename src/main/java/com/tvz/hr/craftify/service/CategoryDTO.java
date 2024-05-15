@@ -4,14 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentDTO {
+public class CategoryDTO {
     private Long id;
-    private String comment;
-    private String user;
-    private LocalDateTime commentTime;
+    private String name;
 }
