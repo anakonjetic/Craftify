@@ -4,6 +4,7 @@ import com.tvz.hr.craftify.model.Comment;
 import com.tvz.hr.craftify.model.Project;
 import com.tvz.hr.craftify.model.Users;
 import com.tvz.hr.craftify.model.Category;
+import com.tvz.hr.craftify.repository.ProjectRepository;
 import com.tvz.hr.craftify.repository.UsersRepository;
 import com.tvz.hr.craftify.request.UsersRequest;
 import com.tvz.hr.craftify.service.dto.CategoryDTO;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UsersServiceImpl implements UsersService{
     private UsersRepository usersRepository;
+    private ProjectRepository projectRepository;
     //public List<UsersRequest> getAllUsers() { return usersRepository.getAllUsers(); };
     public List<UsersRequest> getAllUsers() {
         List<Users> users = usersRepository.findAll();
@@ -53,7 +55,23 @@ public class UsersServiceImpl implements UsersService{
         return mapToUsersRequest(usersRepository.save(existingUser));
 
     };
-    public void deleteUser(Long id) { usersRepository.deleteById(id); };
+    public void deleteUser(Long id) { usersRepository.deleteById(id); }
+
+
+    @Override
+    public void addToFavorites(Long userId, Long projectId) {
+        Users user = usersRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Project not found"));
+        user.getFavoriteProjects().add(project);
+        usersRepository.save(user);
+    }
+
+    @Override
+    public void removeFromFavorites(Long userId, Long projectId) {
+        Users user = usersRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        user.getFavoriteProjects().removeIf(project -> project.getId().equals(projectId));
+        usersRepository.save(user);
+    }
 
     public List<CommentDTO> getUserComments(Long id){
         List<Comment> comments = usersRepository.getUserComments(id);

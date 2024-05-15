@@ -21,4 +21,6 @@ public interface UsersService {
     List<UserDTO> getUserFollowings(Long userId);
     List<ProjectDTO> getUserProjectFollowings(Long userId);
     void deleteUser(Long id);
+    void addToFavorites(Long userId, Long projectId);
+    void removeFromFavorites(Long userId, Long projectId);
 }

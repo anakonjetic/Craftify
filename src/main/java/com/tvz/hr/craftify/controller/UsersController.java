@@ -66,8 +66,13 @@ public class UsersController {
         return usersService.getUserComments(id);
     }
     @GetMapping("/favorite/{id}")
-    public List<ProjectDTO> getFavoriteProjects(@PathVariable long id) {
-        return usersService.getFavoriteProjects(id);
+    public ResponseEntity<List<ProjectDTO>> getFavoriteProjects(@PathVariable long id) {
+        List<ProjectDTO> favoriteProjects = usersService.getFavoriteProjects(id);
+        if (favoriteProjects.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(favoriteProjects);
+        }
     }
     @GetMapping("/liked/{id}")
     public List<ProjectDTO> getLikedProjects(@PathVariable long id) {
@@ -88,5 +93,17 @@ public class UsersController {
     @GetMapping("/following/projects/{id}")
     public List<ProjectDTO> getProjectsFollowings(@PathVariable long id) {
         return usersService.getUserProjectFollowings(id);
+    }
+
+    @PostMapping("/{userId}/addFavorite/{projectId}")
+    public ResponseEntity<Void> addProjectToFavorites(@PathVariable long userId, @PathVariable long projectId) {
+        usersService.addToFavorites(userId, projectId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{userId}/removeFavorite/{projectId}")
+    public ResponseEntity<Void> removeProjectFromFavorites(@PathVariable long userId, @PathVariable long projectId) {
+        usersService.removeFromFavorites(userId, projectId);
+        return ResponseEntity.noContent().build();
     }
 }
