@@ -29,7 +29,10 @@ public class UsersServiceImpl implements UsersService{
     ;
     public Optional<UsersRequest> getUser(Long id) { return usersRepository.getUserById(id); };
     public UsersRequest createUser(UsersRequest user) {
-        Users newUser = new Users(user.getUsername(),user.getEmail(),user.getPassword(), user.isAdmin());
+        List<Category> categories = user.getUserPreferences().stream()
+                .map(this::mapToCategory)
+                .collect(Collectors.toList());
+        Users newUser = new Users(user.getUsername(),user.getEmail(),user.getPassword(), user.isAdmin(), categories);
         return mapToUsersRequest(usersRepository.save(newUser));
     };
     public UsersRequest updateUser(UsersRequest user, Long id) {
@@ -150,5 +153,12 @@ public class UsersServiceImpl implements UsersService{
                 category.getId(),
                 category.getName()
         );
+    }
+
+    private Category mapToCategory(CategoryDTO categoryDTO){
+        Category category = new Category();
+        category.setId(categoryDTO.getId());
+        category.setName(categoryDTO.getName());
+        return category;
     }
 }

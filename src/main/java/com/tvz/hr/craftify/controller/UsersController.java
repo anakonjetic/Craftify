@@ -35,6 +35,14 @@ public class UsersController {
         }
     }
 
+    @PostMapping
+    public ResponseEntity<UsersRequest> createUser(@RequestBody UsersRequest user) {
+        return new ResponseEntity<>(
+                usersService.createUser(user),
+                HttpStatus.CREATED
+        );
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<UsersRequest> updateUser(@RequestBody UsersRequest user,
                                                    @PathVariable Long id)
@@ -81,13 +89,5 @@ public class UsersController {
     @GetMapping("/following/projects/{id}")
     public List<ProjectDTO> getProjectsFollowings(@PathVariable long id) {
         return usersService.getUserProjectFollowings(id);
-    }
-
-    @PostMapping
-    public ResponseEntity<UsersRequest> createUser(@RequestBody UsersRequest user) {
-        return new ResponseEntity<>(
-                usersService.createUser(user),
-                HttpStatus.CREATED
-        );
     }
 }
