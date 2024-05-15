@@ -1,16 +1,10 @@
 package com.tvz.hr.craftify.service;
 
-import com.tvz.hr.craftify.model.Comment;
-import com.tvz.hr.craftify.model.Project;
-import com.tvz.hr.craftify.model.Users;
-import com.tvz.hr.craftify.model.Category;
+import com.tvz.hr.craftify.model.*;
 import com.tvz.hr.craftify.repository.ProjectRepository;
 import com.tvz.hr.craftify.repository.UsersRepository;
-import com.tvz.hr.craftify.request.UsersRequest;
-import com.tvz.hr.craftify.service.dto.CategoryDTO;
-import com.tvz.hr.craftify.service.dto.CommentDTO;
-import com.tvz.hr.craftify.service.dto.ProjectDTO;
-import com.tvz.hr.craftify.service.dto.UserDTO;
+import com.tvz.hr.craftify.service.dto.UsersGetDTO;
+import com.tvz.hr.craftify.service.dto.*;
 import com.tvz.hr.craftify.utilities.MapToDTOHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,26 +18,41 @@ import java.util.stream.Collectors;
 public class UsersServiceImpl implements UsersService{
     private UsersRepository usersRepository;
     private ProjectRepository projectRepository;
+    private CategoryService categoryService;
     //public List<UsersRequest> getAllUsers() { return usersRepository.getAllUsers(); };
-    public List<UsersRequest> getAllUsers() {
+    public List<UsersGetDTO> getAllUsers() {
         List<Users> users = usersRepository.findAll();
         return users.stream()
-                .map(this::mapToUsersRequest)
+                .map(this::mapToUsersGetDTO)
                 .collect(Collectors.toList());}
     ;
-    public Optional<UsersRequest> getUser(Long id) { return usersRepository.getUserById(id); };
-    public UsersRequest createUser(UsersRequest user) {
-        List<Category> categories = user.getUserPreferences().stream()
+    public Optional<UsersGetDTO> getUser(Long id) {
+        Optional<Users> users = usersRepository.findById(id);
+        return users.map(this::mapToUsersGetDTO);
+    };
+
+    public UsersGetDTO createUser(UsersPutPostDTO user) {
+        /*List<Category> categories = user.getUserPreferences().stream()
                 .map(MapToDTOHelper::mapToCategory)
+                .collect(Collectors.toList());*/
+        List<Long> categoryIds = user.getUserPreferences();
+        List<Category> categories = categoryIds.stream()
+                .map(categoryId -> categoryService.getCategoryById(categoryId))
+                .flatMap(Optional::stream)
                 .collect(Collectors.toList());
         Users newUser = new Users(user.getUsername(),user.getEmail(),user.getPassword(), user.isAdmin(), categories);
-        return mapToUsersRequest(usersRepository.save(newUser));
+        return mapToUsersGetDTO(usersRepository.save(newUser));
     };
-    public UsersRequest updateUser(UsersRequest user, Long id) {
+    public UsersGetDTO updateUser(UsersPutPostDTO user, Long id) {
         Optional<Users> optionalUser = usersRepository.findById(id);
         if (optionalUser.isEmpty()) {
             return null;
         }
+        List<Long> categoryIds = user.getUserPreferences();
+        List<Category> categories = categoryIds.stream()
+                .map(categoryId -> categoryService.getCategoryById(categoryId))
+                .flatMap(Optional::stream)
+                .collect(Collectors.toList());
 
         Users existingUser = optionalUser.get();
 
@@ -51,8 +60,9 @@ public class UsersServiceImpl implements UsersService{
         existingUser.setEmail(user.getEmail());
         existingUser.setPassword(user.getPassword());
         existingUser.setAdmin(user.isAdmin());
+        existingUser.setUserPreferences(categories);
 
-        return mapToUsersRequest(usersRepository.save(existingUser));
+        return mapToUsersGetDTO(usersRepository.save(existingUser));
 
     };
     public void deleteUser(Long id) { usersRepository.deleteById(id); }
@@ -123,7 +133,7 @@ public class UsersServiceImpl implements UsersService{
     }
 
 
-    private UsersRequest mapToUsersRequest(Users user) {
+    private UsersGetDTO mapToUsersGetDTO(Users user) {
         /*List<String> categoryNames = user.getUserPreferences().stream()
                 .map(Category::getName)
                 .collect(Collectors.toList());*/
@@ -131,7 +141,7 @@ public class UsersServiceImpl implements UsersService{
                 .map(MapToDTOHelper::mapToCategoryDTO)
                 .collect(Collectors.toList());
 
-        return new UsersRequest(
+        return new UsersGetDTO(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
@@ -139,6 +149,22 @@ public class UsersServiceImpl implements UsersService{
                 user.isAdmin(),
                 category
         );
+    }
+    private UsersGetDTO mapToUsersGetDTO(Optional<Users> usersOptional) {
+        return usersOptional.map(user -> {
+            List<CategoryDTO> category = user.getUserPreferences().stream()
+                    .map(MapToDTOHelper::mapToCategoryDTO)
+                    .collect(Collectors.toList());
+
+            return new UsersGetDTO(
+                    user.getId(),
+                    user.getUsername(),
+                    user.getEmail(),
+                    user.getPassword(),
+                    user.isAdmin(),
+                    category
+            );
+        }).orElse(null);
     }
 
 

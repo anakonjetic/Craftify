@@ -1,7 +1,6 @@
 package com.tvz.hr.craftify.controller;
 
 import com.tvz.hr.craftify.model.Complexity;
-import com.tvz.hr.craftify.request.UsersRequest;
 import com.tvz.hr.craftify.service.ComplexityService;
 import com.tvz.hr.craftify.service.dto.ComplexityDTO;
 import com.tvz.hr.craftify.service.dto.ComplexityGetDTO;

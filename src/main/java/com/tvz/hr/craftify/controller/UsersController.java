@@ -1,10 +1,11 @@
 package com.tvz.hr.craftify.controller;
 
-import com.tvz.hr.craftify.request.UsersRequest;
+import com.tvz.hr.craftify.service.dto.UsersGetDTO;
 import com.tvz.hr.craftify.service.dto.CommentDTO;
 import com.tvz.hr.craftify.service.dto.ProjectDTO;
 import com.tvz.hr.craftify.service.dto.UserDTO;
 import com.tvz.hr.craftify.service.UsersService;
+import com.tvz.hr.craftify.service.dto.UsersPutPostDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +20,13 @@ public class UsersController {
     private UsersService usersService;
 
     @GetMapping("/all")
-    public List<UsersRequest> getUsers() {
+    public List<UsersGetDTO> getUsers() {
         return usersService.getAllUsers();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UsersRequest> getUser(@PathVariable long id) {
-        Optional<UsersRequest> userOptional = usersService.getUser(id);
+    public ResponseEntity<UsersGetDTO> getUser(@PathVariable long id) {
+        Optional<UsersGetDTO> userOptional = usersService.getUser(id);
         if (userOptional.isPresent()) {
             return ResponseEntity.ok(userOptional.get());
         }
@@ -35,7 +36,7 @@ public class UsersController {
     }
 
     @PostMapping
-    public ResponseEntity<UsersRequest> createUser(@RequestBody UsersRequest user) {
+    public ResponseEntity<UsersGetDTO> createUser(@RequestBody UsersPutPostDTO user) {
         return new ResponseEntity<>(
                 usersService.createUser(user),
                 HttpStatus.CREATED
@@ -43,11 +44,11 @@ public class UsersController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UsersRequest> updateUser(@RequestBody UsersRequest user,
-                                                   @PathVariable Long id)
+    public ResponseEntity<UsersGetDTO> updateUser(@RequestBody UsersPutPostDTO user,
+                                                  @PathVariable Long id)
     {
         try {
-            UsersRequest updatedUser = usersService.updateUser(user, id);
+            UsersGetDTO updatedUser = usersService.updateUser(user, id);
             return new ResponseEntity<>(updatedUser, HttpStatus.OK);
         }
         catch (Exception e) {
