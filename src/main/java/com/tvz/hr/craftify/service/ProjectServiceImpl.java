@@ -3,8 +3,7 @@ package com.tvz.hr.craftify.service;
 import com.tvz.hr.craftify.model.*;
 import com.tvz.hr.craftify.repository.ProjectRepository;
 import com.tvz.hr.craftify.request.UsersRequest;
-import com.tvz.hr.craftify.service.dto.ProjectDTO;
-import com.tvz.hr.craftify.service.dto.ProjectPostDTO;
+import com.tvz.hr.craftify.service.dto.*;
 import com.tvz.hr.craftify.utilities.MapToDTOHelper;
 import lombok.AllArgsConstructor;
 import org.apache.catalina.User;
@@ -21,8 +20,8 @@ public class ProjectServiceImpl implements ProjectService{
     private ProjectRepository projectRepository;
     private CategoryService categoryService;
     private UsersService usersService;
+    private ComplexityService complexityService;
 
-    //TODO usera kreatora namapirati
     @Override
     public List<ProjectDTO> getAllProjects() {
         List<Project> projects = projectRepository.findAll();
@@ -31,7 +30,6 @@ public class ProjectServiceImpl implements ProjectService{
                 .collect(Collectors.toList());
     }
 
-    //TODO usera kreatora namapirati
     @Override
     public Optional<ProjectDTO> getProjectById(Long id) {
         Optional<Project> optionalProject = projectRepository.findById(id);
@@ -44,32 +42,61 @@ public class ProjectServiceImpl implements ProjectService{
         newProject.setTitle(postProject.getTitle());
         newProject.setDescription(postProject.getDescription());
         newProject.setContent(postProject.getContent());
-        //TODO Fetch and set user nedostaje
-        newProject.setUser(new Users(1L, "john_doe"));
+        //user setup
+        Optional<UsersRequest> userRequest = usersService.getUser(postProject.getUserId());
+        if (userRequest.isPresent()) {
+            Users user = Users.mapToUserFromUserRequest(userRequest.get());
+            newProject.setUser(user);
+        } else{
+            throw new RuntimeException("User with ID: " + postProject.getUserId() + " not found");
+        }
+        //category setup
         Category category = categoryService.getCategoryById(postProject.getCategoryId()).orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
         newProject.setCategory(category);
-       /* List<UsersRequest> userRequestLikes = usersService.getAllUsers().stream().filter(u -> postProject.getUserLikesIdList().contains(u.getId())).collect(Collectors.toList());
-        List<Users>*/
-        //TODO Fetch and set complexity nedostaje
+        //user likes setup
+        List<UsersRequest> userRequestLikes = usersService.getAllUsers().stream().filter(u -> postProject.getUserLikesIdList().contains(u.getId())).toList();
+        List<Users> userLikes = userRequestLikes.stream().map(Users::mapToUserFromUserRequest).toList();
+        newProject.setUserLikes(userLikes);
+        //favorite projects setup
+        List<UsersRequest> userRequestFavoriteProjects = usersService.getAllUsers().stream().filter(u -> postProject.getFavoriteProjectUserIdList().contains(u.getId())).toList();
+        List<Users> userFavoriteProjects = userRequestFavoriteProjects.stream().map(Users::mapToUserFromUserRequest).toList();
+        newProject.setFavoriteProjects(userFavoriteProjects);
+        //project followers setup
+        List<UsersRequest> userRequestFollowers = usersService.getAllUsers().stream().filter(u -> postProject.getProjectFollowersIdList().contains(u.getId())).toList();
+        List<Users> userFollowers = userRequestFollowers.stream().map(Users::mapToUserFromUserRequest).toList();
+        newProject.setProjectFollowers(userFollowers);
+        //complexity setup
+        Optional<ComplexityGetDTO> complexityDTO = complexityService.getComplexityById(postProject.getComplexityId());
+        if (complexityDTO.isPresent()) {
+            Complexity complexity = new Complexity(complexityDTO.get().getId(), complexityDTO.get().getName());
+            newProject.setComplexity(complexity);
+        } else{
+            throw new RuntimeException("Complexity with ID: " + postProject.getComplexityId() + " not found");
+        }
+
         //TODO Fetch and set media nedostaje
         //TODO Fetch and set comment nedostaje
-        //TODO Fetch and set userLikes nedostaje
-        //TODO Fetch and set favoriteProjects nedostaje
-        //TODO Fetch and set userFollowers nedostaje
 
         return projectRepository.save(newProject);
     }
 
     @Override
-    public Project updateProject(Project project, Long id) {
+    public Project updateProject(ProjectPutDTO projectPutDTO, Long id) {
         Optional<Project> optionalProject = projectRepository.findById(id);
         if (optionalProject.isPresent()) {
             Project projectToUpdate = optionalProject.get();
-            projectToUpdate.setTitle(project.getTitle());
-            projectToUpdate.setDescription(project.getDescription());
-            projectToUpdate.setContent(project.getContent());
-            projectToUpdate.setCategory(project.getCategory());
-            projectToUpdate.setComplexity(project.getComplexity());
+            projectToUpdate.setTitle(projectPutDTO.getTitle());
+            projectToUpdate.setDescription(projectPutDTO.getDescription());
+            projectToUpdate.setContent(projectPutDTO.getContent());
+            Category category = categoryService.getCategoryById(projectPutDTO.getCategoryId()).orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
+            projectToUpdate.setCategory(category);
+            Optional<ComplexityGetDTO> complexityDTO = complexityService.getComplexityById(projectPutDTO.getComplexityId());
+            if (complexityDTO.isPresent()) {
+                Complexity complexity = new Complexity(complexityDTO.get().getId(), complexityDTO.get().getName());
+                projectToUpdate.setComplexity(complexity);
+            } else{
+                throw new RuntimeException("Complexity with ID: " + projectPutDTO.getComplexityId() + " not found");
+            }
             return projectRepository.save(projectToUpdate);
         } else {
             throw new RuntimeException("Project with ID: " + id + " not found");

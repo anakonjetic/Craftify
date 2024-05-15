@@ -1,9 +1,9 @@
 package com.tvz.hr.craftify.controller;
 
-import com.tvz.hr.craftify.model.Project;
 import com.tvz.hr.craftify.service.dto.ProjectDTO;
 import com.tvz.hr.craftify.service.dto.ProjectPostDTO;
 import com.tvz.hr.craftify.service.ProjectService;
+import com.tvz.hr.craftify.service.dto.ProjectPutDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,15 +31,16 @@ public class ProjectController {
         }
 
         @PostMapping
-        public ResponseEntity<Project> createProject(@RequestBody ProjectPostDTO project) {
-            return new ResponseEntity<>(projectService.createProject(project), HttpStatus.CREATED);
+        public ResponseEntity<ProjectPostDTO> createProject(@RequestBody ProjectPostDTO project) {
+            projectService.createProject(project);
+            return new ResponseEntity<>(project, HttpStatus.CREATED);
         }
 
         @PutMapping("/{id}")
-        public ResponseEntity<Project> updateProject(@PathVariable Long id, @RequestBody Project project) {
+        public ResponseEntity<ProjectPutDTO> updateProject(@PathVariable Long id, @RequestBody ProjectPutDTO project) {
             try {
-                Project updatedProject = projectService.updateProject(project, id);
-                return new ResponseEntity<>(updatedProject, HttpStatus.OK);
+                projectService.updateProject(project, id);
+                return new ResponseEntity<>(project, HttpStatus.OK);
             } catch (RuntimeException e) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
