@@ -89,4 +89,14 @@ public class UsersController {
     public List<ProjectDTO> getProjectsFollowings(@PathVariable long id) {
         return usersService.getUserProjectFollowings(id);
     }
+
+    @PostMapping("/{userId}/addFavorite/{projectId}")
+    public void addProjectToFavorites(@PathVariable long userId, @PathVariable long projectId) {
+        usersService.addToFavorites(userId, projectId);
+    }
+
+    @PostMapping("/{userId}/removeFavorite/{projectId}")
+    public void removeProjectFromFavorites(@PathVariable long userId, @PathVariable long projectId) {
+        usersService.removeFromFavorites(userId, projectId);
+    }
 }

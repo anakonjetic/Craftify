@@ -6,7 +6,6 @@ import com.tvz.hr.craftify.request.UsersRequest;
 import com.tvz.hr.craftify.service.dto.*;
 import com.tvz.hr.craftify.utilities.MapToDTOHelper;
 import lombok.AllArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
