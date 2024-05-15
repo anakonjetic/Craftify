@@ -1,12 +1,9 @@
 package com.tvz.hr.craftify.request;
 
-import com.tvz.hr.craftify.model.Category;
-import com.tvz.hr.craftify.service.CategoryDTO;
+import com.tvz.hr.craftify.service.dto.CategoryDTO;
 import lombok.*;
-import org.springframework.data.util.Pair;
 
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter

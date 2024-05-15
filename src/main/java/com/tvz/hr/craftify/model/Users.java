@@ -1,9 +1,12 @@
 package com.tvz.hr.craftify.model;
 
+import com.tvz.hr.craftify.request.UsersRequest;
+import com.tvz.hr.craftify.utilities.MapToDTOHelper;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -90,5 +93,16 @@ public class Users {
     public Users(long l, String johnDoe) {
         this.id = l;
         this.username = johnDoe;
+    }
+
+
+    public static Users mapToUserFromUserRequest(UsersRequest request) {
+        Users user = new Users();
+        user.setId(request.getId());
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
+        user.setAdmin(request.isAdmin());
+        return user;
     }
 }

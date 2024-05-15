@@ -1,7 +1,5 @@
-package com.tvz.hr.craftify.service;
+package com.tvz.hr.craftify.service.dto;
 
-import com.tvz.hr.craftify.model.Category;
-import com.tvz.hr.craftify.model.Complexity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

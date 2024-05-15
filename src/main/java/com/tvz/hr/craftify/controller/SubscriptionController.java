@@ -1,12 +1,10 @@
 package com.tvz.hr.craftify.controller;
 
-import com.tvz.hr.craftify.request.UsersRequest;
-import com.tvz.hr.craftify.service.ProjectDTO;
-import com.tvz.hr.craftify.service.SubscriptionDTO;
-import com.tvz.hr.craftify.service.UserDTO;
+import com.tvz.hr.craftify.service.dto.ProjectDTO;
+import com.tvz.hr.craftify.service.dto.SubscriptionDTO;
+import com.tvz.hr.craftify.service.dto.UserDTO;
 import com.tvz.hr.craftify.service.SubscriptionService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

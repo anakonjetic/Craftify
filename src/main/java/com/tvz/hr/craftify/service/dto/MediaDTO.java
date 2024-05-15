@@ -1,4 +1,4 @@
-package com.tvz.hr.craftify.service;
+package com.tvz.hr.craftify.service.dto;
 
 
 import lombok.AllArgsConstructor;

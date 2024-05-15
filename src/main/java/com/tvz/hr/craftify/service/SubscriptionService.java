@@ -1,6 +1,8 @@
 package com.tvz.hr.craftify.service;
 
-import com.tvz.hr.craftify.model.Project;
+import com.tvz.hr.craftify.service.dto.ProjectDTO;
+import com.tvz.hr.craftify.service.dto.SubscriptionDTO;
+import com.tvz.hr.craftify.service.dto.UserDTO;
 
 import java.util.List;
 

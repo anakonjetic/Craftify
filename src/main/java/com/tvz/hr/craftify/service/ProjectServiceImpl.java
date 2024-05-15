@@ -2,8 +2,12 @@ package com.tvz.hr.craftify.service;
 
 import com.tvz.hr.craftify.model.*;
 import com.tvz.hr.craftify.repository.ProjectRepository;
+import com.tvz.hr.craftify.request.UsersRequest;
+import com.tvz.hr.craftify.service.dto.ProjectDTO;
+import com.tvz.hr.craftify.service.dto.ProjectPostDTO;
 import com.tvz.hr.craftify.utilities.MapToDTOHelper;
 import lombok.AllArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +20,7 @@ public class ProjectServiceImpl implements ProjectService{
 
     private ProjectRepository projectRepository;
     private CategoryService categoryService;
+    private UsersService usersService;
 
     //TODO usera kreatora namapirati
     @Override
@@ -43,7 +48,8 @@ public class ProjectServiceImpl implements ProjectService{
         newProject.setUser(new Users(1L, "john_doe"));
         Category category = categoryService.getCategoryById(postProject.getCategoryId()).orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
         newProject.setCategory(category);
-
+       /* List<UsersRequest> userRequestLikes = usersService.getAllUsers().stream().filter(u -> postProject.getUserLikesIdList().contains(u.getId())).collect(Collectors.toList());
+        List<Users>*/
         //TODO Fetch and set complexity nedostaje
         //TODO Fetch and set media nedostaje
         //TODO Fetch and set comment nedostaje

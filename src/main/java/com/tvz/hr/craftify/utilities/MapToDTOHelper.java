@@ -1,7 +1,7 @@
 package com.tvz.hr.craftify.utilities;
 
 import com.tvz.hr.craftify.model.*;
-import com.tvz.hr.craftify.service.*;
+import com.tvz.hr.craftify.service.dto.*;
 
 import java.util.stream.Collectors;
 

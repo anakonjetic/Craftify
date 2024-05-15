@@ -1,21 +1,14 @@
 package com.tvz.hr.craftify.repository;
 
 import com.tvz.hr.craftify.model.Comment;
-import com.tvz.hr.craftify.model.Project;
 import com.tvz.hr.craftify.model.Users;
 import com.tvz.hr.craftify.request.UsersRequest;
-import com.tvz.hr.craftify.service.CommentDTO;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 
 @Repository

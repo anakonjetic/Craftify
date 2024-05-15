@@ -6,14 +6,15 @@ import com.tvz.hr.craftify.model.Users;
 import com.tvz.hr.craftify.model.Category;
 import com.tvz.hr.craftify.repository.UsersRepository;
 import com.tvz.hr.craftify.request.UsersRequest;
+import com.tvz.hr.craftify.service.dto.CategoryDTO;
+import com.tvz.hr.craftify.service.dto.CommentDTO;
+import com.tvz.hr.craftify.service.dto.ProjectDTO;
+import com.tvz.hr.craftify.service.dto.UserDTO;
 import com.tvz.hr.craftify.utilities.MapToDTOHelper;
 import lombok.AllArgsConstructor;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
-import java.util.AbstractMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
