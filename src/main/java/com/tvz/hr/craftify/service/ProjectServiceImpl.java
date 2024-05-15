@@ -2,6 +2,7 @@ package com.tvz.hr.craftify.service;
 
 import com.tvz.hr.craftify.model.*;
 import com.tvz.hr.craftify.repository.ProjectRepository;
+import com.tvz.hr.craftify.utilities.MapToDTOHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ public class ProjectServiceImpl implements ProjectService{
     public List<ProjectDTO> getAllProjects() {
         List<Project> projects = projectRepository.findAll();
         return projects.stream()
-                .map(this::mapToDTO)
+                .map(MapToDTOHelper::mapToProjectDTO)
                 .collect(Collectors.toList());
     }
 
@@ -29,7 +30,7 @@ public class ProjectServiceImpl implements ProjectService{
     @Override
     public Optional<ProjectDTO> getProjectById(Long id) {
         Optional<Project> optionalProject = projectRepository.findById(id);
-        return optionalProject.map(this::mapToDTO);
+        return optionalProject.map(MapToDTOHelper::mapToProjectDTO);
     }
 
     @Override
@@ -75,44 +76,5 @@ public class ProjectServiceImpl implements ProjectService{
     }
 
 
-    //TODO usera kreatora namapirati
-    private ProjectDTO mapToDTO(Project project) {
-        return new ProjectDTO(
-                project.getId(),
-                project.getTitle(),
-                project.getDescription(),
-                project.getContent(),
-                project.getCategory(),
-                project.getComplexity(),
-                project.getMediaList().stream().map(this::mapToMediaDTO).collect(Collectors.toList()),
-                project.getComments().stream().map(this::mapToCommentDTO).collect(Collectors.toList()),
-                project.getUserLikes().stream().map(this::mapToUserDTO).collect(Collectors.toList()),
-                project.getFavoriteProjects().stream().map(this::mapToUserDTO).collect(Collectors.toList()),
-                project.getProjectFollowers().stream().map(this::mapToUserDTO).collect(Collectors.toList())
-        );
-    }
 
-    private UserDTO mapToUserDTO(Users user) {
-        return new UserDTO(
-                user.getId(),
-                user.getUsername()
-        );
-    }
-
-    private MediaDTO mapToMediaDTO(Media media) {
-        return new MediaDTO(
-                media.getId(),
-                media.getMedia(),
-                media.getMediaOrder()
-        );
-    }
-
-    private CommentDTO mapToCommentDTO(Comment comment) {
-        return new CommentDTO(
-                comment.getId(),
-                comment.getComment(),
-                mapToUserDTO(comment.getUser()),
-                comment.getCommentTime()
-        );
-    }
 }

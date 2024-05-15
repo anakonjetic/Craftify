@@ -5,6 +5,7 @@ import com.tvz.hr.craftify.model.Users;
 import com.tvz.hr.craftify.repository.ProjectRepository;
 import com.tvz.hr.craftify.repository.UsersRepository;
 import com.tvz.hr.craftify.request.UsersRequest;
+import com.tvz.hr.craftify.utilities.MapToDTOHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,28 +21,28 @@ public class SubscriptionServiceImpl implements SubscriptionService{
     public List<UserDTO> getUserFollowers(Long userId){
         List<Users> users = usersRepository.findById(userId).get().getFollowers();
         return users.stream()
-                .map(this::mapToUserDTO)
+                .map(MapToDTOHelper::mapToUserDTO)
                 .collect(Collectors.toList());
     }
 
     public List<UserDTO> getUserFollowings(Long userId){
         List<Users> users = usersRepository.findById(userId).get().getFollowedUsers();
         return users.stream()
-                .map(this::mapToUserDTO)
+                .map(MapToDTOHelper::mapToUserDTO)
                 .collect(Collectors.toList());
     }
 
     public List<ProjectDTO> getUserProjectFollowings(Long userId){
         List<Project> projects = usersRepository.findById(userId).get().getFollowingProjects();
         return projects.stream()
-                .map(this::mapToProjectDTO)
+                .map(MapToDTOHelper::mapToProjectDTO)
                 .collect(Collectors.toList());
     };
 
     public List<UserDTO> getProjectFollowers(Long projectId) {
         List<Users> users = projectRepository.findById(projectId).get().getProjectFollowers();
         return users.stream()
-                .map(this::mapToUserDTO)
+                .map(MapToDTOHelper::mapToUserDTO)
                 .collect(Collectors.toList());
     };
 
@@ -92,22 +93,6 @@ public class SubscriptionServiceImpl implements SubscriptionService{
     }
 
 
-    private UserDTO mapToUserDTO(Users user){
-        return new UserDTO(
-                user.getId(),
-                user.getUsername()
-        );
-    }
-    private ProjectDTO mapToProjectDTO(Project project){
-        return new ProjectDTO(
-                project.getId(),
-                project.getUser().getUsername(),
-                project.getTitle(),
-                project.getDescription(),
-                project.getContent(),
-                project.getCategory().getName(),
-                project.getComplexity().getName(),
-                project.getMediaList()
-        );
-    }
+
+
 }

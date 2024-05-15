@@ -13,11 +13,14 @@ import java.util.List;
 @NoArgsConstructor
 public class ProjectDTO {
     private Long id;
-    private String user;
     private String title;
     private String description;
     private String content;
-    private String category;
-    private String complexity;
-    private List<Media> mediaList;
+    private Category category;
+    private Complexity complexity;
+    private List<MediaDTO> mediaList;
+    private List<CommentDTO> comments;
+    private List<UserDTO> userLikes;
+    private List<UserDTO> favoriteProjects;
+    private List<UserDTO> projectFollowers;
 }

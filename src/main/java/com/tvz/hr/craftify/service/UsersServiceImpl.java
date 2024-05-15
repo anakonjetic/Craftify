@@ -6,6 +6,7 @@ import com.tvz.hr.craftify.model.Users;
 import com.tvz.hr.craftify.model.Category;
 import com.tvz.hr.craftify.repository.UsersRepository;
 import com.tvz.hr.craftify.request.UsersRequest;
+import com.tvz.hr.craftify.utilities.MapToDTOHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class UsersServiceImpl implements UsersService{
     public Optional<UsersRequest> getUser(Long id) { return usersRepository.getUserById(id); };
     public UsersRequest createUser(UsersRequest user) {
         List<Category> categories = user.getUserPreferences().stream()
-                .map(this::mapToCategory)
+                .map(MapToDTOHelper::mapToCategory)
                 .collect(Collectors.toList());
         Users newUser = new Users(user.getUsername(),user.getEmail(),user.getPassword(), user.isAdmin(), categories);
         return mapToUsersRequest(usersRepository.save(newUser));
@@ -56,49 +57,49 @@ public class UsersServiceImpl implements UsersService{
     public List<CommentDTO> getUserComments(Long id){
         List<Comment> comments = usersRepository.getUserComments(id);
         return comments.stream()
-                .map(this::mapToCommentDTO)
+                .map(MapToDTOHelper::mapToCommentDTO)
                 .collect(Collectors.toList());
     }
 
     public List<ProjectDTO> getFavoriteProjects(Long userId){
         List<Project> favoriteProjects = usersRepository.findById(userId).get().getFavoriteProjects();
         return favoriteProjects.stream()
-                .map(this::mapToProjectDTO)
+                .map(MapToDTOHelper::mapToProjectDTO)
                 .collect(Collectors.toList());
     }
 
     public List<ProjectDTO> getLikedProjects(Long userId){
         List<Project> likedProjects = usersRepository.findById(userId).get().getLikedProjects();
         return likedProjects.stream()
-                .map(this::mapToProjectDTO)
+                .map(MapToDTOHelper::mapToProjectDTO)
                 .collect(Collectors.toList());
     }
 
     public List<ProjectDTO> getUserProjects(Long userId){
         List<Project> projects = usersRepository.findById(userId).get().getProjects();
         return projects.stream()
-                .map(this::mapToProjectDTO)
+                .map(MapToDTOHelper::mapToProjectDTO)
                 .collect(Collectors.toList());
     }
 
     public List<UserDTO> getUserFollowers(Long userId){
         List<Users> users = usersRepository.findById(userId).get().getFollowers();
         return users.stream()
-                .map(this::mapToUserDTO)
+                .map(MapToDTOHelper::mapToUserDTO)
                 .collect(Collectors.toList());
     }
 
     public List<UserDTO> getUserFollowings(Long userId){
         List<Users> users = usersRepository.findById(userId).get().getFollowedUsers();
         return users.stream()
-                .map(this::mapToUserDTO)
+                .map(MapToDTOHelper::mapToUserDTO)
                 .collect(Collectors.toList());
     }
 
     public List<ProjectDTO> getUserProjectFollowings(Long userId){
         List<Project> projects = usersRepository.findById(userId).get().getFollowingProjects();
         return projects.stream()
-                .map(this::mapToProjectDTO)
+                .map(MapToDTOHelper::mapToProjectDTO)
                 .collect(Collectors.toList());
     }
 
@@ -108,7 +109,7 @@ public class UsersServiceImpl implements UsersService{
                 .map(Category::getName)
                 .collect(Collectors.toList());*/
         List<CategoryDTO> category = user.getUserPreferences().stream()
-                .map(this::mapToCategoryDTO)
+                .map(MapToDTOHelper::mapToCategoryDTO)
                 .collect(Collectors.toList());
 
         return new UsersRequest(
@@ -122,43 +123,4 @@ public class UsersServiceImpl implements UsersService{
     }
 
 
-    private UserDTO mapToUserDTO(Users user){
-        return new UserDTO(
-                user.getId(),
-                user.getUsername()
-        );
-    }
-    private ProjectDTO mapToProjectDTO(Project project){
-        return new ProjectDTO(
-                project.getId(),
-                project.getUser().getUsername(),
-                project.getTitle(),
-                project.getDescription(),
-                project.getContent(),
-                project.getCategory().getName(),
-                project.getComplexity().getName(),
-                project.getMediaList()
-        );
-    }
-    private CommentDTO mapToCommentDTO (Comment comment){
-        return new CommentDTO(
-                comment.getId(),
-                comment.getComment(),
-                comment.getUser().getUsername(),
-                comment.getCommentTime()
-        );
-    }
-    private CategoryDTO mapToCategoryDTO(Category category){
-        return new CategoryDTO(
-                category.getId(),
-                category.getName()
-        );
-    }
-
-    private Category mapToCategory(CategoryDTO categoryDTO){
-        Category category = new Category();
-        category.setId(categoryDTO.getId());
-        category.setName(categoryDTO.getName());
-        return category;
-    }
 }

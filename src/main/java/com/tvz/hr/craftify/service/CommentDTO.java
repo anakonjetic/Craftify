@@ -12,6 +12,6 @@ import java.time.LocalDateTime;
 public class CommentDTO {
     private Long id;
     private String comment;
-    private String user;
+    private UserDTO user;
     private LocalDateTime commentTime;
 }
