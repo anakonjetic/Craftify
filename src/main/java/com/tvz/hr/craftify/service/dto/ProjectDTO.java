@@ -15,8 +15,8 @@ public class ProjectDTO {
     private String title;
     private String description;
     private String content;
-    private Category category;
-    private Complexity complexity;
+    private CategoryDTO category;
+    private ComplexityDTO complexity;
     private List<MediaDTO> mediaList;
     private List<CommentDTO> comments;
     private List<UserDTO> userLikes;

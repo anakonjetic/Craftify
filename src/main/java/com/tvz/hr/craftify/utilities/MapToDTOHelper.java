@@ -14,8 +14,8 @@ public class MapToDTOHelper {
                 project.getTitle(),
                 project.getDescription(),
                 project.getContent(),
-                project.getCategory(),
-                project.getComplexity(),
+                mapToCategoryDTO(project.getCategory()),
+                mapToComplexityDTO(project.getComplexity()),
                 project.getMediaList().stream().map(MapToDTOHelper::mapToMediaDTO).collect(Collectors.toList()),
                 project.getComments().stream().map(MapToDTOHelper::mapToCommentDTO).collect(Collectors.toList()),
                 project.getUserLikes().stream().map(MapToDTOHelper::mapToUserDTO).collect(Collectors.toList()),
@@ -52,6 +52,20 @@ public class MapToDTOHelper {
         return new CategoryDTO(
                 category.getId(),
                 category.getName()
+        );
+    }
+    public static ComplexityDTO mapToComplexityDTO(Complexity complexity){
+        return new ComplexityDTO(
+                complexity.getId(),
+                complexity.getName()
+        );
+    }
+
+    public static ComplexityGetDTO mapToComplexityGetDTO(Complexity complexity){
+        return new ComplexityGetDTO(
+                complexity.getId(),
+                complexity.getName(),
+                complexity.getProjectList().stream().map(MapToDTOHelper::mapToProjectDTO).collect(Collectors.toList())
         );
     }
 
