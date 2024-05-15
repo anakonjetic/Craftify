@@ -84,7 +84,7 @@ public class UsersServiceImpl implements UsersService{
     }
 
     public List<CommentDTO> getUserComments(Long id){
-        List<Comment> comments = usersRepository.getUserComments(id);
+        List<Comment> comments = usersRepository.findCommentsByUserId(id);
         return comments.stream()
                 .map(MapToDTOHelper::mapToCommentDTO)
                 .collect(Collectors.toList());

@@ -1,6 +1,5 @@
 package com.tvz.hr.craftify.service;
 import com.tvz.hr.craftify.model.Category;
-import org.apache.catalina.User;
 
 import java.util.List;
 import java.util.Optional;

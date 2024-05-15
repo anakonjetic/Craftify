@@ -1,11 +1,13 @@
 package com.tvz.hr.craftify.service;
-
+import com.tvz.hr.craftify.service.dto.CategoryDTO;
 import com.tvz.hr.craftify.model.Category;
 import com.tvz.hr.craftify.model.Users;
 import com.tvz.hr.craftify.repository.CategoryRepository;
 import com.tvz.hr.craftify.repository.UsersRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 import java.util.Optional;
