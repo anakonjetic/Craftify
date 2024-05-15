@@ -1,12 +1,13 @@
 package com.tvz.hr.craftify.service;
 
-import com.tvz.hr.craftify.model.Category;
+import com.tvz.hr.craftify.model.*;
 import com.tvz.hr.craftify.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 public class CategoryServiceImpl implements CategoryService {

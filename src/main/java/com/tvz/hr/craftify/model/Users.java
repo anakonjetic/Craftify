@@ -85,4 +85,10 @@ public class Users {
 
     @OneToMany(mappedBy = "user")
     private List<Comment> comments;
+
+    //TODO quick fix, remove hahaha
+    public Users(long l, String johnDoe) {
+        this.id = l;
+        this.username = johnDoe;
+    }
 }

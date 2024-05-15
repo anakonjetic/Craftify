@@ -1,7 +1,6 @@
 package com.tvz.hr.craftify.service;
 
 import lombok.*;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
