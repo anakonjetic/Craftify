@@ -8,6 +8,7 @@ insert into category(name) values('Outdoor/Garden Crafts');
 insert into category(name) values('Holiday and Seasonal Crafts');
 insert into category(name) values('Kids Crafts');
 
+
 insert into complexity(name) values('Beginner');
 insert into complexity(name) values('Intermediate');
 insert into complexity(name) values('Advanced');

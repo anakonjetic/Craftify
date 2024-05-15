@@ -5,7 +5,6 @@ import com.tvz.hr.craftify.model.Users;
 import com.tvz.hr.craftify.repository.CategoryRepository;
 import com.tvz.hr.craftify.repository.UsersRepository;
 import lombok.AllArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -51,21 +50,34 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category addUserPreference(Long categoryId, Long userID) {
+    public CategoryDTO addUserPreference(Long categoryId, Long userID) {
         Category category = categoryRepository.findById(categoryId).orElse(null);
         Users user = usersRepository.findById(userID).orElse(null);
-        assert category != null;
-        category.getUserPreferences().add(user);
-        return categoryRepository.save(category);
+        if (category != null && user != null) {
+            category.getUserPreferences().add(user);
+            category = categoryRepository.save(category);
+            categoryRepository.flush();
+        }
+        return convertToDTO(category);
     }
 
     @Override
-    public Category removeUserPreference(Long categoryId, Long userID) {
+    public CategoryDTO removeUserPreference(Long categoryId, Long userID) {
         Category category = categoryRepository.findById(categoryId).orElse(null);
         Users user = usersRepository.findById(userID).orElse(null);
-        assert category != null;
-        category.getUserPreferences().remove(user);
-        return categoryRepository.save(category);
+
+        if (category != null && user != null) {
+            category.getUserPreferences().remove(user);
+            category = categoryRepository.save(category);
+            categoryRepository.flush();
+        }
+        return convertToDTO(category);
+    }
+    private CategoryDTO convertToDTO(Category category) {
+        CategoryDTO dto = new CategoryDTO();
+        dto.setId(category.getId());
+        dto.setName(category.getName());
+        return dto;
     }
 
 
