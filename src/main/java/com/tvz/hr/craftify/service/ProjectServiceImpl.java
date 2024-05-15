@@ -2,7 +2,7 @@ package com.tvz.hr.craftify.service;
 
 import com.tvz.hr.craftify.model.*;
 import com.tvz.hr.craftify.repository.ProjectRepository;
-import com.tvz.hr.craftify.request.UsersRequest;
+import com.tvz.hr.craftify.service.dto.UsersGetDTO;
 import com.tvz.hr.craftify.service.dto.*;
 import com.tvz.hr.craftify.utilities.MapToDTOHelper;
 import lombok.AllArgsConstructor;
@@ -42,7 +42,7 @@ public class ProjectServiceImpl implements ProjectService{
         newProject.setDescription(postProject.getDescription());
         newProject.setContent(postProject.getContent());
         //user setup
-        Optional<UsersRequest> userRequest = usersService.getUser(postProject.getUserId());
+        Optional<UsersGetDTO> userRequest = usersService.getUser(postProject.getUserId());
         if (userRequest.isPresent()) {
             Users user = Users.mapToUserFromUserRequest(userRequest.get());
             newProject.setUser(user);
@@ -53,15 +53,15 @@ public class ProjectServiceImpl implements ProjectService{
         Category category = categoryService.getCategoryById(postProject.getCategoryId()).orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
         newProject.setCategory(category);
         //user likes setup
-        List<UsersRequest> userRequestLikes = usersService.getAllUsers().stream().filter(u -> postProject.getUserLikesIdList().contains(u.getId())).toList();
+        List<UsersGetDTO> userRequestLikes = usersService.getAllUsers().stream().filter(u -> postProject.getUserLikesIdList().contains(u.getId())).toList();
         List<Users> userLikes = userRequestLikes.stream().map(Users::mapToUserFromUserRequest).toList();
         newProject.setUserLikes(userLikes);
         //favorite projects setup
-        List<UsersRequest> userRequestFavoriteProjects = usersService.getAllUsers().stream().filter(u -> postProject.getFavoriteProjectUserIdList().contains(u.getId())).toList();
+        List<UsersGetDTO> userRequestFavoriteProjects = usersService.getAllUsers().stream().filter(u -> postProject.getFavoriteProjectUserIdList().contains(u.getId())).toList();
         List<Users> userFavoriteProjects = userRequestFavoriteProjects.stream().map(Users::mapToUserFromUserRequest).toList();
         newProject.setFavoriteProjects(userFavoriteProjects);
         //project followers setup
-        List<UsersRequest> userRequestFollowers = usersService.getAllUsers().stream().filter(u -> postProject.getProjectFollowersIdList().contains(u.getId())).toList();
+        List<UsersGetDTO> userRequestFollowers = usersService.getAllUsers().stream().filter(u -> postProject.getProjectFollowersIdList().contains(u.getId())).toList();
         List<Users> userFollowers = userRequestFollowers.stream().map(Users::mapToUserFromUserRequest).toList();
         newProject.setProjectFollowers(userFollowers);
         //complexity setup

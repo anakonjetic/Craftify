@@ -1,12 +1,10 @@
 package com.tvz.hr.craftify.model;
 
-import com.tvz.hr.craftify.request.UsersRequest;
-import com.tvz.hr.craftify.utilities.MapToDTOHelper;
+import com.tvz.hr.craftify.service.dto.UsersGetDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -89,7 +87,7 @@ public class Users {
     @OneToMany(mappedBy = "user")
     private List<Comment> comments;
 
-    public static Users mapToUserFromUserRequest(UsersRequest request) {
+    public static Users mapToUserFromUserRequest(UsersGetDTO request) {
         Users user = new Users();
         user.setId(request.getId());
         user.setUsername(request.getUsername());
