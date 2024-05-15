@@ -17,6 +17,11 @@ public class Category {
     private Long id;
     private String name;
 
-    @ManyToMany(targetEntity = Users.class, mappedBy = "userPreferences")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_preferences",
+            joinColumns = @JoinColumn (name = "category_id"),
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
+    )
     private List<Users> userPreferences;
 }

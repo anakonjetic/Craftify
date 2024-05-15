@@ -34,6 +34,11 @@ public class CategoryController {
                 categoryService.createCategory(category), HttpStatus.CREATED
         );
     }
+    public ResponseEntity<Category> addUserPreference(@PathVariable Category categoryId, @PathVariable Long userId) {
+        Category category = categoryService.addUserPreference(categoryId.getId(), userId);
+        return ResponseEntity.ok(category);
+
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Category> updateCategory(@PathVariable long id, @RequestBody Category category) {
@@ -50,4 +55,19 @@ public class CategoryController {
         categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{categoryId}/user/{userId}")
+    public ResponseEntity<Category> addUserPreference(@PathVariable long categoryId, @PathVariable long userId) {
+        Category category = categoryService.addUserPreference(categoryId, userId);
+        return ResponseEntity.ok(category);
+    }
+
+    @DeleteMapping("{categoryId}/user/{userId}")
+    public ResponseEntity<Category> removeUserPreference(@PathVariable long categoryId, @PathVariable long userId) {
+        Category category = categoryService.removeUserPreference(categoryId, userId);
+        return ResponseEntity.ok(category);
+    }
+
+
+
 }
