@@ -14,6 +14,7 @@ public class MapToDTOHelper {
                 project.getTitle(),
                 project.getDescription(),
                 project.getContent(),
+                MapToDTOHelper.mapToUserDTO(project.getUser()),
                 mapToCategoryDTO(project.getCategory()),
                 mapToComplexityDTO(project.getComplexity()),
                 project.getMediaList().stream().map(MapToDTOHelper::mapToMediaDTO).collect(Collectors.toList()),

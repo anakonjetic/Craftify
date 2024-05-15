@@ -89,13 +89,6 @@ public class Users {
     @OneToMany(mappedBy = "user")
     private List<Comment> comments;
 
-    //TODO quick fix, remove hahaha
-    public Users(long l, String johnDoe) {
-        this.id = l;
-        this.username = johnDoe;
-    }
-
-
     public static Users mapToUserFromUserRequest(UsersRequest request) {
         Users user = new Users();
         user.setId(request.getId());
