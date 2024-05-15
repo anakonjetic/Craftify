@@ -2,7 +2,12 @@ package com.tvz.hr.craftify.service;
 
 import com.tvz.hr.craftify.model.*;
 import com.tvz.hr.craftify.repository.ProjectRepository;
+import com.tvz.hr.craftify.request.UsersRequest;
+import com.tvz.hr.craftify.service.dto.ProjectDTO;
+import com.tvz.hr.craftify.service.dto.ProjectPostDTO;
+import com.tvz.hr.craftify.utilities.MapToDTOHelper;
 import lombok.AllArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,13 +20,14 @@ public class ProjectServiceImpl implements ProjectService{
 
     private ProjectRepository projectRepository;
     private CategoryService categoryService;
+    private UsersService usersService;
 
     //TODO usera kreatora namapirati
     @Override
     public List<ProjectDTO> getAllProjects() {
         List<Project> projects = projectRepository.findAll();
         return projects.stream()
-                .map(this::mapToDTO)
+                .map(MapToDTOHelper::mapToProjectDTO)
                 .collect(Collectors.toList());
     }
 
@@ -29,7 +35,7 @@ public class ProjectServiceImpl implements ProjectService{
     @Override
     public Optional<ProjectDTO> getProjectById(Long id) {
         Optional<Project> optionalProject = projectRepository.findById(id);
-        return optionalProject.map(this::mapToDTO);
+        return optionalProject.map(MapToDTOHelper::mapToProjectDTO);
     }
 
     @Override
@@ -42,7 +48,8 @@ public class ProjectServiceImpl implements ProjectService{
         newProject.setUser(new Users(1L, "john_doe"));
         Category category = categoryService.getCategoryById(postProject.getCategoryId()).orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
         newProject.setCategory(category);
-
+       /* List<UsersRequest> userRequestLikes = usersService.getAllUsers().stream().filter(u -> postProject.getUserLikesIdList().contains(u.getId())).collect(Collectors.toList());
+        List<Users>*/
         //TODO Fetch and set complexity nedostaje
         //TODO Fetch and set media nedostaje
         //TODO Fetch and set comment nedostaje
@@ -75,44 +82,5 @@ public class ProjectServiceImpl implements ProjectService{
     }
 
 
-    //TODO usera kreatora namapirati
-    private ProjectDTO mapToDTO(Project project) {
-        return new ProjectDTO(
-                project.getId(),
-                project.getTitle(),
-                project.getDescription(),
-                project.getContent(),
-                project.getCategory(),
-                project.getComplexity(),
-                project.getMediaList().stream().map(this::mapToMediaDTO).collect(Collectors.toList()),
-                project.getComments().stream().map(this::mapToCommentDTO).collect(Collectors.toList()),
-                project.getUserLikes().stream().map(this::mapToUserDTO).collect(Collectors.toList()),
-                project.getFavoriteProjects().stream().map(this::mapToUserDTO).collect(Collectors.toList()),
-                project.getProjectFollowers().stream().map(this::mapToUserDTO).collect(Collectors.toList())
-        );
-    }
 
-    private UserDTO mapToUserDTO(Users user) {
-        return new UserDTO(
-                user.getId(),
-                user.getUsername()
-        );
-    }
-
-    private MediaDTO mapToMediaDTO(Media media) {
-        return new MediaDTO(
-                media.getId(),
-                media.getMedia(),
-                media.getMediaOrder()
-        );
-    }
-
-    private CommentDTO mapToCommentDTO(Comment comment) {
-        return new CommentDTO(
-                comment.getId(),
-                comment.getComment(),
-                mapToUserDTO(comment.getUser()),
-                comment.getCommentTime()
-        );
-    }
 }

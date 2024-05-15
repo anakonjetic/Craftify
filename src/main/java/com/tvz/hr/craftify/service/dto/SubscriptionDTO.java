@@ -1,11 +1,9 @@
-package com.tvz.hr.craftify.service;
+package com.tvz.hr.craftify.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Optional;
 
 @Data
 @AllArgsConstructor

@@ -1,6 +1,5 @@
 package com.tvz.hr.craftify.model;
 
-import com.tvz.hr.craftify.service.ProjectDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

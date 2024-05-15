@@ -1,8 +1,8 @@
 package com.tvz.hr.craftify.controller;
 
 import com.tvz.hr.craftify.model.Project;
-import com.tvz.hr.craftify.service.ProjectDTO;
-import com.tvz.hr.craftify.service.ProjectPostDTO;
+import com.tvz.hr.craftify.service.dto.ProjectDTO;
+import com.tvz.hr.craftify.service.dto.ProjectPostDTO;
 import com.tvz.hr.craftify.service.ProjectService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

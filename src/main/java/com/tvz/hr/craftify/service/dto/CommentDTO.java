@@ -1,4 +1,4 @@
-package com.tvz.hr.craftify.service;
+package com.tvz.hr.craftify.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +12,6 @@ import java.time.LocalDateTime;
 public class CommentDTO {
     private Long id;
     private String comment;
-    private String user;
+    private UserDTO user;
     private LocalDateTime commentTime;
 }
