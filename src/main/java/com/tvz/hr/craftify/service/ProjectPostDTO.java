@@ -11,17 +11,17 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProjectDTO {
+public class ProjectPostDTO{
     private Long id;
     private String title;
     private String description;
     private String content;
-    private Category category;
-    private Complexity complexity;
-    private List<MediaDTO> mediaList;
-    private List<CommentDTO> comments;
-    private List<UserDTO> userLikes;
-    private List<UserDTO> favoriteProjects;
-    private List<UserDTO> projectFollowers;
+    private Long userId;
+    private Long categoryId;
+    private Long complexityId;
+    private List<Long> mediaIdList;
+    private List<Long> commentIdList;
+    private List<Long> userLikesIdList;
+    private List<Long> favoriteProjectUserIdList;
+    private List<Long> projectFollowersIdList;
 }
-

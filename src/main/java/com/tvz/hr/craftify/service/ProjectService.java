@@ -7,8 +7,8 @@ import java.util.Optional;
 
 public interface ProjectService {
     List<ProjectDTO> getAllProjects();
-    Optional<Project> getProjectById(Long id);
-    Project createProject(Project project);
+    Optional<ProjectDTO> getProjectById(Long id);
+    Project createProject(ProjectPostDTO projectPostDTO);
     Project updateProject(Project project, Long id);
     void deleteProject(Long id);
 }
