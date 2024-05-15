@@ -1,5 +1,6 @@
 package com.tvz.hr.craftify.model;
 
+import com.tvz.hr.craftify.service.ProjectDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -48,4 +49,14 @@ public class Project {
 
     @OneToMany(mappedBy = "project")
     private List<Comment> comments;
+
+    public Project(Long id, String title, String description, String content, Users user, Category category, Complexity complexity){
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.content = content;
+        this.user = user;
+        this.category = category;
+        this.complexity = complexity;
+    }
 }

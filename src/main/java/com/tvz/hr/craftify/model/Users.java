@@ -23,6 +23,13 @@ public class Users {
     @JoinColumn(name = "is_admin")
     private boolean isAdmin;
 
+    public Users(String username, String email, String password, boolean isAdmin) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.isAdmin = isAdmin;
+    }
+
     @ManyToMany(targetEntity = Category.class)
     @JoinTable(
             name = "user_preferences",
