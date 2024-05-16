@@ -10,4 +10,6 @@ public interface CategoryService {
     Category createCategory(Category category);
     Category updateCategory(Category category, long id);
     void deleteCategory(long id);
+    Category addUserPreference(Long categoryId, Long userID);
+    Category removeUserPreference(Long categoryId, Long userID);
 }

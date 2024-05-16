@@ -66,7 +66,7 @@ public class ProjectServiceImpl implements ProjectService{
             throw new RuntimeException("User with ID: " + postProject.getUserId() + " not found");
         }
         //category setup
-        Category category = categoryService.getCategoryById(postProject.getCategoryId()).orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
+        Category category = categoryService.getCategoryById(postProject.getCategoryId()).orElseThrow(() -> new IllegalArgumentException("   Invalid category ID"));
         newProject.setCategory(category);
         //user likes setup
         List<UsersGetDTO> userRequestLikes = usersService.getAllUsers().stream().filter(u -> postProject.getUserLikesIdList().contains(u.getId())).toList();
