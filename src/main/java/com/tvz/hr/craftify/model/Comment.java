@@ -29,6 +29,7 @@ public class Comment {
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
+
     @ManyToOne
     @JoinColumn(name = "parent_comment_id")
     private Comment parentComment;

@@ -26,6 +26,7 @@ public class MapToDTOHelper {
         );
     }
 
+
     public static ProjectGetDTO mapToProjectGetDTO(Project project) {
         return new ProjectGetDTO(
                 project.getId(),
@@ -35,6 +36,19 @@ public class MapToDTOHelper {
                 MapToDTOHelper.mapToUserDTO(project.getUser()),
                 mapToCategoryDTO(project.getCategory()),
                 mapToComplexityDTO(project.getComplexity())
+          );
+    }
+
+    public static TutorialDTO mapToTutorialDTO(Tutorial tutorial){
+        return new TutorialDTO(
+                tutorial.getId(),
+                tutorial.getTitle(),
+                tutorial.getContent(),
+                MapToDTOHelper.mapToUserDTO(tutorial.getUser()),
+                mapToCategoryDTO(tutorial.getCategory()),
+                mapToComplexityDTO(tutorial.getComplexity()),
+                tutorial.getMediaList().stream().map(MapToDTOHelper::mapToMediaDTO).collect(Collectors.toList()).reversed()
+
         );
     }
 

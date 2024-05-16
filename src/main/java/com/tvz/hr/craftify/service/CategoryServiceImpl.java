@@ -1,18 +1,22 @@
 package com.tvz.hr.craftify.service;
-
-import com.tvz.hr.craftify.model.*;
+import com.tvz.hr.craftify.service.dto.CategoryDTO;
+import com.tvz.hr.craftify.model.Category;
+import com.tvz.hr.craftify.model.Users;
 import com.tvz.hr.craftify.repository.CategoryRepository;
+import com.tvz.hr.craftify.repository.UsersRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 import java.util.Optional;
-
 @Service
 @AllArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
     private CategoryRepository categoryRepository;
+    private UsersRepository usersRepository;
 
     @Override
     public List<Category> getAllCategories() {
@@ -46,5 +50,37 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategory(long id) {
         categoryRepository.deleteById(id);
     }
+
+    @Override
+    public CategoryDTO addUserPreference(Long categoryId, Long userID) {
+        Category category = categoryRepository.findById(categoryId).orElse(null);
+        Users user = usersRepository.findById(userID).orElse(null);
+        if (category != null && user != null) {
+            category.getUserPreferences().add(user);
+            category = categoryRepository.save(category);
+            categoryRepository.flush();
+        }
+        return convertToDTO(category);
+    }
+
+    @Override
+    public CategoryDTO removeUserPreference(Long categoryId, Long userID) {
+        Category category = categoryRepository.findById(categoryId).orElse(null);
+        Users user = usersRepository.findById(userID).orElse(null);
+
+        if (category != null && user != null) {
+            category.getUserPreferences().remove(user);
+            category = categoryRepository.save(category);
+            categoryRepository.flush();
+        }
+        return convertToDTO(category);
+    }
+    private CategoryDTO convertToDTO(Category category) {
+        CategoryDTO dto = new CategoryDTO();
+        dto.setId(category.getId());
+        dto.setName(category.getName());
+        return dto;
+    }
+
 
 }

@@ -1,6 +1,7 @@
 package com.tvz.hr.craftify.service;
 
 import com.tvz.hr.craftify.model.*;
+import com.tvz.hr.craftify.repository.CommentRepository;
 import com.tvz.hr.craftify.repository.ProjectRepository;
 import com.tvz.hr.craftify.repository.UsersRepository;
 import com.tvz.hr.craftify.service.dto.UsersGetDTO;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class UsersServiceImpl implements UsersService{
+    private final CommentRepository commentRepository;
     private UsersRepository usersRepository;
     private ProjectRepository projectRepository;
     private CategoryService categoryService;
@@ -111,7 +113,7 @@ public class UsersServiceImpl implements UsersService{
 
     @Override
     public List<CommentDTO> getUserComments(Long id){
-        List<Comment> comments = usersRepository.getUserComments(id);
+        Optional<Comment> comments = commentRepository.findByUserId(id);
         return comments.stream()
                 .map(MapToDTOHelper::mapToCommentDTO)
                 .collect(Collectors.toList());
