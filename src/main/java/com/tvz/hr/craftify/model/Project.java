@@ -11,7 +11,6 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@ToString(exclude = {"user", "mediaList", "userLikes", "favoriteProjects", "projectFollowers", "comments"})
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
