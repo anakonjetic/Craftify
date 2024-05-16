@@ -17,6 +17,5 @@ public class TutorialDTO {
     private UserDTO user;
     private CategoryDTO category;
     private ComplexityDTO complexity;
-    private List<CommentDTO> comments;
     private List<MediaDTO> mediaList;
 }

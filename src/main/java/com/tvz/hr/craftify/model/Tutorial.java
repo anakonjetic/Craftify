@@ -37,8 +37,6 @@ public class Tutorial {
     @OneToMany(mappedBy = "tutorial")
     private List<Media> mediaList;
 
-    @OneToMany(mappedBy = "project")
-    private List<Comment> comments;
 
     public Tutorial(Long id, String title, String content, Users user, Category category, Complexity complexity) {
         this.id = id;

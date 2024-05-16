@@ -33,7 +33,6 @@ public class MapToDTOHelper {
                 MapToDTOHelper.mapToUserDTO(tutorial.getUser()),
                 mapToCategoryDTO(tutorial.getCategory()),
                 mapToComplexityDTO(tutorial.getComplexity()),
-                tutorial.getComments().stream().map(MapToDTOHelper::mapToCommentDTO).collect(Collectors.toList()).reversed(),
                 tutorial.getMediaList().stream().map(MapToDTOHelper::mapToMediaDTO).collect(Collectors.toList()).reversed()
         );
     }
