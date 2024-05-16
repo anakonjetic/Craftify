@@ -20,17 +20,20 @@ public class UsersServiceImpl implements UsersService{
     private ProjectRepository projectRepository;
     private CategoryService categoryService;
     //public List<UsersRequest> getAllUsers() { return usersRepository.getAllUsers(); };
+    @Override
     public List<UsersGetDTO> getAllUsers() {
         List<Users> users = usersRepository.findAll();
         return users.stream()
                 .map(MapToDTOHelper::mapToUsersGetDTO)
                 .collect(Collectors.toList());}
     ;
+    @Override
     public Optional<UsersGetDTO> getUser(Long id) {
         Optional<Users> users = usersRepository.findById(id);
         return users.map(MapToDTOHelper::mapToUsersGetDTO);
     };
 
+    @Override
     public UsersGetDTO createUser(UsersPutPostDTO user) {
         /*List<Category> categories = user.getUserPreferences().stream()
                 .map(MapToDTOHelper::mapToCategory)
@@ -43,6 +46,7 @@ public class UsersServiceImpl implements UsersService{
         Users newUser = new Users(user.getUsername(),user.getEmail(),user.getPassword(), user.isAdmin(), categories);
         return MapToDTOHelper.mapToUsersGetDTO(usersRepository.save(newUser));
     };
+    @Override
     public UsersGetDTO updateUser(UsersPutPostDTO user, Long id) {
         Optional<Users> optionalUser = usersRepository.findById(id);
         if (optionalUser.isEmpty()) {
@@ -65,6 +69,8 @@ public class UsersServiceImpl implements UsersService{
         return MapToDTOHelper.mapToUsersGetDTO(usersRepository.save(existingUser));
 
     };
+
+    @Override
     public void deleteUser(Long id) { usersRepository.deleteById(id); }
 
 
@@ -103,6 +109,7 @@ public class UsersServiceImpl implements UsersService{
         usersRepository.save(user);
     }
 
+    @Override
     public List<CommentDTO> getUserComments(Long id){
         List<Comment> comments = usersRepository.getUserComments(id);
         return comments.stream()
@@ -110,6 +117,7 @@ public class UsersServiceImpl implements UsersService{
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<ProjectDTO> getFavoriteProjects(Long userId){
         List<Project> favoriteProjects = usersRepository.findById(userId).get().getFavoriteProjects();
         return favoriteProjects.stream()
@@ -117,6 +125,7 @@ public class UsersServiceImpl implements UsersService{
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<ProjectDTO> getLikedProjects(Long userId){
         List<Project> likedProjects = usersRepository.findById(userId).get().getLikedProjects();
         return likedProjects.stream()
@@ -124,6 +133,7 @@ public class UsersServiceImpl implements UsersService{
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<ProjectDTO> getUserProjects(Long userId){
         List<Project> projects = usersRepository.findById(userId).get().getProjects();
         return projects.stream()
@@ -131,6 +141,7 @@ public class UsersServiceImpl implements UsersService{
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<UserDTO> getUserFollowers(Long userId){
         List<Users> users = usersRepository.findById(userId).get().getFollowers();
         return users.stream()
@@ -138,6 +149,7 @@ public class UsersServiceImpl implements UsersService{
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<UserDTO> getUserFollowings(Long userId){
         List<Users> users = usersRepository.findById(userId).get().getFollowedUsers();
         return users.stream()
@@ -145,6 +157,7 @@ public class UsersServiceImpl implements UsersService{
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<ProjectDTO> getUserProjectFollowings(Long userId){
         List<Project> projects = usersRepository.findById(userId).get().getFollowingProjects();
         return projects.stream()
