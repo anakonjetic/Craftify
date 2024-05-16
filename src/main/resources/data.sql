@@ -51,6 +51,9 @@ VALUES(1,2);
 insert into user_project_likes(user_id, project_id)
 VALUES(1,2);
 
+insert into media(media, MEDIA_ORDER, project_id)
+VALUES('url',1,1);
+
 insert into comment (user_id, project_id, comment, comment_time)
 VALUES (1,1,'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed varius diam, sit amet ' ||
             'cursus urna. Morbi tempor elit a lectus ultricies bibendum. Maecenas in dictum massa, ac ' ||

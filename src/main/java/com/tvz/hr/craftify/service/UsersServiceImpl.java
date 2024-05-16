@@ -150,22 +150,4 @@ public class UsersServiceImpl implements UsersService{
                 category
         );
     }
-    private UsersGetDTO mapToUsersGetDTO(Optional<Users> usersOptional) {
-        return usersOptional.map(user -> {
-            List<CategoryDTO> category = user.getUserPreferences().stream()
-                    .map(MapToDTOHelper::mapToCategoryDTO)
-                    .collect(Collectors.toList());
-
-            return new UsersGetDTO(
-                    user.getId(),
-                    user.getUsername(),
-                    user.getEmail(),
-                    user.getPassword(),
-                    user.isAdmin(),
-                    category
-            );
-        }).orElse(null);
-    }
-
-
 }

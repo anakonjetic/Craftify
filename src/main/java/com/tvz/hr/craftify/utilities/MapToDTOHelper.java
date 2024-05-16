@@ -69,6 +69,15 @@ public class MapToDTOHelper {
                 complexity.getProjectList().stream().map(MapToDTOHelper::mapToProjectDTO).collect(Collectors.toList())
         );
     }
+    public static TutorialDTO mapToTutorialDTO(Tutorial tutorial){
+        return new TutorialDTO(
+                tutorial.getId(),
+                tutorial.getTitle(),
+                tutorial.getContent(),
+                mapToCategoryDTO(tutorial.getCategory()),
+                mapToComplexityDTO(tutorial.getComplexity())
+        );
+    }
 
     public static Category mapToCategory(CategoryDTO categoryDTO){
         Category category = new Category();
