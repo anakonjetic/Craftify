@@ -11,6 +11,6 @@ public class MediaGetDTO {
     private Long id;
     private String media;
     private Integer mediaOrder;
-    private ProjectDTO project;
+    private ProjectGetDTO project;
     private TutorialDTO tutorial;
 }

@@ -15,8 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.tvz.hr.craftify.utilities.MapToDTOHelper.mapToProjectDTO;
-import static com.tvz.hr.craftify.utilities.MapToDTOHelper.mapToTutorialDTO;
+import static com.tvz.hr.craftify.utilities.MapToDTOHelper.*;
 
 @Service
 @AllArgsConstructor
@@ -36,7 +35,7 @@ public class MediaServiceImpl implements MediaService {
     };
     public MediaGetDTO addMedia(MediaPutPostDTO media) {
         Optional<Project> project = projectRepository.findById(media.getProjectId());
-        Optional<Tutorial> tutorial = tutorialRepository.findById(media.getTutorialId());
+        Optional<Tutorial> tutorial = media.getTutorialId() != null ? tutorialRepository.findById(media.getTutorialId()) : Optional.empty();
 
         Media newMedia = new Media();
         newMedia.setMedia(saveMediaToFileSystem(media.getMedia()));
@@ -60,9 +59,14 @@ public class MediaServiceImpl implements MediaService {
     };
     public void deleteMedia(Long id) { mediaRepository.deleteById(id); };
 
+    @Override
+    public List<Media> getMediaByIds(List<Long> ids) {
+        return mediaRepository.findAllById(ids); // Fetches media by list of IDs
+    }
+
     public MediaGetDTO mapToMediaGetDTO(Media media){
         Long projectId = media.getProject() != null ? media.getProject().getId() : null;
-        ProjectDTO projectDTO = projectId != null ? mapToProjectDTO(media.getProject()) : null;
+        ProjectGetDTO projectDTO = projectId != null ? mapToProjectGetDTO(media.getProject()) : null;
         Long tutorialId = media.getTutorial() != null ? media.getTutorial().getId() : null;
         TutorialDTO tutorialDTO = tutorialId != null ? mapToTutorialDTO(media.getTutorial()) : null;
 

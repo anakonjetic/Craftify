@@ -26,6 +26,18 @@ public class MapToDTOHelper {
         );
     }
 
+    public static ProjectGetDTO mapToProjectGetDTO(Project project) {
+        return new ProjectGetDTO(
+                project.getId(),
+                project.getTitle(),
+                project.getDescription(),
+                project.getContent(),
+                MapToDTOHelper.mapToUserDTO(project.getUser()),
+                mapToCategoryDTO(project.getCategory()),
+                mapToComplexityDTO(project.getComplexity())
+        );
+    }
+
     public static UserDTO mapToUserDTO(Users user) {
         return new UserDTO(
                 user.getId(),
@@ -98,11 +110,4 @@ public class MapToDTOHelper {
         );
     }
 
-    public static Category mapToCategory(CategoryDTO categoryDTO){
-        Category category = new Category();
-        category.setId(categoryDTO.getId());
-        category.setName(categoryDTO.getName());
-        return category;
     }
-
-}
