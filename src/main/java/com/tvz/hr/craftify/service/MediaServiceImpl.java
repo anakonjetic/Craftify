@@ -39,7 +39,7 @@ public class MediaServiceImpl implements MediaService {
         Optional<Tutorial> tutorial = tutorialRepository.findById(media.getTutorialId());
 
         Media newMedia = new Media();
-        newMedia.setMedia(media.getMedia());
+        newMedia.setMedia(saveMediaToFileSystem(media.getMedia()));
         newMedia.setMediaOrder(media.getMediaOrder());
         project.ifPresent(newMedia::setProject);
         tutorial.ifPresent(newMedia::setTutorial);
@@ -51,7 +51,7 @@ public class MediaServiceImpl implements MediaService {
         Optional<Tutorial> tutorial = tutorialRepository.findById(media.getTutorialId());
 
         Media existingMedia = mediaRepository.getById(id);
-        existingMedia.setMedia(media.getMedia());
+        existingMedia.setMedia(saveMediaToFileSystem(media.getMedia()));
         existingMedia.setMediaOrder(media.getMediaOrder());
         project.ifPresent(existingMedia::setProject);
         tutorial.ifPresent(existingMedia::setTutorial);
@@ -73,5 +73,11 @@ public class MediaServiceImpl implements MediaService {
                 projectDTO,
                 tutorialDTO
         );
+    }
+
+    //function for saving media (images or videos) to file storage and retrieving path/URL
+    private String saveMediaToFileSystem(byte[] b){
+        String url = "http...";
+        return url;
     }
 }
