@@ -25,6 +25,19 @@ public class MapToDTOHelper {
         );
     }
 
+    public static TutorialDTO mapToTutorialDTO(Tutorial tutorial){
+        return new TutorialDTO(
+                tutorial.getId(),
+                tutorial.getTitle(),
+                tutorial.getContent(),
+                MapToDTOHelper.mapToUserDTO(tutorial.getUser()),
+                mapToCategoryDTO(tutorial.getCategory()),
+                mapToComplexityDTO(tutorial.getComplexity()),
+                tutorial.getComments().stream().map(MapToDTOHelper::mapToCommentDTO).collect(Collectors.toList()).reversed(),
+                tutorial.getMediaList().stream().map(MapToDTOHelper::mapToMediaDTO).collect(Collectors.toList()).reversed()
+        );
+    }
+
     public static UserDTO mapToUserDTO(Users user) {
         return new UserDTO(
                 user.getId(),

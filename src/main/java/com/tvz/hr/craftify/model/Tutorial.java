@@ -22,6 +22,10 @@ public class Tutorial {
     private String content;
 
     @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private Users user;
+
+    @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
@@ -32,4 +36,16 @@ public class Tutorial {
     //Images/Videos
     @OneToMany(mappedBy = "tutorial")
     private List<Media> mediaList;
+
+    @OneToMany(mappedBy = "project")
+    private List<Comment> comments;
+
+    public Tutorial(Long id, String title, String content, Users user, Category category, Complexity complexity) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.user = user;
+        this.category = category;
+        this.complexity = complexity;
+    }
 }
