@@ -4,6 +4,7 @@ import com.tvz.hr.craftify.service.dto.ProjectDTO;
 import com.tvz.hr.craftify.service.dto.ProjectPostDTO;
 import com.tvz.hr.craftify.service.ProjectService;
 import com.tvz.hr.craftify.service.dto.ProjectPutDTO;
+import com.tvz.hr.craftify.service.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,12 @@ public class ProjectController {
         public ResponseEntity<ProjectDTO> getProject(@PathVariable Long id) {
             Optional<ProjectDTO> projectOptional = projectService.getProjectById(id);
             return projectOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        }
+
+        @GetMapping("/{id}/likes")
+        public ResponseEntity<List<UserDTO>> getUsersWhoLikedProject(@PathVariable long id) {
+            Optional<List<UserDTO>> likedUsersOptional = projectService.getUsersWhoLikedProject(id);
+            return likedUsersOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
         }
 
         @PostMapping

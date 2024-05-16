@@ -8,6 +8,7 @@ import com.tvz.hr.craftify.utilities.MapToDTOHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,6 +35,20 @@ public class ProjectServiceImpl implements ProjectService{
         Optional<Project> optionalProject = projectRepository.findById(id);
         return optionalProject.map(MapToDTOHelper::mapToProjectDTO);
     }
+
+    @Override
+    public Optional<List<UserDTO>> getUsersWhoLikedProject(Long projectId) {
+        Optional<Project> optionalProject = projectRepository.findById(projectId);
+
+        List<UserDTO> usersWhoLiked = new ArrayList<>();
+
+        optionalProject.ifPresent(project -> usersWhoLiked.addAll(project.getUserLikes().stream()
+                .map(MapToDTOHelper::mapToUserDTO)
+                .toList()));
+
+        return Optional.of(usersWhoLiked);
+    }
+
 
     @Override
     public Project createProject(ProjectPostDTO postProject) {

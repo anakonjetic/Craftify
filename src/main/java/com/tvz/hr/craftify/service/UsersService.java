@@ -24,4 +24,6 @@ public interface UsersService {
     void deleteUser(Long id);
     void addToFavorites(Long userId, Long projectId);
     void removeFromFavorites(Long userId, Long projectId);
+    void userLikeAction(Long userId, Long projectId);
+    void userDislikeAction(Long userId, Long projectId);
 }

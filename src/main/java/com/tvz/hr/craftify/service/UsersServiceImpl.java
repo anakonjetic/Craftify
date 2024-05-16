@@ -23,12 +23,12 @@ public class UsersServiceImpl implements UsersService{
     public List<UsersGetDTO> getAllUsers() {
         List<Users> users = usersRepository.findAll();
         return users.stream()
-                .map(this::mapToUsersGetDTO)
+                .map(MapToDTOHelper::mapToUsersGetDTO)
                 .collect(Collectors.toList());}
     ;
     public Optional<UsersGetDTO> getUser(Long id) {
         Optional<Users> users = usersRepository.findById(id);
-        return users.map(this::mapToUsersGetDTO);
+        return users.map(MapToDTOHelper::mapToUsersGetDTO);
     };
 
     public UsersGetDTO createUser(UsersPutPostDTO user) {
@@ -41,7 +41,7 @@ public class UsersServiceImpl implements UsersService{
                 .flatMap(Optional::stream)
                 .collect(Collectors.toList());
         Users newUser = new Users(user.getUsername(),user.getEmail(),user.getPassword(), user.isAdmin(), categories);
-        return mapToUsersGetDTO(usersRepository.save(newUser));
+        return MapToDTOHelper.mapToUsersGetDTO(usersRepository.save(newUser));
     };
     public UsersGetDTO updateUser(UsersPutPostDTO user, Long id) {
         Optional<Users> optionalUser = usersRepository.findById(id);
@@ -62,7 +62,7 @@ public class UsersServiceImpl implements UsersService{
         existingUser.setAdmin(user.isAdmin());
         existingUser.setUserPreferences(categories);
 
-        return mapToUsersGetDTO(usersRepository.save(existingUser));
+        return MapToDTOHelper.mapToUsersGetDTO(usersRepository.save(existingUser));
 
     };
     public void deleteUser(Long id) { usersRepository.deleteById(id); }
@@ -80,6 +80,26 @@ public class UsersServiceImpl implements UsersService{
     public void removeFromFavorites(Long userId, Long projectId) {
         Users user = usersRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         user.getFavoriteProjects().removeIf(project -> project.getId().equals(projectId));
+        usersRepository.save(user);
+    }
+
+    @Override
+    public void userLikeAction(Long userId, Long projectId) {
+        Users user = usersRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+        if (!project.getUserLikes().contains(user)) {
+            user.getLikedProjects().add(project);
+            usersRepository.save(user);
+        }
+    }
+
+    @Override
+    public void userDislikeAction(Long userId, Long projectId) {
+        Users user = usersRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.getLikedProjects().removeIf(pr -> pr.getId().equals(projectId));
         usersRepository.save(user);
     }
 
@@ -133,39 +153,6 @@ public class UsersServiceImpl implements UsersService{
     }
 
 
-    private UsersGetDTO mapToUsersGetDTO(Users user) {
-        /*List<String> categoryNames = user.getUserPreferences().stream()
-                .map(Category::getName)
-                .collect(Collectors.toList());*/
-        List<CategoryDTO> category = user.getUserPreferences().stream()
-                .map(MapToDTOHelper::mapToCategoryDTO)
-                .collect(Collectors.toList());
-
-        return new UsersGetDTO(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getPassword(),
-                user.isAdmin(),
-                category
-        );
-    }
-    private UsersGetDTO mapToUsersGetDTO(Optional<Users> usersOptional) {
-        return usersOptional.map(user -> {
-            List<CategoryDTO> category = user.getUserPreferences().stream()
-                    .map(MapToDTOHelper::mapToCategoryDTO)
-                    .collect(Collectors.toList());
-
-            return new UsersGetDTO(
-                    user.getId(),
-                    user.getUsername(),
-                    user.getEmail(),
-                    user.getPassword(),
-                    user.isAdmin(),
-                    category
-            );
-        }).orElse(null);
-    }
 
 
 }

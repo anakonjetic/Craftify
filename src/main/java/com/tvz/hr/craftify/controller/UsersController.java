@@ -107,4 +107,16 @@ public class UsersController {
         usersService.removeFromFavorites(userId, projectId);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{userId}/like/{projectId}")
+    public ResponseEntity<Void> likeAProjectByUser(@PathVariable long userId, @PathVariable long projectId) {
+        usersService.userLikeAction(userId, projectId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{userId}/dislike/{projectId}")
+    public ResponseEntity<Void> dislikeAProjectByUser(@PathVariable long userId, @PathVariable long projectId) {
+        usersService.userDislikeAction(userId, projectId);
+        return ResponseEntity.noContent().build();
+    }
 }
