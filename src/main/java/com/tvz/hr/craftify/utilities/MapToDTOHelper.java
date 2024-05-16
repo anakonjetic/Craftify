@@ -3,6 +3,7 @@ package com.tvz.hr.craftify.utilities;
 import com.tvz.hr.craftify.model.*;
 import com.tvz.hr.craftify.service.dto.*;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class MapToDTOHelper {
@@ -76,6 +77,24 @@ public class MapToDTOHelper {
                 tutorial.getContent(),
                 mapToCategoryDTO(tutorial.getCategory()),
                 mapToComplexityDTO(tutorial.getComplexity())
+        );
+    }
+
+    public static UsersGetDTO mapToUsersGetDTO(Users user) {
+        /*List<String> categoryNames = user.getUserPreferences().stream()
+                .map(Category::getName)
+                .collect(Collectors.toList());*/
+        List<CategoryDTO> category = user.getUserPreferences().stream()
+                .map(MapToDTOHelper::mapToCategoryDTO)
+                .collect(Collectors.toList());
+
+        return new UsersGetDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getPassword(),
+                user.isAdmin(),
+                category
         );
     }
 

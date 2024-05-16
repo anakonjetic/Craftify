@@ -12,6 +12,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@ToString(exclude = {"userPreferences", "likedProjects", "favoriteProjects", "followers", "followedUsers", "followingProjects", "projects", "comments"})
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -86,6 +87,11 @@ public class Users {
 
     @OneToMany(mappedBy = "user")
     private List<Comment> comments;
+
+    @Override
+    public String toString() {
+        return "Users{id=" + id + ", username='" + username + '\'' + ", email='" + email + '\'' + ", isAdmin=" + isAdmin + '}';
+    }
 
     public static Users mapToUserFromUserRequest(UsersGetDTO request) {
         Users user = new Users();
