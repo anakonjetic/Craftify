@@ -1,9 +1,7 @@
 package com.tvz.hr.craftify.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -11,6 +9,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Getter
+@Setter
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,6 +48,11 @@ public class Project {
 
     @OneToMany(mappedBy = "project")
     private List<Comment> comments;
+
+    @Override
+    public String toString() {
+        return "Project{id=" + id + ", title='" + title + '\'' + ", description='" + description + '\'' + ", content='" + content + '\'' + '}';
+    }
 
     public Project(Long id, String title, String description, String content, Users user, Category category, Complexity complexity){
         this.id = id;

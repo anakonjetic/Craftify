@@ -3,6 +3,7 @@ package com.tvz.hr.craftify.utilities;
 import com.tvz.hr.craftify.model.*;
 import com.tvz.hr.craftify.service.dto.*;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class MapToDTOHelper {
@@ -25,6 +26,19 @@ public class MapToDTOHelper {
         );
     }
 
+
+    public static ProjectGetDTO mapToProjectGetDTO(Project project) {
+        return new ProjectGetDTO(
+                project.getId(),
+                project.getTitle(),
+                project.getDescription(),
+                project.getContent(),
+                MapToDTOHelper.mapToUserDTO(project.getUser()),
+                mapToCategoryDTO(project.getCategory()),
+                mapToComplexityDTO(project.getComplexity())
+          );
+    }
+
     public static TutorialDTO mapToTutorialDTO(Tutorial tutorial){
         return new TutorialDTO(
                 tutorial.getId(),
@@ -34,6 +48,7 @@ public class MapToDTOHelper {
                 mapToCategoryDTO(tutorial.getCategory()),
                 mapToComplexityDTO(tutorial.getComplexity()),
                 tutorial.getMediaList().stream().map(MapToDTOHelper::mapToMediaDTO).collect(Collectors.toList()).reversed()
+
         );
     }
 
@@ -81,12 +96,32 @@ public class MapToDTOHelper {
                 complexity.getProjectList().stream().map(MapToDTOHelper::mapToProjectDTO).collect(Collectors.toList())
         );
     }
-
-    public static Category mapToCategory(CategoryDTO categoryDTO){
-        Category category = new Category();
-        category.setId(categoryDTO.getId());
-        category.setName(categoryDTO.getName());
-        return category;
+    public static TutorialDTO mapToTutorialDTO(Tutorial tutorial){
+        return new TutorialDTO(
+                tutorial.getId(),
+                tutorial.getTitle(),
+                tutorial.getContent(),
+                mapToCategoryDTO(tutorial.getCategory()),
+                mapToComplexityDTO(tutorial.getComplexity())
+        );
     }
 
-}
+    public static UsersGetDTO mapToUsersGetDTO(Users user) {
+        /*List<String> categoryNames = user.getUserPreferences().stream()
+                .map(Category::getName)
+                .collect(Collectors.toList());*/
+        List<CategoryDTO> category = user.getUserPreferences().stream()
+                .map(MapToDTOHelper::mapToCategoryDTO)
+                .collect(Collectors.toList());
+
+        return new UsersGetDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getPassword(),
+                user.isAdmin(),
+                category
+        );
+    }
+
+    }

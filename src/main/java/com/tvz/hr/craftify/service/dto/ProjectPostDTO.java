@@ -17,7 +17,7 @@ public class ProjectPostDTO{
     private Long userId;
     private Long categoryId;
     private Long complexityId;
-    private List<Long> mediaIdList;
+    private List<MediaPutPostDTO> mediaList;
     private List<Long> commentIdList;
     private List<Long> userLikesIdList;
     private List<Long> favoriteProjectUserIdList;

@@ -20,18 +20,21 @@ import static com.tvz.hr.craftify.utilities.MapToDTOHelper.mapToComplexityGetDTO
 @AllArgsConstructor
 public class ComplexityServiceImpl implements ComplexityService {
     ComplexityRepository complexityRepository;
-
+    @Override
     public List<ComplexityDTO> getAllComplexities() {
         List<Complexity> complexities = complexityRepository.findAll();
         return complexities.stream()
                 .map(MapToDTOHelper::mapToComplexityDTO)
                 .collect(Collectors.toList());
     };
+    @Override
     public Optional<ComplexityGetDTO> getComplexityById(Long id) {
         Optional<Complexity> optionalComplexity = complexityRepository.findById(id);
         return optionalComplexity.map(MapToDTOHelper::mapToComplexityGetDTO);
     };
+    @Override
     public Complexity createComplexity(Complexity complexity) { return complexityRepository.save(complexity); };
+    @Override
     public Complexity updateComplexity(Complexity complexity, Long id) {
         Optional<Complexity> optionalComplexity = complexityRepository.findById(id);
         if (optionalComplexity.isEmpty()) {
@@ -42,5 +45,6 @@ public class ComplexityServiceImpl implements ComplexityService {
 
         return complexityRepository.save(existingComplexity);
     };
+    @Override
     public void deleteComplexity(Long id) { complexityRepository.deleteById(id); };
 }

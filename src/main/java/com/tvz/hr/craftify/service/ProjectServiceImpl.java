@@ -8,6 +8,7 @@ import com.tvz.hr.craftify.utilities.MapToDTOHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ public class ProjectServiceImpl implements ProjectService{
     private CategoryService categoryService;
     private UsersService usersService;
     private ComplexityService complexityService;
+    private MediaService mediaService;
 
     @Override
     public List<ProjectDTO> getAllProjects() {
@@ -34,6 +36,20 @@ public class ProjectServiceImpl implements ProjectService{
         Optional<Project> optionalProject = projectRepository.findById(id);
         return optionalProject.map(MapToDTOHelper::mapToProjectDTO);
     }
+
+    @Override
+    public Optional<List<UserDTO>> getUsersWhoLikedProject(Long projectId) {
+        Optional<Project> optionalProject = projectRepository.findById(projectId);
+
+        List<UserDTO> usersWhoLiked = new ArrayList<>();
+
+        optionalProject.ifPresent(project -> usersWhoLiked.addAll(project.getUserLikes().stream()
+                .map(MapToDTOHelper::mapToUserDTO)
+                .toList()));
+
+        return Optional.of(usersWhoLiked);
+    }
+
 
     @Override
     public Project createProject(ProjectPostDTO postProject) {
@@ -73,10 +89,19 @@ public class ProjectServiceImpl implements ProjectService{
             throw new RuntimeException("Complexity with ID: " + postProject.getComplexityId() + " not found");
         }
 
-        //TODO Fetch and set media nedostaje
+        Project savedProject = projectRepository.save(newProject);
+
+
+
+        //media setup
+        List<MediaPutPostDTO> mediaPost = postProject.getMediaList();
+        mediaPost.forEach(media -> {
+            media.setProjectId(savedProject.getId());
+            mediaService.addMedia(media);
+        });
         //TODO Fetch and set comment nedostaje
 
-        return projectRepository.save(newProject);
+        return newProject;
     }
 
     @Override
@@ -96,6 +121,17 @@ public class ProjectServiceImpl implements ProjectService{
             } else{
                 throw new RuntimeException("Complexity with ID: " + projectPutDTO.getComplexityId() + " not found");
             }
+            List<Long> mediaToRemove = projectToUpdate.getMediaList().stream().map(Media::getId).toList();
+            mediaToRemove.forEach(
+                    m -> {
+                        mediaService.deleteMedia(m);
+                    }
+            );
+            List<MediaPutPostDTO> mediaPost = projectPutDTO.getMediaList();
+            mediaPost.forEach(media -> {
+                media.setProjectId(projectToUpdate.getId());
+                mediaService.addMedia(media);
+            });
             return projectRepository.save(projectToUpdate);
         } else {
             throw new RuntimeException("Project with ID: " + id + " not found");
