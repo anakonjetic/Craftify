@@ -30,7 +30,6 @@ public class SubscriptionServiceImpl implements SubscriptionService{
                 .map(MapToDTOHelper::mapToUserDTO)
                 .collect(Collectors.toList());
     }
-
     @Override
     public List<UserDTO> getUserFollowings(Long userId){
         List<Users> users = usersRepository.findById(userId).get().getFollowedUsers();
@@ -96,30 +95,44 @@ public class SubscriptionServiceImpl implements SubscriptionService{
     }
     @Override
     public void followProject(SubscriptionDTO sub){
-        Users user = usersRepository.findById(sub.getUserId()).get();
-        Project followedProject = projectRepository.findById(sub.getFollowingId()).get();
-        List<Project> followingProjects = usersRepository.findById(sub.getUserId()).get().getFollowingProjects();
+        Users user = usersRepository.findById(sub.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + sub.getUserId()));
+        Project followedProject = projectRepository.findById(sub.getFollowingId())
+                .orElseThrow(() -> new EntityNotFoundException("Project not found with ID: " + sub.getFollowingId()));
+        List<Project> followingProjects = user.getFollowingProjects();
 
-        if(!followingProjects.contains(followedProject)){
-            followingProjects.add(followedProject);
-            user.setFollowingProjects(followingProjects);
+        if (followingProjects.contains(followedProject)) {
+            throw new IllegalStateException("User is already following the specified project");
+        }
+        followingProjects.add(followedProject);
+        user.setFollowingProjects(followingProjects);
+        try {
             usersRepository.save(user);
+        } catch (DataAccessException e) {
+            throw new DatabaseOperationException("Failed to follow project due to database error", e);
+        } catch (Exception e) {
+            throw new ApplicationException("An unexpected error occurred while following project", e);
         }
     }
     @Override
     public void unfollowProject(SubscriptionDTO sub){
-        Users user = usersRepository.findById(sub.getUserId()).get();
-        Project followedProject = projectRepository.findById(sub.getFollowingId()).get();
-        List<Project> followingProjects = usersRepository.findById(sub.getUserId()).get().getFollowingProjects();
+        Users user = usersRepository.findById(sub.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + sub.getUserId()));
+        Project followedProject = projectRepository.findById(sub.getFollowingId())
+                .orElseThrow(() -> new EntityNotFoundException("Project not found with ID: " + sub.getFollowingId()));
+        List<Project> followingProjects = user.getFollowingProjects();
 
-        if(followingProjects.contains(followedProject)){
-            followingProjects.remove(followedProject);
-            user.setFollowingProjects(followingProjects);
+        if (!followingProjects.contains(followedProject)) {
+            throw new IllegalStateException("User is not following the specified project");
+        }
+        followingProjects.remove(followedProject);
+        user.setFollowingProjects(followingProjects);
+        try {
             usersRepository.save(user);
+        } catch (DataAccessException e) {
+            throw new DatabaseOperationException("Failed to unfollow project due to database error", e);
+        } catch (Exception e) {
+            throw new ApplicationException("An unexpected error occurred while unfollowing project", e);
         }
     }
-
-
-
-
 }
