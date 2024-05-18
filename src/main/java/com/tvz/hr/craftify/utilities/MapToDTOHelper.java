@@ -40,6 +40,9 @@ public class MapToDTOHelper {
     }
 
     public static TutorialDTO mapToTutorialDTO(Tutorial tutorial){
+        List<MediaDTO> mediaDTO = tutorial.getMediaList() != null ?
+                tutorial.getMediaList().stream().map(MapToDTOHelper::mapToMediaDTO).collect(Collectors.toList()) : null;
+
         return new TutorialDTO(
                 tutorial.getId(),
                 tutorial.getTitle(),
@@ -47,14 +50,14 @@ public class MapToDTOHelper {
                 MapToDTOHelper.mapToUserDTO(tutorial.getUser()),
                 mapToCategoryDTO(tutorial.getCategory()),
                 mapToComplexityDTO(tutorial.getComplexity()),
-                tutorial.getMediaList().stream().map(MapToDTOHelper::mapToMediaDTO).collect(Collectors.toList()).reversed()
-
+                mediaDTO
         );
     }
 
     public static UserDTO mapToUserDTO(Users user) {
         return new UserDTO(
                 user.getId(),
+                user.getName(),
                 user.getUsername()
         );
     }
@@ -67,11 +70,25 @@ public class MapToDTOHelper {
         );
     }
 
+    public static MediaGetDTO mapToMediaGetDTO(Media media) {
+        ProjectGetDTO projectDTO = media.getProject() != null ? mapToProjectGetDTO(media.getProject()) : null;
+        TutorialDTO tutorialDTO = media.getTutorial() != null ? mapToTutorialDTO(media.getTutorial()) : null;
+
+        return new MediaGetDTO(
+                media.getId(),
+                media.getMedia(),
+                media.getMediaOrder(),
+                projectDTO,
+                tutorialDTO
+        );
+    }
+
     public static CommentDTO mapToCommentDTO(Comment comment) {
         return new CommentDTO(
                 comment.getId(),
                 comment.getComment(),
                 mapToUserDTO(comment.getUser()),
+                mapToProjectGetDTO(comment.getProject()),
                 comment.getCommentTime()
         );
     }
@@ -82,6 +99,28 @@ public class MapToDTOHelper {
                 category.getName()
         );
     }
+
+    public static CategoryGetDTO mapToCategoryGetDTO(Category category){
+        List<UserDTO> users = category.getUserPreferences() != null ?
+                category.getUserPreferences().stream()
+                        .map(MapToDTOHelper::mapToUserDTO).collect(Collectors.toList()) : null;
+
+        List<ProjectGetDTO> projects = category.getProjectList() != null ?
+                category.getProjectList().stream()
+                        .map(MapToDTOHelper::mapToProjectGetDTO).collect(Collectors.toList()) : null;
+
+        List<TutorialDTO> tutorials = category.getTutorialList() != null ?
+                category.getTutorialList().stream()
+                        .map(MapToDTOHelper::mapToTutorialDTO).collect(Collectors.toList()): null;
+
+        return new CategoryGetDTO(
+                category.getId(),
+                category.getName(),
+                users,
+                projects,
+                tutorials
+        );
+    }
     public static ComplexityDTO mapToComplexityDTO(Complexity complexity){
         return new ComplexityDTO(
                 complexity.getId(),
@@ -90,10 +129,14 @@ public class MapToDTOHelper {
     }
 
     public static ComplexityGetDTO mapToComplexityGetDTO(Complexity complexity){
+        List<Project> projects = complexity.getProjectList() != null ? complexity.getProjectList() : null;
+        List<ProjectGetDTO> projectDTO = projects != null ? projects.stream()
+                .map(MapToDTOHelper::mapToProjectGetDTO).collect(Collectors.toList()) : null;
+
         return new ComplexityGetDTO(
                 complexity.getId(),
                 complexity.getName(),
-                complexity.getProjectList().stream().map(MapToDTOHelper::mapToProjectDTO).collect(Collectors.toList())
+                projectDTO
         );
     }
 
@@ -101,12 +144,13 @@ public class MapToDTOHelper {
         /*List<String> categoryNames = user.getUserPreferences().stream()
                 .map(Category::getName)
                 .collect(Collectors.toList());*/
-        List<CategoryDTO> category = user.getUserPreferences().stream()
+        List<CategoryDTO> category = user.getUserPreferences() != null ? user.getUserPreferences().stream()
                 .map(MapToDTOHelper::mapToCategoryDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()) : null;
 
         return new UsersGetDTO(
                 user.getId(),
+                user.getName(),
                 user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),
