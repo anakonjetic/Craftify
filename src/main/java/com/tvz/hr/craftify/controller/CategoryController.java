@@ -2,14 +2,15 @@ package com.tvz.hr.craftify.controller;
 
 import com.tvz.hr.craftify.model.Category;
 import com.tvz.hr.craftify.service.CategoryService;
-import com.tvz.hr.craftify.service.dto.CategoryDTO;
-import com.tvz.hr.craftify.service.dto.CategoryGetDTO;
-import com.tvz.hr.craftify.service.dto.CategoryPostPutDTO;
+import com.tvz.hr.craftify.service.ProjectService;
+import com.tvz.hr.craftify.service.dto.*;
+import com.tvz.hr.craftify.utilities.exceptions.ApplicationException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ import java.util.Optional;
 public class CategoryController {
 
     private CategoryService categoryService;
+    private ProjectService projectService;
     @GetMapping("/all")
     public List<CategoryDTO> getCategories() {
         return categoryService.getAllCategories();
@@ -37,11 +39,6 @@ public class CategoryController {
                 categoryService.createCategory(category), HttpStatus.CREATED
         );
     }
-    public ResponseEntity<CategoryDTO> addUserPreference(@PathVariable Category categoryId, @PathVariable Long userId) {
-        CategoryDTO category = categoryService.addUserPreference(categoryId.getId(), userId);
-        return ResponseEntity.ok(category);
-
-    }
 
     @PutMapping("/{id}")
     public ResponseEntity<CategoryGetDTO> updateCategory(@PathVariable long id, @RequestBody CategoryPostPutDTO category) {
@@ -59,18 +56,37 @@ public class CategoryController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{categoryId}/user/{userId}")
-    public ResponseEntity<CategoryDTO> addUserPreference(@PathVariable long categoryId, @PathVariable long userId) {
-        CategoryDTO category = categoryService.addUserPreference(categoryId, userId);
-        return ResponseEntity.ok(category);
+    @PostMapping("/preference")
+    public ResponseEntity<Void> addUserPreference(@RequestBody List<UserPreferencesDTO> userPreferencesDTO) {
+        userPreferencesDTO.forEach(
+                u -> categoryService.addUserPreference(u.getCategoryId(), u.getUserId()));
+        return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("{categoryId}/user/{userId}")
-    public ResponseEntity<CategoryDTO> removeUserPreference(@PathVariable long categoryId, @PathVariable long userId) {
-        CategoryDTO category = categoryService.removeUserPreference(categoryId, userId);
-        return ResponseEntity.ok(category);
+    @DeleteMapping("/preference")
+    public ResponseEntity<Void> removeUserPreference(@RequestBody UserPreferencesDTO userPreferencesDTO) {
+        categoryService.removeUserPreference(userPreferencesDTO.getCategoryId(), userPreferencesDTO.getUserId());
+        return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/preference/{userId}")
+    public ResponseEntity<List<ProjectGetDTO>> getPreferredProjects(@PathVariable long userId) {
+        try {
+            Optional<List<CategoryDTO>> categoryDTOS = categoryService.getUserPreferences(userId);
 
+            List<ProjectGetDTO> projectGetDTOS = new ArrayList<>();
+
+            if (categoryDTOS.isPresent()) {
+                for (CategoryDTO categoryDTO : categoryDTOS.get()) {
+                    Optional<List<ProjectGetDTO>> categoryProjects = projectService.getProjectsByCategory(categoryDTO.getId());
+                    categoryProjects.ifPresent(projectGetDTOS::addAll);
+                }
+            }
+
+            return ResponseEntity.ok(projectGetDTOS);
+        } catch (ApplicationException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
 }

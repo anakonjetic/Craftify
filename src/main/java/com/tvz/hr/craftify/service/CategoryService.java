@@ -16,4 +16,5 @@ public interface CategoryService {
     void deleteCategory(long id);
     CategoryDTO addUserPreference(Long categoryId, Long userID);
     CategoryDTO removeUserPreference(Long categoryId, Long userID);
+    Optional<List<CategoryDTO>> getUserPreferences(Long userId);
 }

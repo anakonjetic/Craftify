@@ -14,4 +14,5 @@ public interface ProjectService {
     Project updateProject(ProjectPutDTO project, Long id);
     void deleteProject(Long id);
     Optional<List<ProjectGetDTO>> getFilteredProjects(FilterProjectDTO filterProjectDTO);
+    Optional<List<ProjectGetDTO>> getProjectsByCategory(Long id);
 }
