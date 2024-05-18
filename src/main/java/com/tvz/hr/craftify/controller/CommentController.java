@@ -3,6 +3,7 @@ package com.tvz.hr.craftify.controller;
 import com.tvz.hr.craftify.model.Comment;
 import com.tvz.hr.craftify.service.CommentService;
 import com.tvz.hr.craftify.service.dto.CommentDTO;
+import com.tvz.hr.craftify.service.dto.CommentPostPutDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,10 @@ import java.util.Optional;
 public class CommentController {
     private CommentService commentService;
 
+    @GetMapping("/all")
+    public List<CommentDTO> getAllComments() {
+        return commentService.getAllComments();
+    }
     @GetMapping("/{id}")
     public ResponseEntity<CommentDTO> getComment(@PathVariable long id) {
         Optional<CommentDTO> commentOptional = commentService.getCommentById(id);
@@ -25,22 +30,25 @@ public class CommentController {
     }
 
     @GetMapping("/byProject/{projectId}")
-    public List<Comment> getCommentsByProject(@PathVariable long projectId) {
+    public List<CommentDTO> getCommentsByProject(@PathVariable long projectId) {
         return commentService.getCommentsByProject(projectId);
     }
 
     @PostMapping
-    public ResponseEntity<Comment> createComment(@RequestBody Comment comment) {
-        commentService.createComment(comment);
-        return new ResponseEntity<>(comment, HttpStatus.CREATED);
+    public ResponseEntity<CommentDTO> createComment(@RequestBody CommentPostPutDTO comment) {
+        return new ResponseEntity<>(
+                commentService.createComment(comment),
+                HttpStatus.CREATED
+        );
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<Comment> updateComment(@PathVariable long id, @RequestBody Comment comment) {
+    public ResponseEntity<CommentDTO> updateComment(@PathVariable long id, @RequestBody CommentPostPutDTO comment) {
         try{
-            commentService.updateComment(comment, id);
-            return new ResponseEntity<>(comment, HttpStatus.OK);
+            return new ResponseEntity<>(
+                    commentService.updateComment(comment, id),
+                    HttpStatus.OK);
         } catch (RuntimeException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

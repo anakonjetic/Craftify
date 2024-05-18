@@ -4,6 +4,7 @@ import com.tvz.hr.craftify.model.Complexity;
 import com.tvz.hr.craftify.service.ComplexityService;
 import com.tvz.hr.craftify.service.dto.ComplexityDTO;
 import com.tvz.hr.craftify.service.dto.ComplexityGetDTO;
+import com.tvz.hr.craftify.service.dto.ComplexityPostPutDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class ComplexityController {
     }
 
     @PostMapping
-    public ResponseEntity<Complexity> createComplexity(@RequestBody Complexity complexity){
+    public ResponseEntity<ComplexityGetDTO> createComplexity(@RequestBody ComplexityPostPutDTO complexity){
         return new ResponseEntity<>(
                 complexityService.createComplexity(complexity),
                 HttpStatus.CREATED
@@ -41,9 +42,9 @@ public class ComplexityController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Complexity> updateComplexity(@RequestBody Complexity complexity, @PathVariable Long id){
+    public ResponseEntity<ComplexityGetDTO> updateComplexity(@RequestBody ComplexityPostPutDTO complexity, @PathVariable Long id){
         try {
-            Complexity updatedComplexity = complexityService.updateComplexity(complexity, id);
+            ComplexityGetDTO updatedComplexity = complexityService.updateComplexity(complexity, id);
             return new ResponseEntity<>(updatedComplexity, HttpStatus.OK);
         }
         catch (Exception e) {

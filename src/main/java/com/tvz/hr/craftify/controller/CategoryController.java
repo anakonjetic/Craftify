@@ -2,6 +2,9 @@ package com.tvz.hr.craftify.controller;
 
 import com.tvz.hr.craftify.model.Category;
 import com.tvz.hr.craftify.service.CategoryService;
+import com.tvz.hr.craftify.service.dto.CategoryDTO;
+import com.tvz.hr.craftify.service.dto.CategoryGetDTO;
+import com.tvz.hr.craftify.service.dto.CategoryPostPutDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,19 +20,19 @@ public class CategoryController {
 
     private CategoryService categoryService;
     @GetMapping("/all")
-    public List<Category> getCategories() {
+    public List<CategoryDTO> getCategories() {
         return categoryService.getAllCategories();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategory(@PathVariable long id) {
-        Optional<Category> categoryOptional = categoryService.getCategoryById(id);
+    public ResponseEntity<CategoryGetDTO> getCategory(@PathVariable long id) {
+        Optional<CategoryGetDTO> categoryOptional = categoryService.getCategory(id);
         return categoryOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 
     }
 
     @PostMapping
-    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
+    public ResponseEntity<CategoryGetDTO> createCategory(@RequestBody CategoryPostPutDTO category) {
         return new ResponseEntity<>(
                 categoryService.createCategory(category), HttpStatus.CREATED
         );
@@ -41,9 +44,9 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategory(@PathVariable long id, @RequestBody Category category) {
+    public ResponseEntity<CategoryGetDTO> updateCategory(@PathVariable long id, @RequestBody CategoryPostPutDTO category) {
         try{
-            Category updateCategory = categoryService.updateCategory(category, id);
+            CategoryGetDTO updateCategory = categoryService.updateCategory(category, id);
             return new ResponseEntity<>(updateCategory, HttpStatus.OK);
         }
         catch (Exception e) {

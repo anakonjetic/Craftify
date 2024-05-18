@@ -10,26 +10,41 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Getter
-@Setter
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
-    private String email;
-    private String password;
-    @Column(columnDefinition = "BIT")
+    @Column(nullable = false)
+    private String name, username, email, password;
+
+    @Column(columnDefinition = "BIT", nullable = false)
     @JoinColumn(name = "is_admin")
     private boolean isAdmin;
 
-    public Users(String username, String email, String password, boolean isAdmin, List<Category> userPreferences) {
+    public Users(Long id, String name, String username, String email, String password, boolean isAdmin, List<Category> userPreferences) {
+        this.id = id;
+        this.name = name;
         this.username = username;
         this.email = email;
         this.password = password;
         this.isAdmin = isAdmin;
         this.userPreferences = userPreferences;
+    }
+
+    public Users(String name, String username, String email, String password, boolean isAdmin, List<Category> userPreferences) {
+        this.name = name;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.isAdmin = isAdmin;
+        this.userPreferences = userPreferences;
+    }
+
+    public Users(Long id, String name, String username){
+        this.id = id;
+        this.name = name;
+        this.username = username;
     }
 
     @ManyToMany(targetEntity = Category.class)
