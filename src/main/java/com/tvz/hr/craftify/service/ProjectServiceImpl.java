@@ -5,7 +5,9 @@ import com.tvz.hr.craftify.repository.ProjectRepository;
 import com.tvz.hr.craftify.service.dto.UsersGetDTO;
 import com.tvz.hr.craftify.service.dto.*;
 import com.tvz.hr.craftify.utilities.MapToDTOHelper;
+import com.tvz.hr.craftify.utilities.exceptions.ApplicationException;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -143,6 +145,25 @@ public class ProjectServiceImpl implements ProjectService{
         projectRepository.deleteById(id);
     }
 
+    @Override
+    public Optional<List<ProjectGetDTO>> getFilteredProjects(FilterProjectDTO filterProjectDTO) {
+        try {
+            List<Project> projects = projectRepository.findByFilters(
+                    filterProjectDTO.getNameOrUser(),
+                    filterProjectDTO.getCategoryId(),
+                    filterProjectDTO.getComplexityId());
+
+            List<ProjectGetDTO> projectGetDTOS = projects.stream()
+                    .map(MapToDTOHelper::mapToProjectGetDTO)
+                    .toList();
+
+            return projects.isEmpty() ? Optional.empty() : Optional.of(projectGetDTOS);
+        } catch (DataAccessException ex) {
+            throw new ApplicationException("Database error occurred while filtering projects", ex);
+        } catch (Exception ex) {
+            throw new ApplicationException("An unexpected error occurred while filtering projects", ex);
+        }
+    }
 
 
 }
