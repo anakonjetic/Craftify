@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/subscription")
@@ -18,20 +19,28 @@ public class SubscriptionController {
 
     // Retrieves followers of a user
     @GetMapping("/followers/user/{id}")
-    public List<UserDTO> getFollowers(@PathVariable long id) { return subscriptionService.getUserFollowers(id); }
+    public ResponseEntity<List<UserDTO>> getFollowers(@PathVariable long id) {
+        Optional<List<UserDTO>> followersOptional = subscriptionService.getUserFollowers(id);
+        return followersOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
+    }
 
-    // Retrieves users followed by a user
     @GetMapping("/followed/users/{id}")
-    public List<UserDTO> getFollowedUsers(@PathVariable long id) { return subscriptionService.getUserFollowings(id); }
+    public ResponseEntity<List<UserDTO>> getFollowedUsers(@PathVariable long id) {
+        Optional<List<UserDTO>> followedUsersOptional = subscriptionService.getUserFollowings(id);
+        return followedUsersOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
+    }
 
-    // Retrieves projects followed by a user
     @GetMapping("/followed/projects/{id}")
-    public List<ProjectDTO> getFollowedProjects(@PathVariable long id) { return subscriptionService.getUserProjectFollowings(id); }
+    public ResponseEntity<List<ProjectDTO>> getFollowedProjects(@PathVariable long id) {
+        Optional<List<ProjectDTO>> followedProjectsOptional = subscriptionService.getUserProjectFollowings(id);
+        return followedProjectsOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
+    }
 
-    // Retrieves followers of a project
     @GetMapping("/followers/project/{id}")
-    public List<UserDTO> getProjectFollowers(@PathVariable long id) { return subscriptionService.getProjectFollowers(id); }
-
+    public ResponseEntity<List<UserDTO>> getProjectFollowers(@PathVariable long id) {
+        Optional<List<UserDTO>> projectFollowersOptional = subscriptionService.getProjectFollowers(id);
+        return projectFollowersOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
+    }
 
     @PostMapping("/user")
     public ResponseEntity<Void> followUser(@RequestBody SubscriptionDTO sub) {

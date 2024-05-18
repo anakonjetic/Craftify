@@ -63,37 +63,44 @@ public class UsersController {
     }
 
     @GetMapping("/comments/{id}")
-    public List<CommentDTO> getUserComments(@PathVariable long id) {
-        return usersService.getUserComments(id);
+    public ResponseEntity<List<CommentDTO>> getUserComments(@PathVariable long id) {
+        Optional<List<CommentDTO>> userCommentsOptional = usersService.getUserComments(id);
+        return userCommentsOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
     @GetMapping("/favorite/{id}")
     public ResponseEntity<List<ProjectDTO>> getFavoriteProjects(@PathVariable long id) {
-        List<ProjectDTO> favoriteProjects = usersService.getFavoriteProjects(id);
-        if (favoriteProjects.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(favoriteProjects);
-        }
+        Optional<List<ProjectDTO>> favoriteProjectsOptional = usersService.getFavoriteProjects(id);
+        return favoriteProjectsOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
+
     @GetMapping("/liked/{id}")
-    public List<ProjectDTO> getLikedProjects(@PathVariable long id) {
-        return usersService.getLikedProjects(id);
+    public ResponseEntity<List<ProjectDTO>> getLikedProjects(@PathVariable long id) {
+        Optional<List<ProjectDTO>> likedProjectsOptional = usersService.getLikedProjects(id);
+        return likedProjectsOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
+
     @GetMapping("/projects/{id}")
-    public List<ProjectDTO> getUserProjects(@PathVariable long id) {
-        return usersService.getUserProjects(id);
+    public ResponseEntity<List<ProjectDTO>> getUserProjects(@PathVariable long id) {
+        Optional<List<ProjectDTO>> userProjectsOptional = usersService.getUserProjects(id);
+        return userProjectsOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
+
     @GetMapping("/followers/{id}")
-    public List<UserDTO> getUserFollowers(@PathVariable long id) {
-        return usersService.getUserFollowers(id);
+    public ResponseEntity<List<UserDTO>> getUserFollowers(@PathVariable long id) {
+        Optional<List<UserDTO>> userFollowersOptional = usersService.getUserFollowers(id);
+        return userFollowersOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
+
     @GetMapping("/following/users/{id}")
-    public List<UserDTO> getUserFollowings(@PathVariable long id) {
-        return usersService.getUserFollowings(id);
+    public ResponseEntity<List<UserDTO>> getUserFollowings(@PathVariable long id) {
+        Optional<List<UserDTO>> userFollowingsOptional = usersService.getUserFollowings(id);
+        return userFollowingsOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
+
     @GetMapping("/following/projects/{id}")
-    public List<ProjectDTO> getProjectsFollowings(@PathVariable long id) {
-        return usersService.getUserProjectFollowings(id);
+    public ResponseEntity<List<ProjectDTO>> getProjectsFollowings(@PathVariable long id) {
+        Optional<List<ProjectDTO>> projectsFollowingsOptional = usersService.getUserProjectFollowings(id);
+        return projectsFollowingsOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @PostMapping("/{userId}/addFavorite/{projectId}")

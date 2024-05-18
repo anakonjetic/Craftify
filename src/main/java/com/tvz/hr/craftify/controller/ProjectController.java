@@ -30,8 +30,9 @@ public class ProjectController {
 
         @GetMapping("/{id}/likes")
         public ResponseEntity<List<UserDTO>> getUsersWhoLikedProject(@PathVariable long id) {
-            Optional<List<UserDTO>> likedUsersOptional = projectService.getUsersWhoLikedProject(id);
-            return likedUsersOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
+            return projectService.getUsersWhoLikedProject(id)
+                    .map(users -> ResponseEntity.ok().body(users))
+                    .orElseGet(() -> ResponseEntity.noContent().build());
         }
 
         @PostMapping
