@@ -100,6 +100,26 @@ public class MapToDTOHelper {
         );
     }
 
+    public static NewsDTO mapToNewsDTO(News news) {
+        return new NewsDTO(
+                news.getId(),
+                news.getTitle(),
+                news.getContent(),
+                mapToCategoryDTO(news.getCategory()), // Assuming category is not null
+                news.getImageUrl()
+        );
+    }
+
+    public static NewsPostPutDTO mapToNewsPostPutDTO(News news) {
+        return new NewsPostPutDTO(
+                news.getId(),
+                news.getTitle(),
+                news.getContent(),
+                news.getCategory().getId(), // Assuming category is not null
+                news.getImageUrl()
+        );
+    }
+
     public static CategoryGetDTO mapToCategoryGetDTO(Category category){
         List<UserDTO> users = category.getUserPreferences() != null ?
                 category.getUserPreferences().stream()

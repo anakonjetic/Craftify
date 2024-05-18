@@ -74,3 +74,27 @@ insert into comment (user_id, project_id, comment, comment_time, parent_comment_
 VALUES (1,2,'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed varius diam, sit amet ' ||
             'cursus urna. Morbi tempor elit a lectus ultricies bibendum. Maecenas in dictum massa, ac ' ||
             'rhoncus lorem. Morbi varius leo et lacus fermentum lobortis.', CURRENT_TIME, 3);
+
+INSERT INTO news (title, content, category_id, image_url)
+VALUES ('New DIY Project: Transform Your Living Space with Upcycled Decor',
+        'Turn your home into a cozy haven with these DIY decor ideas. Learn how to upcycle everyday items into stylish home accents.',
+        2,
+        'url');
+
+INSERT INTO news (title, content, category_id, image_url)
+VALUES ('Creative Sewing Projects for Beginners and Beyond',
+        'Discover fun sewing projects for all skill levels. From simple stitches to intricate designs, there''s something for everyone.',
+        3,
+        'url');
+
+INSERT INTO news (title, content, category_id, image_url)
+VALUES ('Woodworking Wonders: Build Your Own Furniture with These Easy Plans',
+        'Unleash your creativity with woodworking. Learn how to build beautiful furniture pieces for your home with step-by-step guides.',
+        4,
+        'url');
+
+INSERT INTO news (title, content, category_id, image_url)
+VALUES ('Crafting Fun for the Whole Family: Paper Crafts Galore!',
+        'Get crafty with paper! Explore a world of creativity with these paper craft ideas. From origami to cardmaking, let your imagination soar.',
+        5,
+        'url');

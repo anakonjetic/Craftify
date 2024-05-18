@@ -37,8 +37,8 @@ public class CategoryController {
                 categoryService.createCategory(category), HttpStatus.CREATED
         );
     }
-    public ResponseEntity<Category> addUserPreference(@PathVariable Category categoryId, @PathVariable Long userId) {
-        Category category = categoryService.addUserPreference(categoryId.getId(), userId);
+    public ResponseEntity<CategoryDTO> addUserPreference(@PathVariable Category categoryId, @PathVariable Long userId) {
+        CategoryDTO category = categoryService.addUserPreference(categoryId.getId(), userId);
         return ResponseEntity.ok(category);
 
     }
@@ -60,14 +60,14 @@ public class CategoryController {
     }
 
     @PostMapping("/{categoryId}/user/{userId}")
-    public ResponseEntity<Category> addUserPreference(@PathVariable long categoryId, @PathVariable long userId) {
-        Category category = categoryService.addUserPreference(categoryId, userId);
+    public ResponseEntity<CategoryDTO> addUserPreference(@PathVariable long categoryId, @PathVariable long userId) {
+        CategoryDTO category = categoryService.addUserPreference(categoryId, userId);
         return ResponseEntity.ok(category);
     }
 
     @DeleteMapping("{categoryId}/user/{userId}")
-    public ResponseEntity<Category> removeUserPreference(@PathVariable long categoryId, @PathVariable long userId) {
-        Category category = categoryService.removeUserPreference(categoryId, userId);
+    public ResponseEntity<CategoryDTO> removeUserPreference(@PathVariable long categoryId, @PathVariable long userId) {
+        CategoryDTO category = categoryService.removeUserPreference(categoryId, userId);
         return ResponseEntity.ok(category);
     }
 

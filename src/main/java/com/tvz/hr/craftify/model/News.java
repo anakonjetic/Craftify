@@ -26,5 +26,6 @@ public class News {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @Column(columnDefinition = "TEXT", nullable = true)
     private String imageUrl;
 }

@@ -3,7 +3,6 @@ package com.tvz.hr.craftify.utilities;
 import com.tvz.hr.craftify.model.*;
 import com.tvz.hr.craftify.service.dto.*;
 
-import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 public class MapFromDTOHelper {
@@ -14,7 +13,7 @@ public class MapFromDTOHelper {
                 project.getTitle(),
                 project.getDescription(),
                 project.getContent(),
-                mapCategoryToCategoryDTO(project.getCategory()),
+                mapCategoryDTOToCategory(project.getCategory()),
                 mapComplexityDTOToComplexity(project.getComplexity()),
                 project.getMediaList().stream().map(MapFromDTOHelper::mapMediaDTOToMedia).collect(Collectors.toList()),
                 project.getUserLikes().stream().map(MapFromDTOHelper::mapUserDTOToUsers).collect(Collectors.toList()),
@@ -30,7 +29,7 @@ public class MapFromDTOHelper {
                 project.getDescription(),
                 project.getContent(),
                 mapUserDTOToUsers(project.getUser()),
-                project.getCategory(),
+                mapCategoryDTOToCategory(project.getCategory()),
                 mapComplexityDTOToComplexity(project.getComplexity())
         );
     }
@@ -49,11 +48,23 @@ public class MapFromDTOHelper {
                 complexity.getName()
         );
     }
-    public static Category mapCategoryToCategoryDTO(CategoryDTO category){
+    public static Category mapCategoryDTOToCategory(CategoryDTO category){
         return new Category(
                 category.getId(),
                 category.getName()
         );
+    }
+
+    public static News mapNewsDTOToNews(NewsDTO newsDTO) {
+        News news = new News();
+        news.setId(newsDTO.getId());
+        news.setTitle(newsDTO.getTitle());
+        news.setContent(newsDTO.getContent());
+        Category category = new Category();
+        category.setId(newsDTO.getCategory().getId());
+        news.setCategory(category);
+        news.setImageUrl(newsDTO.getImageUrl());
+        return news;
     }
 
     public static Category mapCategoryGetDTOToCategoryDTO(CategoryGetDTO category){
@@ -74,7 +85,7 @@ public class MapFromDTOHelper {
                 user.getEmail(),
                 user.getPassword(),
                 user.isAdmin(),
-                user.getUserPreferences().stream().map(MapFromDTOHelper::mapCategoryToCategoryDTO).collect(Collectors.toList())
+                user.getUserPreferences().stream().map(MapFromDTOHelper::mapCategoryDTOToCategory).collect(Collectors.toList())
         );
     }
 
@@ -92,7 +103,7 @@ public class MapFromDTOHelper {
                 tutorial.getTitle(),
                 tutorial.getContent(),
                 mapUserDTOToUsers(tutorial.getUser()),
-                tutorial.getCategory(),
+                mapCategoryDTOToCategory(tutorial.getCategory()),
                 mapComplexityDTOToComplexity(tutorial.getComplexity()),
                 tutorial.getMediaList().stream().map(MapFromDTOHelper::mapMediaDTOToMedia).collect(Collectors.toList())
         );
