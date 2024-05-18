@@ -1,6 +1,7 @@
 package com.tvz.hr.craftify.service;
 
 import com.tvz.hr.craftify.model.*;
+import com.tvz.hr.craftify.repository.CategoryRepository;
 import com.tvz.hr.craftify.repository.CommentRepository;
 import com.tvz.hr.craftify.repository.ProjectRepository;
 import com.tvz.hr.craftify.repository.UsersRepository;
@@ -25,6 +26,7 @@ public class UsersServiceImpl implements UsersService{
     private UsersRepository usersRepository;
     private ProjectRepository projectRepository;
     private CategoryService categoryService;
+    private CategoryRepository categoryRepository;
     //public List<UsersRequest> getAllUsers() { return usersRepository.getAllUsers(); };
     @Override
     public List<UsersGetDTO> getAllUsers() {
@@ -46,10 +48,11 @@ public class UsersServiceImpl implements UsersService{
                 .collect(Collectors.toList());*/
         List<Long> categoryIds = user.getUserPreferences();
         List<Category> categories = categoryIds.stream()
-                .map(categoryId -> categoryService.getCategoryById(categoryId))
-                .flatMap(Optional::stream)
+                .map(categoryId -> categoryRepository.findById(categoryId))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toList());
-        Users newUser = new Users(user.getUsername(),user.getEmail(),user.getPassword(), user.isAdmin(), categories);
+        Users newUser = new Users(user.getName(), user.getUsername(),user.getEmail(),user.getPassword(), user.isAdmin(), categories);
         return MapToDTOHelper.mapToUsersGetDTO(usersRepository.save(newUser));
     };
     @Override
@@ -60,12 +63,14 @@ public class UsersServiceImpl implements UsersService{
         }
         List<Long> categoryIds = user.getUserPreferences();
         List<Category> categories = categoryIds.stream()
-                .map(categoryId -> categoryService.getCategoryById(categoryId))
-                .flatMap(Optional::stream)
+                .map(categoryId -> categoryRepository.findById(categoryId))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toList());
 
         Users existingUser = optionalUser.get();
 
+        existingUser.setName(user.getName());
         existingUser.setUsername(user.getUsername());
         existingUser.setEmail(user.getEmail());
         existingUser.setPassword(user.getPassword());

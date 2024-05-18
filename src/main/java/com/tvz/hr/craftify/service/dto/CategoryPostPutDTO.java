@@ -9,8 +9,9 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ComplexityGetDTO {
+public class CategoryPostPutDTO {
     private Long id;
     private String name;
-    private List<ProjectGetDTO> projects;
+    List<Long> projectIdList;
+    List<Long> tutorialIdList;
 }

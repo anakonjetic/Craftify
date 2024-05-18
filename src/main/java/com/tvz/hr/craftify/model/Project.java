@@ -20,9 +20,9 @@ public class Project {
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
-    private String title;
-    private String description;
-    @Column(columnDefinition = "TEXT")
+    @Column(nullable = false)
+    private String title, description;
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
     @ManyToOne
