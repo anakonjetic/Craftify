@@ -6,8 +6,12 @@ import com.tvz.hr.craftify.repository.ProjectRepository;
 import com.tvz.hr.craftify.repository.UsersRepository;
 import com.tvz.hr.craftify.service.dto.UsersGetDTO;
 import com.tvz.hr.craftify.service.dto.*;
+import com.tvz.hr.craftify.utilities.exceptions.ApplicationException;
+import com.tvz.hr.craftify.utilities.exceptions.DatabaseOperationException;
 import com.tvz.hr.craftify.utilities.MapToDTOHelper;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -78,17 +82,42 @@ public class UsersServiceImpl implements UsersService{
 
     @Override
     public void addToFavorites(Long userId, Long projectId) {
-        Users user = usersRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Project not found"));
-        user.getFavoriteProjects().add(project);
-        usersRepository.save(user);
+        try {
+            Users user = usersRepository.findById(userId)
+                    .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+            Project project = projectRepository.findById(projectId)
+                    .orElseThrow(() -> new EntityNotFoundException("Project not found with ID: " + projectId));
+
+            if (!user.getFavoriteProjects().contains(project)) {
+                user.getFavoriteProjects().add(project);
+                usersRepository.save(user);
+            } else {
+                throw new IllegalStateException("Project is already in favorites");
+            }
+        } catch (DataAccessException e) {
+            throw new DatabaseOperationException("Failed to add project to favorites due to database error", e);
+        } catch (Exception e) {
+            throw new ApplicationException("An unexpected error occurred while adding project to favorites", e);
+        }
     }
 
     @Override
     public void removeFromFavorites(Long userId, Long projectId) {
-        Users user = usersRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        user.getFavoriteProjects().removeIf(project -> project.getId().equals(projectId));
-        usersRepository.save(user);
+        try {
+            Users user = usersRepository.findById(userId)
+                    .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+            boolean removed = user.getFavoriteProjects().removeIf(project -> project.getId().equals(projectId));
+
+            if (removed) {
+                usersRepository.save(user);
+            } else {
+                throw new IllegalStateException("Project not found in user's favorites");
+            }
+        } catch (DataAccessException e) {
+            throw new DatabaseOperationException("Failed to remove project from favorites due to database error", e);
+        } catch (Exception e) {
+            throw new ApplicationException("An unexpected error occurred while removing project from favorites", e);
+        }
     }
 
     @Override
