@@ -8,7 +8,11 @@ import com.tvz.hr.craftify.service.dto.ProjectDTO;
 import com.tvz.hr.craftify.service.dto.SubscriptionDTO;
 import com.tvz.hr.craftify.service.dto.UserDTO;
 import com.tvz.hr.craftify.utilities.MapToDTOHelper;
+import com.tvz.hr.craftify.utilities.exceptions.ApplicationException;
+import com.tvz.hr.craftify.utilities.exceptions.DatabaseOperationException;
+import com.tvz.hr.craftify.utilities.exceptions.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,24 +54,44 @@ public class SubscriptionServiceImpl implements SubscriptionService{
     };
     @Override
     public void followUser(SubscriptionDTO sub){
-        Users user = usersRepository.findById(sub.getUserId()).get();
-        Users followedUser = usersRepository.findById(sub.getFollowingId()).get();
-        List<Users> followingUsers = usersRepository.findById(sub.getUserId()).get().getFollowedUsers();
-        if (!followingUsers.contains(followedUser)) {
+        try {
+            Users user = usersRepository.findById(sub.getUserId())
+                    .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + sub.getUserId()));
+            Users followedUser = usersRepository.findById(sub.getFollowingId())
+                    .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + sub.getFollowingId()));
+            List<Users> followingUsers = user.getFollowedUsers();
+
+            if (followingUsers.contains(followedUser)) {
+                throw new IllegalStateException("User is already following the specified user");
+            }
             followingUsers.add(followedUser);
             user.setFollowedUsers(followingUsers);
             usersRepository.save(user);
+        } catch (DataAccessException e) {
+            throw new DatabaseOperationException("Failed to follow user due to database error", e);
+        } catch (Exception e) {
+            throw new ApplicationException("An unexpected error occurred while following user", e);
         }
     }
     @Override
     public void unfollowUser(SubscriptionDTO sub){
-        Users user = usersRepository.findById(sub.getUserId()).get();
-        Users followedUser = usersRepository.findById(sub.getFollowingId()).get();
-        List<Users> followingUsers = usersRepository.findById(sub.getUserId()).get().getFollowedUsers();
-        if (followingUsers.contains(followedUser)) {
+        try {
+            Users user = usersRepository.findById(sub.getUserId())
+                    .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + sub.getUserId()));
+            Users followedUser = usersRepository.findById(sub.getFollowingId())
+                    .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + sub.getFollowingId()));
+            List<Users> followingUsers = user.getFollowedUsers();
+
+            if (!followingUsers.contains(followedUser)) {
+                throw new IllegalStateException("User is not following the specified user");
+            }
             followingUsers.remove(followedUser);
             user.setFollowedUsers(followingUsers);
             usersRepository.save(user);
+        } catch (DataAccessException e) {
+            throw new DatabaseOperationException("Failed to unfollow user due to database error", e);
+        } catch (Exception e) {
+            throw new ApplicationException("An unexpected error occurred while unfollowing user", e);
         }
     }
     @Override
