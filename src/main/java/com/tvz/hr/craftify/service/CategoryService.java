@@ -14,6 +14,6 @@ public interface CategoryService {
     CategoryGetDTO createCategory(CategoryPostPutDTO category);
     CategoryGetDTO updateCategory(CategoryPostPutDTO category, long id);
     void deleteCategory(long id);
-    Category addUserPreference(Long categoryId, Long userID);
-    Category removeUserPreference(Long categoryId, Long userID);
+    CategoryDTO addUserPreference(Long categoryId, Long userID);
+    CategoryDTO removeUserPreference(Long categoryId, Long userID);
 }
