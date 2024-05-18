@@ -16,6 +16,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,34 +24,38 @@ import java.util.stream.Collectors;
 public class SubscriptionServiceImpl implements SubscriptionService{
     private UsersRepository usersRepository;
     private ProjectRepository projectRepository;
+
     @Override
-    public List<UserDTO> getUserFollowers(Long userId){
-        List<Users> users = usersRepository.findById(userId).get().getFollowers();
-        return users.stream()
+    public Optional<List<UserDTO>> getUserFollowers(Long userId) {
+        Optional<Users> userOptional = usersRepository.findById(userId);
+        return userOptional.map(user -> user.getFollowers().stream()
                 .map(MapToDTOHelper::mapToUserDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
+
     @Override
-    public List<UserDTO> getUserFollowings(Long userId){
-        List<Users> users = usersRepository.findById(userId).get().getFollowedUsers();
-        return users.stream()
+    public Optional<List<UserDTO>> getUserFollowings(Long userId) {
+        Optional<Users> userOptional = usersRepository.findById(userId);
+        return userOptional.map(user -> user.getFollowedUsers().stream()
                 .map(MapToDTOHelper::mapToUserDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
+
     @Override
-    public List<ProjectDTO> getUserProjectFollowings(Long userId){
-        List<Project> projects = usersRepository.findById(userId).get().getFollowingProjects();
-        return projects.stream()
+    public Optional<List<ProjectDTO>> getUserProjectFollowings(Long userId) {
+        Optional<Users> userOptional = usersRepository.findById(userId);
+        return userOptional.map(user -> user.getFollowingProjects().stream()
                 .map(MapToDTOHelper::mapToProjectDTO)
-                .collect(Collectors.toList());
-    };
+                .collect(Collectors.toList()));
+    }
+
     @Override
-    public List<UserDTO> getProjectFollowers(Long projectId) {
-        List<Users> users = projectRepository.findById(projectId).get().getProjectFollowers();
-        return users.stream()
+    public Optional<List<UserDTO>> getProjectFollowers(Long projectId) {
+        Optional<Project> projectOptional = projectRepository.findById(projectId);
+        return projectOptional.map(project -> project.getProjectFollowers().stream()
                 .map(MapToDTOHelper::mapToUserDTO)
-                .collect(Collectors.toList());
-    };
+                .collect(Collectors.toList()));
+    }
     @Override
     public void followUser(SubscriptionDTO sub){
         try {

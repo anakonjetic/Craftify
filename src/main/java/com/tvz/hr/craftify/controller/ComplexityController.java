@@ -25,12 +25,7 @@ public class ComplexityController {
     @GetMapping("/{id}")
     public ResponseEntity<ComplexityGetDTO> getComplexity(@PathVariable Long id) {
         Optional<ComplexityGetDTO> complexityOptional = complexityService.getComplexityById(id);
-        if (complexityOptional.isPresent()) {
-            return ResponseEntity.ok(complexityOptional.get());
-        }
-        else {
-            return ResponseEntity.noContent().build();
-        }
+        return complexityOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @PostMapping

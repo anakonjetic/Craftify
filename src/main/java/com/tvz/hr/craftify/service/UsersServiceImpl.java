@@ -146,59 +146,59 @@ public class UsersServiceImpl implements UsersService{
     }
 
     @Override
-    public List<CommentDTO> getUserComments(Long id){
-        Optional<Comment> comments = commentRepository.findByUserId(id);
-        return comments.stream()
+    public Optional<List<CommentDTO>> getUserComments(Long id) {
+        Optional<List<Comment>> comments = commentRepository.findByUserId(id);
+        return comments.map(commentList -> commentList.stream()
                 .map(MapToDTOHelper::mapToCommentDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     @Override
-    public List<ProjectDTO> getFavoriteProjects(Long userId){
-        List<Project> favoriteProjects = usersRepository.findById(userId).get().getFavoriteProjects();
-        return favoriteProjects.stream()
+    public Optional<List<ProjectDTO>> getFavoriteProjects(Long userId) {
+        Optional<Users> userOptional = usersRepository.findById(userId);
+        return userOptional.map(user -> user.getFavoriteProjects().stream()
                 .map(MapToDTOHelper::mapToProjectDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     @Override
-    public List<ProjectDTO> getLikedProjects(Long userId){
-        List<Project> likedProjects = usersRepository.findById(userId).get().getLikedProjects();
-        return likedProjects.stream()
+    public Optional<List<ProjectDTO>> getLikedProjects(Long userId) {
+        Optional<Users> userOptional = usersRepository.findById(userId);
+        return userOptional.map(user -> user.getLikedProjects().stream()
                 .map(MapToDTOHelper::mapToProjectDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     @Override
-    public List<ProjectDTO> getUserProjects(Long userId){
-        List<Project> projects = usersRepository.findById(userId).get().getProjects();
-        return projects.stream()
+    public Optional<List<ProjectDTO>> getUserProjects(Long userId) {
+        Optional<Users> userOptional = usersRepository.findById(userId);
+        return userOptional.map(user -> user.getProjects().stream()
                 .map(MapToDTOHelper::mapToProjectDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     @Override
-    public List<UserDTO> getUserFollowers(Long userId){
-        List<Users> users = usersRepository.findById(userId).get().getFollowers();
-        return users.stream()
+    public Optional<List<UserDTO>> getUserFollowers(Long userId) {
+        Optional<Users> userOptional = usersRepository.findById(userId);
+        return userOptional.map(user -> user.getFollowers().stream()
                 .map(MapToDTOHelper::mapToUserDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     @Override
-    public List<UserDTO> getUserFollowings(Long userId){
-        List<Users> users = usersRepository.findById(userId).get().getFollowedUsers();
-        return users.stream()
+    public Optional<List<UserDTO>> getUserFollowings(Long userId) {
+        Optional<Users> userOptional = usersRepository.findById(userId);
+        return userOptional.map(user -> user.getFollowedUsers().stream()
                 .map(MapToDTOHelper::mapToUserDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     @Override
-    public List<ProjectDTO> getUserProjectFollowings(Long userId){
-        List<Project> projects = usersRepository.findById(userId).get().getFollowingProjects();
-        return projects.stream()
+    public Optional<List<ProjectDTO>> getUserProjectFollowings(Long userId) {
+        Optional<Users> userOptional = usersRepository.findById(userId);
+        return userOptional.map(user -> user.getFollowingProjects().stream()
                 .map(MapToDTOHelper::mapToProjectDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
 }

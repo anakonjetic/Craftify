@@ -68,20 +68,10 @@ public class MediaServiceImpl implements MediaService {
     public void deleteMedia(Long id) { mediaRepository.deleteById(id); };
 
     @Override
-    public List<MediaGetDTO> getMediaByIds(List<Long> ids) {
-        return mediaRepository.findAllById(ids).stream().map(MapToDTOHelper::mapToMediaGetDTO).collect(Collectors.toList());
+    public Optional<List<MediaGetDTO>> getMediaByIds(List<Long> ids) {
+        List<MediaGetDTO> mediaList = mediaRepository.findAllById(ids).stream()
+                .map(MapToDTOHelper::mapToMediaGetDTO)
+                .collect(Collectors.toList());
+        return mediaList.isEmpty() ? Optional.empty() : Optional.of(mediaList);
     }
-
-    /*public MediaGetDTO mapToMediaGetDTO(Media media){
-        ProjectGetDTO projectDTO = media.getProject() != null ? mapToProjectGetDTO(media.getProject()) : null;
-        TutorialDTO tutorialDTO = media.getTutorial() != null ? mapToTutorialDTO(media.getTutorial()) : null;
-
-        return new MediaGetDTO(
-                media.getId(),
-                media.getMedia(),
-                media.getMediaOrder(),
-                projectDTO,
-                tutorialDTO
-        );
-    }*/
 }

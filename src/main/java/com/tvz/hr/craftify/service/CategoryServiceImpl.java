@@ -123,7 +123,7 @@ public class CategoryServiceImpl implements CategoryService {
             category = categoryRepository.save(category);
             categoryRepository.flush();
         }
-        return convertToDTO(category);
+        return mapToCategoryDTO(category);
     }
 
     @Override
@@ -136,14 +136,7 @@ public class CategoryServiceImpl implements CategoryService {
             category = categoryRepository.save(category);
             categoryRepository.flush();
         }
-        return convertToDTO(category);
+        return mapToCategoryDTO(category);
     }
-    private CategoryDTO convertToDTO(Category category) {
-        CategoryDTO dto = new CategoryDTO();
-        dto.setId(category.getId());
-        dto.setName(category.getName());
-        return dto;
-    }
-
 
 }
