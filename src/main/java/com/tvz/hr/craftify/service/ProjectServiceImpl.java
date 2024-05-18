@@ -165,5 +165,22 @@ public class ProjectServiceImpl implements ProjectService{
         }
     }
 
+    @Override
+    public Optional<List<ProjectGetDTO>> getProjectsByCategory(Long id) {
+        try {
+            List<Project> projects = projectRepository.findByCategory_Id(id);
+
+            List<ProjectGetDTO> projectGetDTOS = projects.stream()
+                    .map(MapToDTOHelper::mapToProjectGetDTO)
+                    .toList();
+
+            return projects.isEmpty() ? Optional.empty() : Optional.of(projectGetDTOS);
+        } catch (DataAccessException ex) {
+            throw new ApplicationException("Database error occurred while filtering projects", ex);
+        } catch (Exception ex) {
+            throw new ApplicationException("An unexpected error occurred while filtering projects", ex);
+        }
+    }
+
 
 }
