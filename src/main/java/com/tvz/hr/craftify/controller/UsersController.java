@@ -1,16 +1,13 @@
 package com.tvz.hr.craftify.controller;
 
-import com.tvz.hr.craftify.service.dto.UsersGetDTO;
-import com.tvz.hr.craftify.service.dto.CommentDTO;
-import com.tvz.hr.craftify.service.dto.ProjectDTO;
-import com.tvz.hr.craftify.service.dto.UserDTO;
+import com.tvz.hr.craftify.service.dto.*;
 import com.tvz.hr.craftify.service.UsersService;
-import com.tvz.hr.craftify.service.dto.UsersPutPostDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -53,6 +50,19 @@ public class UsersController {
         }
         catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/change-password/{id}")
+    public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody Map<String, String> request)
+    {
+        String newPassword = request.get("newPassword");
+        try {
+            UsersGetDTO updatedUser = usersService.changeUserPassword(newPassword, id);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
         }
     }
 

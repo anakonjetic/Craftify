@@ -1,10 +1,6 @@
 package com.tvz.hr.craftify.service;
 
-import com.tvz.hr.craftify.service.dto.UsersGetDTO;
-import com.tvz.hr.craftify.service.dto.CommentDTO;
-import com.tvz.hr.craftify.service.dto.ProjectDTO;
-import com.tvz.hr.craftify.service.dto.UserDTO;
-import com.tvz.hr.craftify.service.dto.UsersPutPostDTO;
+import com.tvz.hr.craftify.service.dto.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,8 +8,11 @@ import java.util.Optional;
 public interface UsersService {
     List<UsersGetDTO> getAllUsers();
     Optional<UsersGetDTO> getUser(Long id);
+    UsersGetDTO authenticateUser(LoginDTO loginDTO);
+    //UsersGetDTO authenticateUser(String usernameOrEmail);
     UsersGetDTO createUser(UsersPutPostDTO user);
     UsersGetDTO updateUser(UsersPutPostDTO user, Long id);
+    UsersGetDTO changeUserPassword(String newPassword, Long id);
     Optional<List<CommentDTO>> getUserComments(Long id);
     Optional<List<ProjectDTO>> getFavoriteProjects(Long userId);
     Optional<List<ProjectDTO>> getLikedProjects(Long userId);

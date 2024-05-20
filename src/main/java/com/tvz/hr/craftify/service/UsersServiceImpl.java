@@ -19,15 +19,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.tvz.hr.craftify.service.PasswordService.*;
+import static com.tvz.hr.craftify.utilities.MapToDTOHelper.mapToUsersGetDTO;
+
 @Service
 @AllArgsConstructor
 public class UsersServiceImpl implements UsersService{
-    private final CommentRepository commentRepository;
+    private CommentRepository commentRepository;
     private UsersRepository usersRepository;
-    private ProjectRepository projectRepository;
-    private CategoryService categoryService;
+    private ProjectRepository projectRepository;;
     private CategoryRepository categoryRepository;
-    //public List<UsersRequest> getAllUsers() { return usersRepository.getAllUsers(); };
+
     @Override
     public List<UsersGetDTO> getAllUsers() {
         List<Users> users = usersRepository.findAll();
@@ -40,20 +42,40 @@ public class UsersServiceImpl implements UsersService{
         Optional<Users> users = usersRepository.findById(id);
         return users.map(MapToDTOHelper::mapToUsersGetDTO);
     };
+    @Override
+    public UsersGetDTO authenticateUser(LoginDTO login) {
+        Optional<Users> optionalUser = usersRepository.getUsersByUsernameOrEmailIgnoreCase(login.getUsernameOrEmail(), login.getUsernameOrEmail());
+
+        if (optionalUser.isPresent()) {
+            Users user = optionalUser.get();
+
+            if (isPasswordMatching(login.getPassword(), user.getPassword())) {
+                return mapToUsersGetDTO(user);
+            } else {
+                throw new IllegalArgumentException("Invalid password for user " + login.getUsernameOrEmail());
+            }
+        } else {
+            throw new IllegalArgumentException("User not found: " + login.getUsernameOrEmail());
+        }
+    }
 
     @Override
     public UsersGetDTO createUser(UsersPutPostDTO user) {
-        /*List<Category> categories = user.getUserPreferences().stream()
-                .map(MapToDTOHelper::mapToCategory)
-                .collect(Collectors.toList());*/
-        List<Long> categoryIds = user.getUserPreferences();
+        List<Long> categoryIds = user.getUserPreferences().stream().distinct().toList();
         List<Category> categories = categoryIds.stream()
                 .map(categoryId -> categoryRepository.findById(categoryId))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
-        Users newUser = new Users(user.getName(), user.getUsername(),user.getEmail(),user.getPassword(), user.isAdmin(), categories);
-        return MapToDTOHelper.mapToUsersGetDTO(usersRepository.save(newUser));
+
+        if (!isPasswordStrong(user.getPassword())) {
+            throw new IllegalArgumentException("Password is not strong enough");
+        }
+
+        String hashedPassword = hashPassword(user.getPassword());
+
+        Users newUser = new Users(user.getName(), user.getUsername(),user.getEmail(),hashedPassword, user.isAdmin(), categories);
+        return mapToUsersGetDTO(usersRepository.save(newUser));
     };
     @Override
     public UsersGetDTO updateUser(UsersPutPostDTO user, Long id) {
@@ -61,25 +83,45 @@ public class UsersServiceImpl implements UsersService{
         if (optionalUser.isEmpty()) {
             return null;
         }
-        List<Long> categoryIds = user.getUserPreferences();
-        List<Category> categories = categoryIds.stream()
-                .map(categoryId -> categoryRepository.findById(categoryId))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
-
         Users existingUser = optionalUser.get();
 
+        List<Category> categories = existingUser.getUserPreferences();
+        List<Long> categoryIds = user.getUserPreferences().stream().distinct().toList();
+        if(!categoryIds.isEmpty()) {
+            categories = categoryIds.stream()
+                    .map(categoryId -> categoryRepository.findById(categoryId))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+        }
+        if(!user.getPassword().isEmpty()) {
+            if (!isPasswordStrong(user.getPassword())) {
+                throw new IllegalArgumentException("Password is not strong enough");
+            }
+            String newPassword = hashPassword(user.getPassword());
+            existingUser.setPassword(newPassword);
+        }
         existingUser.setName(user.getName());
         existingUser.setUsername(user.getUsername());
         existingUser.setEmail(user.getEmail());
-        existingUser.setPassword(user.getPassword());
         existingUser.setAdmin(user.isAdmin());
         existingUser.setUserPreferences(categories);
 
-        return MapToDTOHelper.mapToUsersGetDTO(usersRepository.save(existingUser));
-
+        return mapToUsersGetDTO(usersRepository.save(existingUser));
     };
+
+    @Override
+    public UsersGetDTO changeUserPassword(String newPassword, Long id){
+        Users existingUser = usersRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
+
+        if (!isPasswordStrong(newPassword)) {
+            throw new IllegalArgumentException("Password "+ newPassword + " is not strong enough");
+        }
+        String newHashedPassword = hashPassword(newPassword);
+        existingUser.setPassword(newHashedPassword);
+        return mapToUsersGetDTO(usersRepository.save(existingUser));
+    }
 
     @Override
     public void deleteUser(Long id) { usersRepository.deleteById(id); }
@@ -200,5 +242,4 @@ public class UsersServiceImpl implements UsersService{
                 .map(MapToDTOHelper::mapToProjectDTO)
                 .collect(Collectors.toList()));
     }
-
 }
