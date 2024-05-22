@@ -52,7 +52,22 @@ public class UsersController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    //JSON: { "categories" : [1,2,3] }
+    @PutMapping("/change-preference/{id}")
+    public ResponseEntity<UsersGetDTO> setUserPreference(@RequestBody Map<String, List<Long>> request,
+                                                  @PathVariable Long id)
+    {
+        List<Long> categoryIds = request.get("categories");
+        try {
+            UsersGetDTO updatedUser = usersService.setUserPreference(categoryIds, id);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
+    //JSON: { "newPassword" : "novaLozinka123" }
     @PutMapping("/change-password/{id}")
     public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody Map<String, String> request)
     {

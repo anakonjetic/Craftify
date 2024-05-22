@@ -20,6 +20,7 @@ public interface UsersService {
     Optional<List<UserDTO>> getUserFollowers(Long userId);
     Optional<List<UserDTO>> getUserFollowings(Long userId);
     Optional<List<ProjectDTO>> getUserProjectFollowings(Long userId);
+    UsersGetDTO setUserPreference(List<Long> categories, Long userId);
     void deleteUser(Long id);
     void addToFavorites(Long userId, Long projectId);
     void removeFromFavorites(Long userId, Long projectId);

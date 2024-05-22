@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -241,5 +242,22 @@ public class UsersServiceImpl implements UsersService{
         return userOptional.map(user -> user.getFollowingProjects().stream()
                 .map(MapToDTOHelper::mapToProjectDTO)
                 .collect(Collectors.toList()));
+    }
+    @Override
+    public UsersGetDTO setUserPreference(List<Long> categoryIds, Long userId){
+        Users existingUser = usersRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+
+        List<Category> categories = new ArrayList<>();
+        categoryIds = categoryIds.stream().distinct().toList();
+        if(!categoryIds.isEmpty()) {
+            categories = categoryIds.stream()
+                    .map(categoryId -> categoryRepository.findById(categoryId))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+        }
+        existingUser.setUserPreferences(categories);
+        return mapToUsersGetDTO(usersRepository.save(existingUser));
     }
 }
