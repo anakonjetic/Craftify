@@ -11,6 +11,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -188,12 +189,19 @@ public class ProjectServiceImpl implements ProjectService{
             UsersGetDTO user = usersService.getUser(userId).orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
             List<CategoryDTO> userPreferences = user.getUserPreferences();
 
-            List<ProjectGetDTO> projects = new ArrayList<>();
+            List<Project> projects = new ArrayList<>();
             for (CategoryDTO category : userPreferences) {
                 List<Project> projectsByCategory = projectRepository.findByCategory_Id(category.getId());
-                projects.addAll(projectsByCategory.stream().map(MapToDTOHelper::mapToProjectGetDTO).collect(Collectors.toList()));
+                projects.addAll(projectsByCategory);
             }
-            return projects.isEmpty() ? Optional.empty() : Optional.of(projects);
+            //Sort projects by number of user likes
+            Collections.sort(projects, (project1, project2) -> {
+                Integer numOfLikes1 = project1.getUserLikes().size();
+                Integer numOfLikes2 = project2.getUserLikes().size();
+                return numOfLikes2.compareTo(numOfLikes1);
+            });
+            return projects.isEmpty() ? Optional.empty() : Optional.of(projects.stream()
+                    .map(MapToDTOHelper::mapToProjectGetDTO).collect(Collectors.toList()));
 
         } catch (DataAccessException ex) {
             throw new ApplicationException("Database error occurred while filtering projects", ex);
