@@ -14,11 +14,11 @@ insert into complexity(name) values('Intermediate');
 insert into complexity(name) values('Advanced');
 insert into complexity(name) values('Expert');
 
-INSERT INTO users(name, username, email, password, is_admin) VALUES ('John Doe','john_doe', 'john@example.com', 'password123', false);
-INSERT INTO users(name, username, email, password, is_admin) VALUES ('Jane Smith','jane_smith', 'jane@example.com', 'securePassword', false);
-INSERT INTO users(name, username, email, password, is_admin) VALUES ('Alice','alice_wonderland', 'alice@example.com', 's3cr3t!', false);
-INSERT INTO users(name, username, email, password, is_admin) VALUES ('Bob Marley','bob_marley', 'bob@example.com', 'reggae123', false);
-INSERT INTO users(name, username, email, password, is_admin) VALUES ('Emma Jones','emma_jones', 'emma@example.com', 'emmaPassword', false);
+INSERT INTO users(name, username, email, password, is_admin, is_private) VALUES ('John Doe','john_doe', 'john@example.com', 'password123', false, false);
+INSERT INTO users(name, username, email, password, is_admin, is_private) VALUES ('Jane Smith','jane_smith', 'jane@example.com', 'securePassword', false, false);
+INSERT INTO users(name, username, email, password, is_admin, is_private) VALUES ('Alice','alice_wonderland', 'alice@example.com', 's3cr3t!', false, true);
+INSERT INTO users(name, username, email, password, is_admin, is_private) VALUES ('Bob Marley','bob_marley', 'bob@example.com', 'reggae123', false, false);
+INSERT INTO users(name, username, email, password, is_admin, is_private) VALUES ('Emma Jones','emma_jones', 'emma@example.com', 'emmaPassword', false, true);
 
 INSERT INTO project (title, user_id, category_id, complexity_id, description, content)
 VALUES ('DIY Mason Jar Lanterns', 1, 1, 1, 'Create beautiful lanterns using mason jars',

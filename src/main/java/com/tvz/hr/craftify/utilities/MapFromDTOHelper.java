@@ -85,6 +85,7 @@ public class MapFromDTOHelper {
                 user.getEmail(),
                 user.getPassword(),
                 user.isAdmin(),
+                user.isPrivate(),
                 user.getUserPreferences().stream().map(MapFromDTOHelper::mapCategoryDTOToCategory).collect(Collectors.toList())
         );
     }

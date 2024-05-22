@@ -1,5 +1,7 @@
 package com.tvz.hr.craftify.controller;
 
+import com.tvz.hr.craftify.service.LikesAndFavoritesService;
+import com.tvz.hr.craftify.service.SubscriptionService;
 import com.tvz.hr.craftify.service.dto.*;
 import com.tvz.hr.craftify.service.UsersService;
 import lombok.AllArgsConstructor;
@@ -78,6 +80,21 @@ public class UsersController {
         }
         catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+    }
+
+    //JSON: { "private" : true }
+    @PutMapping("/profile-visibility/{id}")
+    public ResponseEntity<UsersGetDTO> setUserInfoVisibility(@RequestBody Map<String, Boolean> request,
+                                                         @PathVariable Long id)
+    {
+        Boolean isPrivate = request.get("private");
+        try {
+            UsersGetDTO updatedUser = usersService.changeUserInfoVisibility(isPrivate, id);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 

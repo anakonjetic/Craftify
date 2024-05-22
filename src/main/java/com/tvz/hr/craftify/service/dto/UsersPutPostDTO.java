@@ -14,5 +14,6 @@ public class UsersPutPostDTO {
     private String email;
     private String password;
     private boolean isAdmin;
+    private boolean isPrivate;
     private List<Long> userPreferences;
 }

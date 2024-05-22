@@ -75,7 +75,7 @@ public class UsersServiceImpl implements UsersService{
 
         String hashedPassword = hashPassword(user.getPassword());
 
-        Users newUser = new Users(user.getName(), user.getUsername(),user.getEmail(),hashedPassword, user.isAdmin(), categories);
+        Users newUser = new Users(user.getName(), user.getUsername(),user.getEmail(),hashedPassword, user.isAdmin(), user.isPrivate(), categories);
         return mapToUsersGetDTO(usersRepository.save(newUser));
     };
     @Override
@@ -106,6 +106,7 @@ public class UsersServiceImpl implements UsersService{
         existingUser.setUsername(user.getUsername());
         existingUser.setEmail(user.getEmail());
         existingUser.setAdmin(user.isAdmin());
+        existingUser.setPrivate(user.isPrivate());
         existingUser.setUserPreferences(categories);
 
         return mapToUsersGetDTO(usersRepository.save(existingUser));
@@ -121,6 +122,15 @@ public class UsersServiceImpl implements UsersService{
         }
         String newHashedPassword = hashPassword(newPassword);
         existingUser.setPassword(newHashedPassword);
+        return mapToUsersGetDTO(usersRepository.save(existingUser));
+    }
+
+    @Override
+    public UsersGetDTO changeUserInfoVisibility(boolean isPrivate, Long id){
+        Users existingUser = usersRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
+
+        existingUser.setPrivate(isPrivate);
         return mapToUsersGetDTO(usersRepository.save(existingUser));
     }
 
