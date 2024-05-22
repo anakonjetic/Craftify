@@ -182,5 +182,25 @@ public class ProjectServiceImpl implements ProjectService{
         }
     }
 
+    @Override
+    public Optional<List<ProjectGetDTO>> getProjectsByUserPreference(Long userId){
+        try {
+            UsersGetDTO user = usersService.getUser(userId).orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+            List<CategoryDTO> userPreferences = user.getUserPreferences();
+
+            List<ProjectGetDTO> projects = new ArrayList<>();
+            for (CategoryDTO category : userPreferences) {
+                List<Project> projectsByCategory = projectRepository.findByCategory_Id(category.getId());
+                projects.addAll(projectsByCategory.stream().map(MapToDTOHelper::mapToProjectGetDTO).collect(Collectors.toList()));
+            }
+            return projects.isEmpty() ? Optional.empty() : Optional.of(projects);
+
+        } catch (DataAccessException ex) {
+            throw new ApplicationException("Database error occurred while filtering projects", ex);
+        } catch (Exception ex) {
+            throw new ApplicationException("An unexpected error occurred while filtering projects", ex);
+        }
+    }
+
 
 }
