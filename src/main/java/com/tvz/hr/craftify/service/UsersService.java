@@ -17,14 +17,7 @@ public interface UsersService {
     Optional<List<ProjectDTO>> getFavoriteProjects(Long userId);
     Optional<List<ProjectDTO>> getLikedProjects(Long userId);
     Optional<List<ProjectDTO>> getUserProjects(Long userId);
-    Optional<List<UserDTO>> getUserFollowers(Long userId);
-    Optional<List<UserDTO>> getUserFollowings(Long userId);
-    Optional<List<ProjectDTO>> getUserProjectFollowings(Long userId);
     UsersGetDTO setUserPreference(List<Long> categories, Long userId);
     UsersGetDTO changeUserInfoVisibility(boolean isPrivate, Long id);
     void deleteUser(Long id);
-    void addToFavorites(Long userId, Long projectId);
-    void removeFromFavorites(Long userId, Long projectId);
-    void userLikeAction(Long userId, Long projectId);
-    void userDislikeAction(Long userId, Long projectId);
 }

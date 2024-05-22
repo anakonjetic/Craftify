@@ -17,6 +17,8 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UsersController {
     private UsersService usersService;
+    private LikesAndFavoritesService likesAndFavoritesService;
+    private SubscriptionService subscriptionService;
 
     @GetMapping("/all")
     public List<UsersGetDTO> getUsers() {
@@ -129,43 +131,43 @@ public class UsersController {
 
     @GetMapping("/followers/{id}")
     public ResponseEntity<List<UserDTO>> getUserFollowers(@PathVariable long id) {
-        Optional<List<UserDTO>> userFollowersOptional = usersService.getUserFollowers(id);
+        Optional<List<UserDTO>> userFollowersOptional = subscriptionService.getUserFollowers(id);
         return userFollowersOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @GetMapping("/following/users/{id}")
     public ResponseEntity<List<UserDTO>> getUserFollowings(@PathVariable long id) {
-        Optional<List<UserDTO>> userFollowingsOptional = usersService.getUserFollowings(id);
+        Optional<List<UserDTO>> userFollowingsOptional = subscriptionService.getUserFollowings(id);
         return userFollowingsOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @GetMapping("/following/projects/{id}")
     public ResponseEntity<List<ProjectDTO>> getProjectsFollowings(@PathVariable long id) {
-        Optional<List<ProjectDTO>> projectsFollowingsOptional = usersService.getUserProjectFollowings(id);
+        Optional<List<ProjectDTO>> projectsFollowingsOptional = subscriptionService.getUserProjectFollowings(id);
         return projectsFollowingsOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @PostMapping("/{userId}/addFavorite/{projectId}")
     public ResponseEntity<Void> addProjectToFavorites(@PathVariable long userId, @PathVariable long projectId) {
-        usersService.addToFavorites(userId, projectId);
+        likesAndFavoritesService.addToFavorites(userId, projectId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{userId}/removeFavorite/{projectId}")
     public ResponseEntity<Void> removeProjectFromFavorites(@PathVariable long userId, @PathVariable long projectId) {
-        usersService.removeFromFavorites(userId, projectId);
+        likesAndFavoritesService.removeFromFavorites(userId, projectId);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{userId}/like/{projectId}")
     public ResponseEntity<Void> likeAProjectByUser(@PathVariable long userId, @PathVariable long projectId) {
-        usersService.userLikeAction(userId, projectId);
+        likesAndFavoritesService.userLikeAction(userId, projectId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{userId}/dislike/{projectId}")
     public ResponseEntity<Void> dislikeAProjectByUser(@PathVariable long userId, @PathVariable long projectId) {
-        usersService.userDislikeAction(userId, projectId);
+        likesAndFavoritesService.userDislikeAction(userId, projectId);
         return ResponseEntity.noContent().build();
     }
 }
