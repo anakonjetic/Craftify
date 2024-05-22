@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface TutorialService {
     List<TutorialDTO> getAllTutorials();
     Optional<TutorialDTO> getTutorialById(Long id);
-    Tutorial createTutorial(TutorialPostDTO tutorialPostDTO);
-    Tutorial updateTutorial(TutorialPutDTO tutorialPutDTO, Long id);
+    TutorialDTO createTutorial(TutorialPostDTO tutorialPostDTO);
+    TutorialDTO updateTutorial(TutorialPutDTO tutorialPutDTO, Long id);
     void deleteTutorialById(Long id);
 }
