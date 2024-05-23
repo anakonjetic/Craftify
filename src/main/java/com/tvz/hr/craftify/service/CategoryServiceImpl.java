@@ -16,9 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.tvz.hr.craftify.utilities.MapToDTOHelper.mapToCategoryDTO;
@@ -81,8 +79,8 @@ public class CategoryServiceImpl implements CategoryService {
         if (optionalCategory.isPresent()) {
             Category categoryToUpdate = optionalCategory.get();
 
-            List<Project> projects = new ArrayList<>();
-            List<Long> projectIds = category.getProjectIdList();
+            List<Project> projects = categoryToUpdate.getProjectList();
+            List<Long> projectIds = category.getProjectIdList().stream().distinct().toList();
             if (!projectIds.isEmpty()) {
                 projects = projectIds.stream()
                         .map(projectId -> projectRepository.findById(projectId))
@@ -91,8 +89,8 @@ public class CategoryServiceImpl implements CategoryService {
                         .collect(Collectors.toList());
             }
 
-            List<Tutorial> tutorials = new ArrayList<>();
-            List<Long> tutorialIds = category.getTutorialIdList();
+            List<Tutorial> tutorials = categoryToUpdate.getTutorialList();
+            List<Long> tutorialIds = category.getTutorialIdList().stream().distinct().toList();
             if (!tutorialIds.isEmpty()) {
                 tutorials = tutorialIds.stream()
                         .map(tutorialId -> tutorialRepository.findById(tutorialId))
@@ -119,9 +117,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDTO addUserPreference(Long categoryId, Long userID) {
-        Category category = categoryRepository.findById(categoryId).orElse(null);
-        Users user = usersRepository.findById(userID).orElse(null);
-        if (category != null && user != null) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Category not found with ID: " + categoryId));
+        Users user = usersRepository.findById(userID).orElseThrow(() -> new RuntimeException("User not found with ID: " + userID));
+
+        if(!category.getUserPreferences().contains(user)){
             category.getUserPreferences().add(user);
             category = categoryRepository.save(category);
             categoryRepository.flush();
@@ -131,10 +130,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDTO removeUserPreference(Long categoryId, Long userID) {
-        Category category = categoryRepository.findById(categoryId).orElse(null);
-        Users user = usersRepository.findById(userID).orElse(null);
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Category not found with ID: " + categoryId));
+        Users user = usersRepository.findById(userID).orElseThrow(() -> new RuntimeException("User not found with ID: " + userID));
 
-        if (category != null && user != null) {
+        if (category.getUserPreferences().contains(user)) {
             category.getUserPreferences().remove(user);
             category = categoryRepository.save(category);
             categoryRepository.flush();

@@ -1,9 +1,7 @@
 package com.tvz.hr.craftify.service;
 
-import com.tvz.hr.craftify.model.Category;
-import com.tvz.hr.craftify.model.Complexity;
-import com.tvz.hr.craftify.model.Tutorial;
-import com.tvz.hr.craftify.model.Users;
+import com.tvz.hr.craftify.model.*;
+import com.tvz.hr.craftify.repository.MediaRepository;
 import com.tvz.hr.craftify.repository.TutorialRepository;
 import com.tvz.hr.craftify.service.dto.*;
 import com.tvz.hr.craftify.utilities.MapToDTOHelper;
@@ -14,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.tvz.hr.craftify.utilities.MapToDTOHelper.mapToTutorialDTO;
+
 @Service
 @AllArgsConstructor
 public class TutorialServiceImpl implements TutorialService {
@@ -22,6 +22,7 @@ public class TutorialServiceImpl implements TutorialService {
     private CategoryService categoryService;
     private UsersService usersService;
     private ComplexityService complexityService;
+    private MediaRepository mediaRepository;
 
 
     @Override
@@ -39,7 +40,7 @@ public class TutorialServiceImpl implements TutorialService {
     }
 
     @Override
-    public Tutorial createTutorial(TutorialPostDTO postTutorial) {
+    public TutorialDTO createTutorial(TutorialPostDTO postTutorial) {
         Tutorial newTutorial = new Tutorial();
         newTutorial.setTitle(postTutorial.getTitle());
         newTutorial.setContent(postTutorial.getContent());
@@ -61,12 +62,18 @@ public class TutorialServiceImpl implements TutorialService {
         }else{
             throw new RuntimeException("Complexity with ID: " + postTutorial.getComplexityId()+ "not found");
         }
+        List<Long> mediaListId = postTutorial.getMediaList().stream().distinct().toList();
+        List<Media> mediaList = mediaListId.stream()
+                .map(mediaId -> mediaRepository.findById(mediaId).orElseThrow(() -> new RuntimeException("Media not found with ID: " + mediaId)))
+                .collect(Collectors.toList());
 
-        return tutorialRepository.save(newTutorial);
+        newTutorial.setMediaList(mediaList);
+
+        return mapToTutorialDTO(tutorialRepository.save(newTutorial));
     }
 
     @Override
-    public Tutorial updateTutorial(TutorialPutDTO tutorialPutDTO, Long id) {
+    public TutorialDTO updateTutorial(TutorialPutDTO tutorialPutDTO, Long id) {
         Optional<Tutorial> optionalTutorial = tutorialRepository.findById(id);
         if (optionalTutorial.isPresent()) {
             Tutorial tutorialToUpdate = optionalTutorial.get();
@@ -81,7 +88,7 @@ public class TutorialServiceImpl implements TutorialService {
             }else{
                 throw new RuntimeException("Complexity with ID: " + tutorialPutDTO.getComplexityId()+ "not found");
             }
-            return tutorialRepository.save(tutorialToUpdate);
+            return mapToTutorialDTO(tutorialRepository.save(tutorialToUpdate));
         }else {
             throw new RuntimeException("Tutorial with ID: " + id + "not found");
         }

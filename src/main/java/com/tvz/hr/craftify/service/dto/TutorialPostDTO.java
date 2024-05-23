@@ -17,6 +17,5 @@ public class TutorialPostDTO {
     private Long userId;
     private Long categoryId;
     private Long complexityId;
-    private List<Long> comments;
     private List<Long> mediaList;
 }

@@ -1,16 +1,15 @@
 package com.tvz.hr.craftify.controller;
 
-import com.tvz.hr.craftify.service.dto.UsersGetDTO;
-import com.tvz.hr.craftify.service.dto.CommentDTO;
-import com.tvz.hr.craftify.service.dto.ProjectDTO;
-import com.tvz.hr.craftify.service.dto.UserDTO;
+import com.tvz.hr.craftify.service.LikesAndFavoritesService;
+import com.tvz.hr.craftify.service.SubscriptionService;
+import com.tvz.hr.craftify.service.dto.*;
 import com.tvz.hr.craftify.service.UsersService;
-import com.tvz.hr.craftify.service.dto.UsersPutPostDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -18,6 +17,8 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UsersController {
     private UsersService usersService;
+    private LikesAndFavoritesService likesAndFavoritesService;
+    private SubscriptionService subscriptionService;
 
     @GetMapping("/all")
     public List<UsersGetDTO> getUsers() {
@@ -49,6 +50,49 @@ public class UsersController {
     {
         try {
             UsersGetDTO updatedUser = usersService.updateUser(user, id);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+    //JSON: { "categories" : [1,2,3] }
+    @PutMapping("/change-preference/{id}")
+    public ResponseEntity<UsersGetDTO> setUserPreference(@RequestBody Map<String, List<Long>> request,
+                                                  @PathVariable Long id)
+    {
+        List<Long> categoryIds = request.get("categories");
+        try {
+            UsersGetDTO updatedUser = usersService.setUserPreference(categoryIds, id);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    //JSON: { "newPassword" : "novaLozinka123" }
+    @PutMapping("/change-password/{id}")
+    public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody Map<String, String> request)
+    {
+        String newPassword = request.get("newPassword");
+        try {
+            UsersGetDTO updatedUser = usersService.changeUserPassword(newPassword, id);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+    }
+
+    //JSON: { "private" : true }
+    @PutMapping("/profile-visibility/{id}")
+    public ResponseEntity<UsersGetDTO> setUserInfoVisibility(@RequestBody Map<String, Boolean> request,
+                                                         @PathVariable Long id)
+    {
+        Boolean isPrivate = request.get("private");
+        try {
+            UsersGetDTO updatedUser = usersService.changeUserInfoVisibility(isPrivate, id);
             return new ResponseEntity<>(updatedUser, HttpStatus.OK);
         }
         catch (Exception e) {
@@ -87,43 +131,43 @@ public class UsersController {
 
     @GetMapping("/followers/{id}")
     public ResponseEntity<List<UserDTO>> getUserFollowers(@PathVariable long id) {
-        Optional<List<UserDTO>> userFollowersOptional = usersService.getUserFollowers(id);
+        Optional<List<UserDTO>> userFollowersOptional = subscriptionService.getUserFollowers(id);
         return userFollowersOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @GetMapping("/following/users/{id}")
     public ResponseEntity<List<UserDTO>> getUserFollowings(@PathVariable long id) {
-        Optional<List<UserDTO>> userFollowingsOptional = usersService.getUserFollowings(id);
+        Optional<List<UserDTO>> userFollowingsOptional = subscriptionService.getUserFollowings(id);
         return userFollowingsOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @GetMapping("/following/projects/{id}")
     public ResponseEntity<List<ProjectDTO>> getProjectsFollowings(@PathVariable long id) {
-        Optional<List<ProjectDTO>> projectsFollowingsOptional = usersService.getUserProjectFollowings(id);
+        Optional<List<ProjectDTO>> projectsFollowingsOptional = subscriptionService.getUserProjectFollowings(id);
         return projectsFollowingsOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @PostMapping("/{userId}/addFavorite/{projectId}")
     public ResponseEntity<Void> addProjectToFavorites(@PathVariable long userId, @PathVariable long projectId) {
-        usersService.addToFavorites(userId, projectId);
+        likesAndFavoritesService.addToFavorites(userId, projectId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{userId}/removeFavorite/{projectId}")
     public ResponseEntity<Void> removeProjectFromFavorites(@PathVariable long userId, @PathVariable long projectId) {
-        usersService.removeFromFavorites(userId, projectId);
+        likesAndFavoritesService.removeFromFavorites(userId, projectId);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{userId}/like/{projectId}")
     public ResponseEntity<Void> likeAProjectByUser(@PathVariable long userId, @PathVariable long projectId) {
-        usersService.userLikeAction(userId, projectId);
+        likesAndFavoritesService.userLikeAction(userId, projectId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{userId}/dislike/{projectId}")
     public ResponseEntity<Void> dislikeAProjectByUser(@PathVariable long userId, @PathVariable long projectId) {
-        usersService.userDislikeAction(userId, projectId);
+        likesAndFavoritesService.userDislikeAction(userId, projectId);
         return ResponseEntity.noContent().build();
     }
 }

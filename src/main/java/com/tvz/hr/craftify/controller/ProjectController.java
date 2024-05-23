@@ -35,6 +35,13 @@ public class ProjectController {
                     .orElseGet(() -> ResponseEntity.noContent().build());
         }
 
+        @GetMapping("/preference/{id}")
+        public ResponseEntity<List<ProjectGetDTO>> getProjectsByUserPreferences(@PathVariable long id) {
+            return projectService.getProjectsByUserPreference(id)
+                    .map(users -> ResponseEntity.ok().body(users))
+                    .orElseGet(() -> ResponseEntity.noContent().build());
+        }
+
         @PostMapping
         public ResponseEntity<ProjectPostDTO> createProject(@RequestBody ProjectPostDTO project) {
             projectService.createProject(project);

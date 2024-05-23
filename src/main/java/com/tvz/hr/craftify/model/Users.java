@@ -17,27 +17,32 @@ public class Users {
 
     @Column(nullable = false)
     private String name, username, email, password;
-
     @Column(columnDefinition = "BIT", nullable = false)
     @JoinColumn(name = "is_admin")
     private boolean isAdmin;
 
-    public Users(Long id, String name, String username, String email, String password, boolean isAdmin, List<Category> userPreferences) {
+    @Column(columnDefinition = "BIT", nullable = false)
+    @JoinColumn(name = "is_private")
+    private boolean isPrivate;
+
+    public Users(Long id, String name, String username, String email, String password, boolean isAdmin, boolean isPrivate, List<Category> userPreferences) {
         this.id = id;
         this.name = name;
         this.username = username;
         this.email = email;
         this.password = password;
         this.isAdmin = isAdmin;
+        this.isPrivate = isPrivate;
         this.userPreferences = userPreferences;
     }
 
-    public Users(String name, String username, String email, String password, boolean isAdmin, List<Category> userPreferences) {
+    public Users(String name, String username, String email, String password, boolean isAdmin, boolean isPrivate, List<Category> userPreferences) {
         this.name = name;
         this.username = username;
         this.email = email;
         this.password = password;
         this.isAdmin = isAdmin;
+        this.isPrivate = isPrivate;
         this.userPreferences = userPreferences;
     }
 

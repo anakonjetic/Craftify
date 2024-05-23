@@ -15,4 +15,5 @@ public interface ProjectService {
     void deleteProject(Long id);
     Optional<List<ProjectGetDTO>> getFilteredProjects(FilterProjectDTO filterProjectDTO);
     Optional<List<ProjectGetDTO>> getProjectsByCategory(Long id);
+    Optional<List<ProjectGetDTO>> getProjectsByUserPreference(Long id);
 }

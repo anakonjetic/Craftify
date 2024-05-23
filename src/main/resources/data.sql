@@ -14,11 +14,12 @@ insert into complexity(name) values('Intermediate');
 insert into complexity(name) values('Advanced');
 insert into complexity(name) values('Expert');
 
-INSERT INTO users(name, username, email, password, is_admin) VALUES ('John Doe','john_doe', 'john@example.com', 'password123', false);
-INSERT INTO users(name, username, email, password, is_admin) VALUES ('Jane Smith','jane_smith', 'jane@example.com', 'securePassword', false);
-INSERT INTO users(name, username, email, password, is_admin) VALUES ('Alice','alice_wonderland', 'alice@example.com', 's3cr3t!', false);
-INSERT INTO users(name, username, email, password, is_admin) VALUES ('Bob Marley','bob_marley', 'bob@example.com', 'reggae123', false);
-INSERT INTO users(name, username, email, password, is_admin) VALUES ('Emma Jones','emma_jones', 'emma@example.com', 'emmaPassword', false);
+/*password = newPassword123*/
+INSERT INTO users(name, username, email, password, is_admin, is_private) VALUES ('John Doe','john_doe', 'john@example.com', '$2a$10$AI4p3eAvDflvwMAcKwvFfeT0rsv9CC5U8ewX1lk/KLuvoDe5GU5Ae', false, false);
+INSERT INTO users(name, username, email, password, is_admin, is_private) VALUES ('Jane Smith','jane_smith', 'jane@example.com', '$2a$10$AI4p3eAvDflvwMAcKwvFfeT0rsv9CC5U8ewX1lk/KLuvoDe5GU5Ae', false, false);
+INSERT INTO users(name, username, email, password, is_admin, is_private) VALUES ('Alice','alice_wonderland', 'alice@example.com', '$2a$10$AI4p3eAvDflvwMAcKwvFfeT0rsv9CC5U8ewX1lk/KLuvoDe5GU5Ae', true, true);
+INSERT INTO users(name, username, email, password, is_admin, is_private) VALUES ('Bob Marley','bob_marley', 'bob@example.com', '$2a$10$AI4p3eAvDflvwMAcKwvFfeT0rsv9CC5U8ewX1lk/KLuvoDe5GU5Ae', false, false);
+INSERT INTO users(name, username, email, password, is_admin, is_private) VALUES ('Emma Jones','emma_jones', 'emma@example.com', '$2a$10$AI4p3eAvDflvwMAcKwvFfeT0rsv9CC5U8ewX1lk/KLuvoDe5GU5Ae', false, true);
 
 INSERT INTO project (title, user_id, category_id, complexity_id, description, content)
 VALUES ('DIY Mason Jar Lanterns', 1, 1, 1, 'Create beautiful lanterns using mason jars',
@@ -35,25 +36,18 @@ VALUES ('DIY Fabric Wall Art', 2, 3, 2, 'Create unique fabric wall art to add pe
         'appliques to add texture and visual interest. Once your design is complete, hang the fabric wall ' ||
         'art using picture hooks or adhesive strips. Enjoy your personalized wall decor!');
 
-insert into favorites(user_id, project_id)
-VALUES(2,1);
+insert into favorites(user_id, project_id) VALUES(2,1);
 
-insert into user_preferences(user_id, category_id)
-VALUES(1,2);
-insert into user_preferences(user_id, category_id)
-VALUES(1,3);
-insert into user_preferences(user_id, category_id)
-VALUES(1,4);
+insert into user_preferences(user_id, category_id) VALUES(1,2);
+insert into user_preferences(user_id, category_id) VALUES(1,3);
+insert into user_preferences(user_id, category_id) VALUES(1,4);
+insert into user_preferences(user_id, category_id) VALUES(2,1);
 
-insert into project_subscribers(user_id, project_id)
-VALUES(1,2);
-insert into user_subscribers(user_id, followed_user_id)
-VALUES(1,2);
-insert into user_project_likes(user_id, project_id)
-VALUES(1,2);
+insert into project_subscribers(user_id, project_id) VALUES(1,2);
+insert into user_subscribers(user_id, followed_user_id) VALUES(1,2);
+insert into user_project_likes(user_id, project_id) VALUES(1,2);
 
-insert into media(media, MEDIA_ORDER, project_id)
-VALUES('url',1,1);
+insert into media(media, MEDIA_ORDER, project_id) VALUES('url',1,1);
 
 insert into comment (user_id, project_id, comment, comment_time)
 VALUES (1,1,'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed varius diam, sit amet ' ||
@@ -77,24 +71,20 @@ VALUES (1,2,'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed 
 
 INSERT INTO news (title, content, category_id, image_url)
 VALUES ('New DIY Project: Transform Your Living Space with Upcycled Decor',
-        'Turn your home into a cozy haven with these DIY decor ideas. Learn how to upcycle everyday items into stylish home accents.',
-        2,
-        'url');
+        'Turn your home into a cozy haven with these DIY decor ideas. Learn how to upcycle everyday items ' ||
+        'into stylish home accents.',2,'url');
 
 INSERT INTO news (title, content, category_id, image_url)
 VALUES ('Creative Sewing Projects for Beginners and Beyond',
-        'Discover fun sewing projects for all skill levels. From simple stitches to intricate designs, there''s something for everyone.',
-        3,
-        'url');
+        'Discover fun sewing projects for all skill levels. From simple stitches to intricate designs, ' ||
+        'there''s something for everyone.', 3,'url');
 
 INSERT INTO news (title, content, category_id, image_url)
 VALUES ('Woodworking Wonders: Build Your Own Furniture with These Easy Plans',
-        'Unleash your creativity with woodworking. Learn how to build beautiful furniture pieces for your home with step-by-step guides.',
-        4,
-        'url');
+        'Unleash your creativity with woodworking. Learn how to build beautiful furniture pieces for ' ||
+        'your home with step-by-step guides.', 4,'url');
 
 INSERT INTO news (title, content, category_id, image_url)
 VALUES ('Crafting Fun for the Whole Family: Paper Crafts Galore!',
-        'Get crafty with paper! Explore a world of creativity with these paper craft ideas. From origami to cardmaking, let your imagination soar.',
-        5,
-        'url');
+        'Get crafty with paper! Explore a world of creativity with these paper craft ideas. From ' ||
+        'origami to cardmaking, let your imagination soar.', 5,'url');

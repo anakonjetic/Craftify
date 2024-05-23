@@ -175,6 +175,7 @@ public class MapToDTOHelper {
                 user.getEmail(),
                 user.getPassword(),
                 user.isAdmin(),
+                user.isPrivate(),
                 category
         );
     }
