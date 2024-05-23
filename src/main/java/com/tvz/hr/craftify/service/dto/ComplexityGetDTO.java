@@ -12,5 +12,5 @@ import java.util.List;
 public class ComplexityGetDTO {
     private Long id;
     private String name;
-    private List<ProjectDTO> projects;
+    private List<ProjectGetDTO> projects;
 }

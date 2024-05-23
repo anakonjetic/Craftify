@@ -1,10 +1,6 @@
 package com.tvz.hr.craftify.service;
 
-import com.tvz.hr.craftify.service.dto.UsersGetDTO;
-import com.tvz.hr.craftify.service.dto.CommentDTO;
-import com.tvz.hr.craftify.service.dto.ProjectDTO;
-import com.tvz.hr.craftify.service.dto.UserDTO;
-import com.tvz.hr.craftify.service.dto.UsersPutPostDTO;
+import com.tvz.hr.craftify.service.dto.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,18 +8,16 @@ import java.util.Optional;
 public interface UsersService {
     List<UsersGetDTO> getAllUsers();
     Optional<UsersGetDTO> getUser(Long id);
+    UsersGetDTO authenticateUser(LoginDTO loginDTO);
+    //UsersGetDTO authenticateUser(String usernameOrEmail);
     UsersGetDTO createUser(UsersPutPostDTO user);
     UsersGetDTO updateUser(UsersPutPostDTO user, Long id);
-    List<CommentDTO> getUserComments(Long id);
-    List<ProjectDTO> getFavoriteProjects(Long userId);
-    List<ProjectDTO> getLikedProjects(Long userId);
-    List<ProjectDTO> getUserProjects(Long userId);
-    List<UserDTO> getUserFollowers(Long userId);
-    List<UserDTO> getUserFollowings(Long userId);
-    List<ProjectDTO> getUserProjectFollowings(Long userId);
+    UsersGetDTO changeUserPassword(String newPassword, Long id);
+    Optional<List<CommentDTO>> getUserComments(Long id);
+    Optional<List<ProjectDTO>> getFavoriteProjects(Long userId);
+    Optional<List<ProjectDTO>> getLikedProjects(Long userId);
+    Optional<List<ProjectDTO>> getUserProjects(Long userId);
+    UsersGetDTO setUserPreference(List<Long> categories, Long userId);
+    UsersGetDTO changeUserInfoVisibility(boolean isPrivate, Long id);
     void deleteUser(Long id);
-    void addToFavorites(Long userId, Long projectId);
-    void removeFromFavorites(Long userId, Long projectId);
-    void userLikeAction(Long userId, Long projectId);
-    void userDislikeAction(Long userId, Long projectId);
 }

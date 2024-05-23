@@ -24,4 +24,10 @@ public class Media {
     @ManyToOne
     @JoinColumn(name = "tutorial_id")
     private Tutorial tutorial;
+
+    public Media(Long id, String media, Integer mediaOrder){
+        this.id = id;
+        this.media = media;
+        this.mediaOrder = mediaOrder;
+    }
 }

@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface MediaService {
     List<MediaDTO> getAllMedia();
     Optional<MediaGetDTO> getMedia(Long id);
-    List<Media> getMediaByIds(List<Long> ids);
+    Optional<List<MediaGetDTO>> getMediaByIds(List<Long> ids);
     MediaGetDTO addMedia(MediaPutPostDTO media);
     MediaGetDTO updateMedia(MediaPutPostDTO media, Long id);
     void deleteMedia(Long id);

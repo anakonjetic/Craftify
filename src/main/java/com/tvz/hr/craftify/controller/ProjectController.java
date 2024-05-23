@@ -1,10 +1,7 @@
 package com.tvz.hr.craftify.controller;
 
-import com.tvz.hr.craftify.service.dto.ProjectDTO;
-import com.tvz.hr.craftify.service.dto.ProjectPostDTO;
+import com.tvz.hr.craftify.service.dto.*;
 import com.tvz.hr.craftify.service.ProjectService;
-import com.tvz.hr.craftify.service.dto.ProjectPutDTO;
-import com.tvz.hr.craftify.service.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,8 +30,16 @@ public class ProjectController {
 
         @GetMapping("/{id}/likes")
         public ResponseEntity<List<UserDTO>> getUsersWhoLikedProject(@PathVariable long id) {
-            Optional<List<UserDTO>> likedUsersOptional = projectService.getUsersWhoLikedProject(id);
-            return likedUsersOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
+            return projectService.getUsersWhoLikedProject(id)
+                    .map(users -> ResponseEntity.ok().body(users))
+                    .orElseGet(() -> ResponseEntity.noContent().build());
+        }
+
+        @GetMapping("/preference/{id}")
+        public ResponseEntity<List<ProjectGetDTO>> getProjectsByUserPreferences(@PathVariable long id) {
+            return projectService.getProjectsByUserPreference(id)
+                    .map(users -> ResponseEntity.ok().body(users))
+                    .orElseGet(() -> ResponseEntity.noContent().build());
         }
 
         @PostMapping
@@ -57,6 +62,13 @@ public class ProjectController {
         public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
             projectService.deleteProject(id);
             return ResponseEntity.noContent().build();
+        }
+
+        @PostMapping("/filter")
+        public ResponseEntity<List<ProjectGetDTO>> filterProjects(@RequestBody FilterProjectDTO filterProjectDTO) {
+            return projectService.getFilteredProjects(filterProjectDTO)
+                    .map(projects -> ResponseEntity.ok().body(projects))
+                    .orElseGet(() -> ResponseEntity.noContent().build());
         }
     }
 

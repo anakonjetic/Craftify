@@ -1,10 +1,7 @@
 package com.tvz.hr.craftify.service;
 
 import com.tvz.hr.craftify.model.Project;
-import com.tvz.hr.craftify.service.dto.ProjectDTO;
-import com.tvz.hr.craftify.service.dto.ProjectPostDTO;
-import com.tvz.hr.craftify.service.dto.ProjectPutDTO;
-import com.tvz.hr.craftify.service.dto.UserDTO;
+import com.tvz.hr.craftify.service.dto.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,4 +13,7 @@ public interface ProjectService {
     Project createProject(ProjectPostDTO projectPostDTO);
     Project updateProject(ProjectPutDTO project, Long id);
     void deleteProject(Long id);
+    Optional<List<ProjectGetDTO>> getFilteredProjects(FilterProjectDTO filterProjectDTO);
+    Optional<List<ProjectGetDTO>> getProjectsByCategory(Long id);
+    Optional<List<ProjectGetDTO>> getProjectsByUserPreference(Long id);
 }

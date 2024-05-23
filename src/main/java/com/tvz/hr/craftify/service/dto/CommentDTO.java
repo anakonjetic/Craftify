@@ -13,5 +13,7 @@ public class CommentDTO {
     private Long id;
     private String comment;
     private UserDTO user;
+    private ProjectGetDTO project;
     private LocalDateTime commentTime;
+
 }

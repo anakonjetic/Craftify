@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MediaPutPostDTO {
     private Long id;
-    private byte[] media;
+    private String media;
     private Integer mediaOrder;
     private Long projectId;
     private Long tutorialId;
