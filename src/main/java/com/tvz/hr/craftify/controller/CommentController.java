@@ -16,6 +16,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/comments")
 @AllArgsConstructor
+@CrossOrigin(origins = {"http://test-craftify.vercel.app", "http://localhost:4200"})
 public class CommentController {
     private CommentService commentService;
 

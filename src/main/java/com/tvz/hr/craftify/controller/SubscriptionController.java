@@ -14,6 +14,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/subscription")
 @AllArgsConstructor
+@CrossOrigin(origins = {"http://test-craftify.vercel.app", "http://localhost:4200"})
 public class SubscriptionController {
     private SubscriptionService subscriptionService;
 
