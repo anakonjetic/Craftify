@@ -45,7 +45,7 @@ public class UsersServiceImpl implements UsersService{
     };
     @Override
     public UsersGetDTO authenticateUser(LoginDTO login) {
-        Optional<Users> optionalUser = usersRepository.getUsersByUsernameOrEmailIgnoreCase(login.getUsernameOrEmail(), login.getUsernameOrEmail());
+        Optional<Users> optionalUser = usersRepository.getFirstByUsernameOrEmailIgnoreCase(login.getUsernameOrEmail(), login.getUsernameOrEmail());
 
         if (optionalUser.isPresent()) {
             Users user = optionalUser.get();
