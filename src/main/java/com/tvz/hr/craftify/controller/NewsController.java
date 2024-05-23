@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/news")
 @AllArgsConstructor
+@CrossOrigin(origins = {"http://test-craftify.vercel.app", "http://localhost:4200"})
 public class NewsController {
 
     private final NewsService newsService;
