@@ -31,11 +31,13 @@ public class TutorialController {
         return tutorialService.getAllTutorials();
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<TutorialDTO> getTutorialById(@PathVariable Long id) {
         Optional<TutorialDTO> tutorialOptional = tutorialService.getTutorialById(id);
         return tutorialOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+    //@PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<TutorialDTO> createTutorial(@RequestBody TutorialPostDTO tutorial) {
         return new ResponseEntity<>(
@@ -58,5 +60,13 @@ public class TutorialController {
     public ResponseEntity<Void> deleteTutorial(@PathVariable Long id) {
         tutorialService.deleteTutorialById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    public UserDetails getLoggedInUserDetails(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails){
+            return (UserDetails) authentication.getPrincipal();
+        }
+        return null;
     }
 }
