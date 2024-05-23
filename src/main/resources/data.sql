@@ -88,3 +88,12 @@ INSERT INTO news (title, content, category_id, image_url)
 VALUES ('Crafting Fun for the Whole Family: Paper Crafts Galore!',
         'Get crafty with paper! Explore a world of creativity with these paper craft ideas. From ' ||
         'origami to cardmaking, let your imagination soar.', 5,'url');
+
+
+INSERT INTO tutorial (title, content, user_id, category_id, complexity_id) VALUES
+        ('DIY Paper Flowers', 'Learn how to make beautiful paper flowers with this easy step-by-step tutorial...', 1, 1, 1),
+        ('Build a Wooden Birdhouse', 'This project will guide you through building a charming wooden birdhouse...', 2, 2, 2);
+
+INSERT INTO media (media, media_order, project_id, tutorial_id) VALUES
+        ('https://www.12x12cardstock.shop/cdn/shop/articles/paper_flowers_by_rosy_46939f0d-f9bf-4d17-873b-5dfb34bc087b_1400x.jpg?v=1650583476', 1, NULL, 1),
+        ('https://www.wainfleetradingpost.com/cdn/shop/files/barnbirdhouse-h_1500x1500.png?v=1698630725', 1, NULL, 2)
