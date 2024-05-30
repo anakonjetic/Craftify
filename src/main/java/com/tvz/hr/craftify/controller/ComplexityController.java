@@ -8,6 +8,7 @@ import com.tvz.hr.craftify.service.dto.ComplexityPostPutDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/complexity")
 @AllArgsConstructor
-//@CrossOrigin(origins = {"http://test-craftify.vercel.app", "http://localhost:4200"})
+@CrossOrigin(origins = {"http://test-craftify.vercel.app", "http://localhost:4200"})
 public class ComplexityController {
     ComplexityService complexityService;
 
@@ -30,6 +31,7 @@ public class ComplexityController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ComplexityGetDTO> createComplexity(@RequestBody ComplexityPostPutDTO complexity){
         return new ResponseEntity<>(
                 complexityService.createComplexity(complexity),
@@ -38,6 +40,7 @@ public class ComplexityController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ComplexityGetDTO> updateComplexity(@RequestBody ComplexityPostPutDTO complexity, @PathVariable Long id){
         try {
             ComplexityGetDTO updatedComplexity = complexityService.updateComplexity(complexity, id);
@@ -48,6 +51,7 @@ public class ComplexityController {
         }
     }
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteComplexity(@PathVariable Long id){
         complexityService.deleteComplexity(id);
         return ResponseEntity.noContent().build();

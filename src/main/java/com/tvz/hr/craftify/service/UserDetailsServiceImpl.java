@@ -31,8 +31,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         String[] roles = user.isAdmin() ? new String[]{"USER", "ADMIN"} : new String[]{"USER"};
 
+        List<SimpleGrantedAuthority> authorities = user.isAdmin() ?
+                List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER")) :
+                List.of(new SimpleGrantedAuthority("ROLE_USER"));
+
         return User.withUsername(user.getUsername())
                 .password(user.getPassword())
+                .authorities(authorities)
                 .roles(roles)
                 .accountExpired(false)
                 .accountLocked(false)

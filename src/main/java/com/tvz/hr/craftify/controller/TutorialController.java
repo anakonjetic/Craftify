@@ -22,7 +22,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/tutorial")
 @AllArgsConstructor
-//@CrossOrigin(origins = {"http://test-craftify.vercel.app", "http://localhost:4200"})
+@CrossOrigin(origins = {"http://test-craftify.vercel.app", "http://localhost:4200"})
 public class TutorialController {
     private final TutorialService tutorialService;
 
@@ -37,7 +37,8 @@ public class TutorialController {
         Optional<TutorialDTO> tutorialOptional = tutorialService.getTutorialById(id);
         return tutorialOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
-    //@PreAuthorize("hasRole('ADMIN')")
+
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<TutorialDTO> createTutorial(@RequestBody TutorialPostDTO tutorial) {
         return new ResponseEntity<>(
@@ -46,6 +47,7 @@ public class TutorialController {
         );
     }
 
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @PutMapping
     public ResponseEntity<TutorialDTO> updateTutorial(@RequestBody Long id, @RequestBody TutorialPutDTO tutorial) {
         try{
@@ -56,7 +58,9 @@ public class TutorialController {
         }
     }
 
+
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteTutorial(@PathVariable Long id) {
         tutorialService.deleteTutorialById(id);
         return ResponseEntity.noContent().build();

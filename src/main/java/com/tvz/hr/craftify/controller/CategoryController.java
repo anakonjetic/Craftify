@@ -8,6 +8,7 @@ import com.tvz.hr.craftify.utilities.exceptions.ApplicationException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -17,11 +18,12 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/category")
 @AllArgsConstructor
-//@CrossOrigin(origins = {"http://test-craftify.vercel.app", "http://localhost:4200"})
+@CrossOrigin(origins = {"http://test-craftify.vercel.app", "http://localhost:4200"})
 public class CategoryController {
 
     private CategoryService categoryService;
     private ProjectService projectService;
+
     @GetMapping("/all")
     public List<CategoryDTO> getCategories() {
         return categoryService.getAllCategories();
@@ -35,6 +37,7 @@ public class CategoryController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<CategoryGetDTO> createCategory(@RequestBody CategoryPostPutDTO category) {
         return new ResponseEntity<>(
                 categoryService.createCategory(category), HttpStatus.CREATED
@@ -42,6 +45,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<CategoryGetDTO> updateCategory(@PathVariable long id, @RequestBody CategoryPostPutDTO category) {
         try{
             CategoryGetDTO updateCategory = categoryService.updateCategory(category, id);
@@ -52,12 +56,14 @@ public class CategoryController {
         }
     }
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteCategory(@PathVariable long id) {
         categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/preference")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> addUserPreference(@RequestBody List<UserPreferencesDTO> userPreferencesDTO) {
         userPreferencesDTO.forEach(
                 u -> categoryService.addUserPreference(u.getCategoryId(), u.getUserId()));
@@ -65,12 +71,14 @@ public class CategoryController {
     }
 
     @DeleteMapping("/preference")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> removeUserPreference(@RequestBody UserPreferencesDTO userPreferencesDTO) {
         categoryService.removeUserPreference(userPreferencesDTO.getCategoryId(), userPreferencesDTO.getUserId());
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/preference/{userId}")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<ProjectGetDTO>> getPreferredProjects(@PathVariable long userId) {
         try {
             Optional<List<CategoryDTO>> categoryDTOS = categoryService.getUserPreferences(userId);
