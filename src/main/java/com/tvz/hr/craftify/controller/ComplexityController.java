@@ -16,7 +16,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/complexity")
 @AllArgsConstructor
-@CrossOrigin(origins = {"http://test-craftify.vercel.app", "http://localhost:4200"})
+//@CrossOrigin(origins = {"http://test-craftify.vercel.app", "http://localhost:4200"})
 public class ComplexityController {
     ComplexityService complexityService;
 

@@ -13,7 +13,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/project")
 @AllArgsConstructor
-@CrossOrigin(origins = {"http://test-craftify.vercel.app", "http://localhost:4200"})
+//@CrossOrigin(origins = {"http://test-craftify.vercel.app", "http://localhost:4200"})
 public class ProjectController {
 
         private final ProjectService projectService;

@@ -15,7 +15,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/media")
 @AllArgsConstructor
-@CrossOrigin(origins = {"http://test-craftify.vercel.app", "http://localhost:4200"})
+//@CrossOrigin(origins = {"http://test-craftify.vercel.app", "http://localhost:4200"})
 public class MediaController {
     public MediaService mediaService;
 
