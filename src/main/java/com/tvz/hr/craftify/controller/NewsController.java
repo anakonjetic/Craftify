@@ -7,6 +7,7 @@ import com.tvz.hr.craftify.service.dto.NewsPostPutDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,18 +34,21 @@ public class NewsController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<NewsPostPutDTO> createNews(@RequestBody NewsDTO newsDTO) {
         NewsPostPutDTO createdNews = newsService.createNews(newsDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdNews);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<NewsPostPutDTO> updateNews(@PathVariable Long id, @RequestBody NewsDTO newsDTO) {
         NewsPostPutDTO updatedNews = newsService.updateNews(id, newsDTO);
         return ResponseEntity.ok(updatedNews);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteNews(@PathVariable Long id) {
         newsService.deleteNews(id);
         return ResponseEntity.noContent().build();

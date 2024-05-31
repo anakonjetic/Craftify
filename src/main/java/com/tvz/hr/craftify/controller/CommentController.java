@@ -7,6 +7,7 @@ import com.tvz.hr.craftify.service.dto.CommentPostPutDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -36,6 +37,7 @@ public class CommentController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<CommentDTO> createComment(@RequestBody CommentPostPutDTO comment) {
         return new ResponseEntity<>(
                 commentService.createComment(comment),
@@ -45,6 +47,7 @@ public class CommentController {
 
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<CommentDTO> updateComment(@PathVariable long id, @RequestBody CommentPostPutDTO comment) {
         try{
             return new ResponseEntity<>(
@@ -57,6 +60,7 @@ public class CommentController {
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteComment(@PathVariable long id) {
         commentService.deleteComment(id);
         return ResponseEntity.noContent().build();

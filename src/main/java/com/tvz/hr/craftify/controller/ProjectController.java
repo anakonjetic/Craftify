@@ -5,6 +5,7 @@ import com.tvz.hr.craftify.service.ProjectService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public class ProjectController {
         }
 
         @GetMapping("/preference/{id}")
+        @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
         public ResponseEntity<List<ProjectGetDTO>> getProjectsByUserPreferences(@PathVariable long id) {
             return projectService.getProjectsByUserPreference(id)
                     .map(users -> ResponseEntity.ok().body(users))
@@ -44,12 +46,14 @@ public class ProjectController {
         }
 
         @PostMapping
+        @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
         public ResponseEntity<ProjectPostDTO> createProject(@RequestBody ProjectPostDTO project) {
             projectService.createProject(project);
             return new ResponseEntity<>(project, HttpStatus.CREATED);
         }
 
         @PutMapping("/{id}")
+        @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
         public ResponseEntity<ProjectPutDTO> updateProject(@PathVariable Long id, @RequestBody ProjectPutDTO project) {
             try {
                 projectService.updateProject(project, id);
@@ -60,6 +64,7 @@ public class ProjectController {
         }
 
         @DeleteMapping("/{id}")
+        @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
         public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
             projectService.deleteProject(id);
             return ResponseEntity.noContent().build();

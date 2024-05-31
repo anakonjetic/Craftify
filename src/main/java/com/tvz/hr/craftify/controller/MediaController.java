@@ -7,6 +7,7 @@ import com.tvz.hr.craftify.service.dto.MediaPutPostDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class MediaController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<MediaGetDTO> addMedia(@RequestBody MediaPutPostDTO media){
         return new ResponseEntity<>(
                 mediaService.addMedia(media),
@@ -37,6 +39,7 @@ public class MediaController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<MediaGetDTO> updateMedia(@RequestBody MediaPutPostDTO media, @PathVariable Long id){
         try{
             MediaGetDTO updatedMedia = mediaService.updateMedia(media, id);
@@ -47,6 +50,7 @@ public class MediaController {
         }
     }
     @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteMedia(@PathVariable Long id){
         mediaService.deleteMedia(id);
         return ResponseEntity.noContent().build();
