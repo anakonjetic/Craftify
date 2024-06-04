@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.util.List;
 
+import static jakarta.persistence.CascadeType.ALL;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -34,7 +36,7 @@ public class Project {
     private Complexity complexity;
 
     //Images/Videos
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project",cascade=ALL)
     private List<Media> mediaList;
 
     @ManyToMany(targetEntity = Users.class, mappedBy = "likedProjects")
@@ -46,7 +48,7 @@ public class Project {
     @ManyToMany(targetEntity = Users.class, mappedBy = "followingProjects")
     private List<Users> projectFollowers;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", cascade=ALL)
     private List<Comment> comments;
 
     @Override

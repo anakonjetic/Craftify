@@ -58,6 +58,19 @@ public class AuthorizationController {
                 }).orElseThrow(() ->new RuntimeException("Refresh Token is not in Database!"));
     }
 
+    // Endpoint for logging out a user by user ID
+    @PostMapping("/logout/{id}")
+    public void logout(@PathVariable Long id){
+        refreshTokenService.removeToken(id);
+    }
+
+    // Endpoint for logging out a user by access token
+    @PostMapping("/logout")
+    public void logout(){
+        refreshTokenService.removeToken();
+    }
+
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor

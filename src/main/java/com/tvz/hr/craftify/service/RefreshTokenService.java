@@ -1,6 +1,7 @@
 package com.tvz.hr.craftify.service;
 
 import com.tvz.hr.craftify.model.RefreshToken;
+import com.tvz.hr.craftify.model.Users;
 import com.tvz.hr.craftify.repository.RefreshTokenRepository;
 import com.tvz.hr.craftify.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +17,14 @@ public class RefreshTokenService {
     RefreshTokenRepository refreshTokenRepository;
     @Autowired
     UsersRepository usersRepository;
+    @Autowired
+    UsersService usersService;
 
     public RefreshToken createRefreshToken(String username){
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(usersRepository.findByUsername(username))
                 .token(UUID.randomUUID().toString())
-                .expiryDate(Instant.now().plusSeconds(600)) //10 minutes
+                .expiryDate(Instant.now().plusSeconds(30*60)) //30 minutes
                 .build();
         return refreshTokenRepository.save(refreshToken);
     }
@@ -36,5 +39,16 @@ public class RefreshTokenService {
             throw new RuntimeException(token.getToken() + " Refresh token is expired. Please log in again.");
         }
         return token;
+    }
+
+    public void removeToken(Long id){
+        Optional<RefreshToken> token = refreshTokenRepository.findByUser_id(id);
+        token.ifPresent(refreshToken -> refreshTokenRepository.delete(refreshToken));
+    }
+
+    public void removeToken(){
+        Users user = usersService.getLoggedInUser();
+        Optional<RefreshToken> token = refreshTokenRepository.findByUser_id(user.getId());
+        token.ifPresent(refreshToken -> refreshTokenRepository.delete(refreshToken));
     }
 }

@@ -66,8 +66,6 @@ public class SecurityConfiguration{
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/**","/auth/login").permitAll()
                         .anyRequest().authenticated())
-                .httpBasic(withDefaults())
-                .formLogin(withDefaults())
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
