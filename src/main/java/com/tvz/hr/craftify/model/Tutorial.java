@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+import static jakarta.persistence.CascadeType.ALL;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -35,7 +37,7 @@ public class Tutorial {
     private Complexity complexity;
 
     //Images/Videos
-    @OneToMany(mappedBy = "tutorial")
+    @OneToMany(mappedBy = "tutorial",cascade=ALL)
     private List<Media> mediaList;
 
 

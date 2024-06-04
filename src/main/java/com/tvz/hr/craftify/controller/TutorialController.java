@@ -48,8 +48,8 @@ public class TutorialController {
     }
 
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-    @PutMapping
-    public ResponseEntity<TutorialDTO> updateTutorial(@RequestBody Long id, @RequestBody TutorialPutDTO tutorial) {
+    @PutMapping("/{id}")
+    public ResponseEntity<TutorialDTO> updateTutorial(@PathVariable Long id, @RequestBody TutorialPutDTO tutorial) {
         try{
             TutorialDTO updatedTutorial = tutorialService.updateTutorial(tutorial, id);
             return new ResponseEntity<>(updatedTutorial, HttpStatus.OK);
@@ -64,13 +64,5 @@ public class TutorialController {
     public ResponseEntity<Void> deleteTutorial(@PathVariable Long id) {
         tutorialService.deleteTutorialById(id);
         return ResponseEntity.noContent().build();
-    }
-
-    public UserDetails getLoggedInUserDetails(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails){
-            return (UserDetails) authentication.getPrincipal();
-        }
-        return null;
     }
 }

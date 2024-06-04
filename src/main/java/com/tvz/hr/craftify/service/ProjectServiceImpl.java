@@ -112,6 +112,7 @@ public class ProjectServiceImpl implements ProjectService{
         Optional<Project> optionalProject = projectRepository.findById(id);
         if (optionalProject.isPresent()) {
             Project projectToUpdate = optionalProject.get();
+            usersService.checkAuthorization(projectToUpdate.getUser().getId());
             projectToUpdate.setTitle(projectPutDTO.getTitle());
             projectToUpdate.setDescription(projectPutDTO.getDescription());
             projectToUpdate.setContent(projectPutDTO.getContent());

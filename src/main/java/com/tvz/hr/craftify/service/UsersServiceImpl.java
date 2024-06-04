@@ -7,16 +7,18 @@ import com.tvz.hr.craftify.repository.ProjectRepository;
 import com.tvz.hr.craftify.repository.UsersRepository;
 import com.tvz.hr.craftify.service.dto.UsersGetDTO;
 import com.tvz.hr.craftify.service.dto.*;
-import com.tvz.hr.craftify.utilities.exceptions.ApplicationException;
-import com.tvz.hr.craftify.utilities.exceptions.DatabaseOperationException;
 import com.tvz.hr.craftify.utilities.MapToDTOHelper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import org.springframework.dao.DataAccessException;
+import org.hibernate.annotations.Comments;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -28,8 +30,10 @@ import static com.tvz.hr.craftify.utilities.MapToDTOHelper.mapToUsersGetDTO;
 public class UsersServiceImpl implements UsersService{
     private CommentRepository commentRepository;
     private UsersRepository usersRepository;
-    private ProjectRepository projectRepository;;
+    private UserDetailsServiceImpl userDetailsService;
     private CategoryRepository categoryRepository;
+    private ProjectRepository projectRepository;
+    //private ProjectService projectService;
 
     @Override
     public List<UsersGetDTO> getAllUsers() {
@@ -44,19 +48,19 @@ public class UsersServiceImpl implements UsersService{
         return users.map(MapToDTOHelper::mapToUsersGetDTO);
     };
     @Override
-    public UsersGetDTO authenticateUser(LoginDTO login) {
-        Optional<Users> optionalUser = usersRepository.getFirstByUsernameOrEmailIgnoreCase(login.getUsernameOrEmail(), login.getUsernameOrEmail());
+    public Users getLoggedInUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails user){
+            return usersRepository.findByUsername(user.getUsername());
+        }
+        return null;
+    }
 
-        if (optionalUser.isPresent()) {
-            Users user = optionalUser.get();
-
-            if (isPasswordMatching(login.getPassword(), user.getPassword())) {
-                return mapToUsersGetDTO(user);
-            } else {
-                throw new IllegalArgumentException("Invalid password for user " + login.getUsernameOrEmail());
-            }
-        } else {
-            throw new IllegalArgumentException("User not found: " + login.getUsernameOrEmail());
+    @Override
+    public void checkAuthorization(Long userId) {
+        Users activeUser = getLoggedInUser();
+        if (!(Objects.equals(activeUser.getId(), userId) || activeUser.isAdmin())) {
+            throw new RuntimeException("You are not authorized to perform this action.");
         }
     }
 
@@ -74,12 +78,12 @@ public class UsersServiceImpl implements UsersService{
         }
 
         String hashedPassword = hashPassword(user.getPassword());
-
         Users newUser = new Users(user.getName(), user.getUsername(),user.getEmail(),hashedPassword, user.isAdmin(), user.isPrivate(), categories);
         return mapToUsersGetDTO(usersRepository.save(newUser));
     };
     @Override
     public UsersGetDTO updateUser(UsersPutPostDTO user, Long id) {
+        checkAuthorization(id);
         Optional<Users> optionalUser = usersRepository.findById(id);
         if (optionalUser.isEmpty()) {
             return null;
@@ -114,6 +118,7 @@ public class UsersServiceImpl implements UsersService{
 
     @Override
     public UsersGetDTO changeUserPassword(String newPassword, Long id){
+        checkAuthorization(id);
         Users existingUser = usersRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
 
@@ -127,6 +132,7 @@ public class UsersServiceImpl implements UsersService{
 
     @Override
     public UsersGetDTO changeUserInfoVisibility(boolean isPrivate, Long id){
+        checkAuthorization(id);
         Users existingUser = usersRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
 
@@ -170,6 +176,7 @@ public class UsersServiceImpl implements UsersService{
     }
     @Override
     public UsersGetDTO setUserPreference(List<Long> categoryIds, Long userId){
+        checkAuthorization(userId);
         Users existingUser = usersRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
 
@@ -178,9 +185,7 @@ public class UsersServiceImpl implements UsersService{
         if(!categoryIds.isEmpty()) {
             categories = categoryIds.stream()
                     .map(categoryId -> categoryRepository.findById(categoryId))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
+                    .filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
         }
         existingUser.setUserPreferences(categories);
         return mapToUsersGetDTO(usersRepository.save(existingUser));

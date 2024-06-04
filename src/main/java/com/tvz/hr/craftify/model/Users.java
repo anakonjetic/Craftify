@@ -6,6 +6,8 @@ import lombok.*;
 
 import java.util.List;
 
+import static jakarta.persistence.CascadeType.ALL;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -101,10 +103,13 @@ public class Users {
     private List<Project> followingProjects;
 
     // Projects created by the current user.
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",cascade=ALL)
     private List<Project> projects;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",cascade=ALL)
+    private List<Tutorial> tutorials;
+
+    @OneToMany(mappedBy = "user",cascade=ALL)
     private List<Comment> comments;
 
     @Override

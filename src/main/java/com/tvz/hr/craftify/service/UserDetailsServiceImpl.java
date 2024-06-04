@@ -26,8 +26,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-        Optional<Users> optionalUser = usersRepository.getFirstByUsernameOrEmailIgnoreCase(usernameOrEmail, usernameOrEmail);
-        Users user = optionalUser.get();
+        Users user = usersRepository.getFirstByUsernameOrEmailIgnoreCase(usernameOrEmail, usernameOrEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("Unknown user " + usernameOrEmail));
 
         String[] roles = user.isAdmin() ? new String[]{"USER", "ADMIN"} : new String[]{"USER"};
 
