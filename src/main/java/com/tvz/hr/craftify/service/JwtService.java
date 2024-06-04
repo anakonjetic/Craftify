@@ -1,8 +1,11 @@
 package com.tvz.hr.craftify.service;
 
+
 import com.tvz.hr.craftify.model.Users;
+import com.tvz.hr.craftify.utilities.exceptions.TokenExpiredException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -23,12 +26,20 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
     private Claims extractAllClaims(String token) {
-        return Jwts
-                .parserBuilder()
-                .setSigningKey(getSignKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts
+                    .parserBuilder()
+                    .setSigningKey(getSignKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (SecurityException | MalformedJwtException e) {
+            throw new MalformedJwtException("Invalid JWT token", e);
+        } catch (TokenExpiredException e) {
+            throw new RuntimeException("JWT token is expired", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error extracting claims from JWT", e);
+        }
     }
 
     public String extractUsername(String token) { return extractClaim(token, Claims::getSubject); }
@@ -53,6 +64,9 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
     public Boolean validateToken(String token, UserDetails user) {
+        if (isTokenExpired(token)) {
+            throw new TokenExpiredException("JWT token is expired");
+        }
         final String username = extractUsername(token);
         return (username.equals(user.getUsername()) && !isTokenExpired(token));
     }

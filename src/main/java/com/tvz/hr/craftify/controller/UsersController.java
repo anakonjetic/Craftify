@@ -1,21 +1,17 @@
 package com.tvz.hr.craftify.controller;
 
-import com.tvz.hr.craftify.model.Users;
 import com.tvz.hr.craftify.service.LikesAndFavoritesService;
 import com.tvz.hr.craftify.service.SubscriptionService;
 import com.tvz.hr.craftify.service.dto.*;
 import com.tvz.hr.craftify.service.UsersService;
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 @RestController

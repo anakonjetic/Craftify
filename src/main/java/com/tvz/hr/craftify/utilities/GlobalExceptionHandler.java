@@ -1,9 +1,7 @@
 package com.tvz.hr.craftify.utilities;
 
-import com.tvz.hr.craftify.utilities.exceptions.ApplicationException;
-import com.tvz.hr.craftify.utilities.exceptions.DatabaseOperationException;
-import com.tvz.hr.craftify.utilities.exceptions.EntityNotFoundException;
-import com.tvz.hr.craftify.utilities.exceptions.ErrorResponse;
+import com.tvz.hr.craftify.utilities.exceptions.*;
+import io.jsonwebtoken.MalformedJwtException;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +41,17 @@ public class GlobalExceptionHandler{
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(MalformedJwtException.class)
+    public ResponseEntity<Object> handleMalformedJwtException(MalformedJwtException ex, WebRequest request) {
+        // Customize the response as needed
+        return new ResponseEntity<>("Invalid JWT token", HttpStatus.BAD_REQUEST);
+    }
 
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<ErrorResponse> handleTokenExpiredException(TokenExpiredException ex, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED.value());
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
 
 }
 

@@ -1,0 +1,7 @@
+package com.tvz.hr.craftify.utilities.exceptions;
+
+public class TokenExpiredException extends RuntimeException {
+    public TokenExpiredException(String message) {
+        super(message);
+    }
+}
