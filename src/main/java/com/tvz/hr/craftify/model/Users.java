@@ -103,7 +103,7 @@ public class Users {
     private List<Project> followingProjects;
 
     // Projects created by the current user.
-    @OneToMany(mappedBy = "user",cascade=ALL)
+    @OneToMany(mappedBy = "user")
     private List<Project> projects;
 
     @OneToMany(mappedBy = "user",cascade=ALL)

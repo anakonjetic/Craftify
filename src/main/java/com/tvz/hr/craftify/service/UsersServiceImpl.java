@@ -10,7 +10,6 @@ import com.tvz.hr.craftify.service.dto.*;
 import com.tvz.hr.craftify.utilities.MapToDTOHelper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import org.hibernate.annotations.Comments;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,7 +32,6 @@ public class UsersServiceImpl implements UsersService{
     private UserDetailsServiceImpl userDetailsService;
     private CategoryRepository categoryRepository;
     private ProjectRepository projectRepository;
-    //private ProjectService projectService;
 
     @Override
     public List<UsersGetDTO> getAllUsers() {
@@ -70,8 +68,7 @@ public class UsersServiceImpl implements UsersService{
         List<Category> categories = categoryIds.stream()
                 .map(categoryId -> categoryRepository.findById(categoryId))
                 .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+                .map(Optional::get).collect(Collectors.toList());
 
         if (!isPasswordStrong(user.getPassword())) {
             throw new IllegalArgumentException("Password is not strong enough");
@@ -96,8 +93,7 @@ public class UsersServiceImpl implements UsersService{
             categories = categoryIds.stream()
                     .map(categoryId -> categoryRepository.findById(categoryId))
                     .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
+                    .map(Optional::get).collect(Collectors.toList());
         }
         if(!user.getPassword().isEmpty()) {
             if (!isPasswordStrong(user.getPassword())) {
@@ -122,9 +118,8 @@ public class UsersServiceImpl implements UsersService{
         Users existingUser = usersRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
 
-        if (!isPasswordStrong(newPassword)) {
+        if (!isPasswordStrong(newPassword))
             throw new IllegalArgumentException("Password "+ newPassword + " is not strong enough");
-        }
         String newHashedPassword = hashPassword(newPassword);
         existingUser.setPassword(newHashedPassword);
         return mapToUsersGetDTO(usersRepository.save(existingUser));
@@ -135,44 +130,62 @@ public class UsersServiceImpl implements UsersService{
         checkAuthorization(id);
         Users existingUser = usersRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
-
         existingUser.setPrivate(isPrivate);
         return mapToUsersGetDTO(usersRepository.save(existingUser));
     }
 
     @Override
-    public void deleteUser(Long id) { usersRepository.deleteById(id); }
+    public void deleteUser(Long id) {
+        Users existingUser = usersRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
+
+        for (Users user:existingUser.getFollowers()){
+            user.getFollowedUsers().remove(existingUser);
+            usersRepository.save(user);
+        }
+        for (Project project : existingUser.getLikedProjects()){
+            project.getUserLikes().remove(existingUser);
+            projectRepository.save(project);
+        }
+        for (Project project : existingUser.getFavoriteProjects()){
+            project.getFavoriteProjects().remove(existingUser);
+            projectRepository.save(project);
+        }
+        for (Project project : existingUser.getFollowingProjects()){
+            project.getProjectFollowers().remove(existingUser);
+            projectRepository.save(project);
+        }
+
+        List<Project> projects = existingUser.getProjects();
+        for (Project project : projects){
+            List<Users> usersToUpdate = new ArrayList<>();
+            usersToUpdate.addAll(project.getProjectFollowers());
+            usersToUpdate.addAll(project.getFavoriteProjects());
+            usersToUpdate.addAll(project.getUserLikes());
+
+            for (Users user : usersToUpdate) {
+                user.getFollowingProjects().remove(project);
+                user.getFavoriteProjects().remove(project);
+                user.getLikedProjects().remove(project);
+                usersRepository.save(user);
+            }
+            projectRepository.delete(project);
+        }
+        usersRepository.deleteById(id);
+    }
 
     @Override
     public Optional<List<CommentDTO>> getUserComments(Long id) {
         Optional<List<Comment>> comments = commentRepository.findByUserId(id);
         return comments.map(commentList -> commentList.stream()
-                .map(MapToDTOHelper::mapToCommentDTO)
-                .collect(Collectors.toList()));
-    }
-
-    @Override
-    public Optional<List<ProjectDTO>> getFavoriteProjects(Long userId) {
-        Optional<Users> userOptional = usersRepository.findById(userId);
-        return userOptional.map(user -> user.getFavoriteProjects().stream()
-                .map(MapToDTOHelper::mapToProjectDTO)
-                .collect(Collectors.toList()));
-    }
-
-    @Override
-    public Optional<List<ProjectDTO>> getLikedProjects(Long userId) {
-        Optional<Users> userOptional = usersRepository.findById(userId);
-        return userOptional.map(user -> user.getLikedProjects().stream()
-                .map(MapToDTOHelper::mapToProjectDTO)
-                .collect(Collectors.toList()));
+                .map(MapToDTOHelper::mapToCommentDTO).collect(Collectors.toList()));
     }
 
     @Override
     public Optional<List<ProjectDTO>> getUserProjects(Long userId) {
         Optional<Users> userOptional = usersRepository.findById(userId);
         return userOptional.map(user -> user.getProjects().stream()
-                .map(MapToDTOHelper::mapToProjectDTO)
-                .collect(Collectors.toList()));
+                .map(MapToDTOHelper::mapToProjectDTO).collect(Collectors.toList()));
     }
     @Override
     public UsersGetDTO setUserPreference(List<Long> categoryIds, Long userId){

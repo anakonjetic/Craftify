@@ -122,14 +122,14 @@ public class UsersController {
     @GetMapping("/favorite/{id}")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<ProjectDTO>> getFavoriteProjects(@PathVariable long id) {
-        Optional<List<ProjectDTO>> favoriteProjectsOptional = usersService.getFavoriteProjects(id);
+        Optional<List<ProjectDTO>> favoriteProjectsOptional = likesAndFavoritesService.getFavoriteProjects(id);
         return favoriteProjectsOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @GetMapping("/liked/{id}")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<ProjectDTO>> getLikedProjects(@PathVariable long id) {
-        Optional<List<ProjectDTO>> likedProjectsOptional = usersService.getLikedProjects(id);
+        Optional<List<ProjectDTO>> likedProjectsOptional = likesAndFavoritesService.getLikedProjects(id);
         return likedProjectsOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
 

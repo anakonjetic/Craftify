@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
+import static jakarta.persistence.CascadeType.ALL;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -19,7 +21,7 @@ public class RefreshToken {
     private int id;
     private String token;
     private Instant expiryDate;
-    @OneToOne
+    @OneToOne(cascade = ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private Users user;
 }

@@ -2,6 +2,7 @@ package com.tvz.hr.craftify.service;
 
 import com.tvz.hr.craftify.model.*;
 import com.tvz.hr.craftify.repository.ProjectRepository;
+import com.tvz.hr.craftify.repository.UsersRepository;
 import com.tvz.hr.craftify.service.dto.UsersGetDTO;
 import com.tvz.hr.craftify.service.dto.*;
 import com.tvz.hr.craftify.utilities.MapToDTOHelper;
@@ -23,6 +24,7 @@ public class ProjectServiceImpl implements ProjectService{
     private ProjectRepository projectRepository;
     private CategoryService categoryService;
     private UsersService usersService;
+    private UsersRepository usersRepository;
     private ComplexityService complexityService;
     private MediaService mediaService;
 
@@ -144,7 +146,22 @@ public class ProjectServiceImpl implements ProjectService{
 
     @Override
     public void deleteProject(Long id) {
-        projectRepository.deleteById(id);
+        Optional<Project> optionalProject = projectRepository.findById(id);
+        if (optionalProject.isPresent()) {
+            Project projectToDelete = optionalProject.get();
+            List<Users> usersToUpdate = new ArrayList<>();
+            usersToUpdate.addAll(projectToDelete.getProjectFollowers());
+            usersToUpdate.addAll(projectToDelete.getFavoriteProjects());
+            usersToUpdate.addAll(projectToDelete.getUserLikes());
+
+            for (Users user : usersToUpdate) {
+                user.getFollowingProjects().remove(projectToDelete);
+                user.getFavoriteProjects().remove(projectToDelete);
+                user.getLikedProjects().remove(projectToDelete);
+                usersRepository.save(user);
+            }
+            projectRepository.delete(projectToDelete);
+        }
     }
 
     @Override
