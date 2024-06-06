@@ -8,6 +8,9 @@ import com.tvz.hr.craftify.service.RefreshTokenService;
 import com.tvz.hr.craftify.service.UserDetailsServiceImpl;
 import com.tvz.hr.craftify.service.UsersService;
 import com.tvz.hr.craftify.service.dto.LoginDTO;
+import com.tvz.hr.craftify.service.dto.UserDTO;
+import com.tvz.hr.craftify.service.dto.UsersGetDTO;
+import com.tvz.hr.craftify.utilities.MapToDTOHelper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,6 +32,7 @@ public class AuthorizationController {
     private JwtService jwtService;
     private RefreshTokenService refreshTokenService;
     private UserDetailsServiceImpl userDetailsService;
+    private UsersService usersService;
 
     @PostMapping("/login")
     public JwtResponseDTO authenticateAndGetToken(@RequestBody LoginDTO authRequestDTO){
@@ -36,9 +40,11 @@ public class AuthorizationController {
         if(authentication.isAuthenticated()){
             UserDetails user = userDetailsService.loadUserByUsername(authRequestDTO.getUsernameOrEmail());
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getUsername());
+
             return JwtResponseDTO.builder()
                     .accessToken(jwtService.generateToken(user.getUsername()))
                     .token(refreshToken.getToken())
+                    .user(usersService.getUserByUsername(user.getUsername()))
                     .build();
         } else {
             throw new UsernameNotFoundException("invalid user request..!!");
@@ -71,6 +77,8 @@ public class AuthorizationController {
     }
 
 
+
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -78,6 +86,7 @@ public class AuthorizationController {
     public static class JwtResponseDTO {
         private String accessToken;
         private String token;
+        private UserDTO user;
     }
 
     @Data
