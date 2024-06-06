@@ -16,10 +16,13 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
 @Component
 public class JwtService {
+    private ConcurrentMap<String, Boolean> revokedTokens = new ConcurrentHashMap<>();
     public static final String SECRET = "D1E2F3A4B5C6D7E8F9E0D1C2B3A4F5E6D7C8B9A0E1F2D3C4B5A6D7E8F9E0D1C2";
     private Key getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET);
@@ -69,5 +72,13 @@ public class JwtService {
         }
         final String username = extractUsername(token);
         return (username.equals(user.getUsername()) && !isTokenExpired(token));
+    }
+
+    public void revokeToken(String token) {
+        revokedTokens.put(token, true);
+    }
+
+    public boolean isTokenRevoked(String token) {
+        return revokedTokens.getOrDefault(token, false);
     }
 }

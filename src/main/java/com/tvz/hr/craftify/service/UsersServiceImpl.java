@@ -10,6 +10,7 @@ import com.tvz.hr.craftify.service.dto.*;
 import com.tvz.hr.craftify.utilities.MapToDTOHelper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -142,42 +143,24 @@ public class UsersServiceImpl implements UsersService{
 
     @Override
     public void deleteUser(Long id) {
-        Users existingUser = usersRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
-
-        for (Users user:existingUser.getFollowers()){
-            user.getFollowedUsers().remove(existingUser);
-            usersRepository.save(user);
+        try {
+            usersRepository.deleteProjectSubscribersByUserId(id);
+            usersRepository.deleteUserProjectLikesByProjectUserId(id);
+            usersRepository.deleteFavoritesByProjectUserId(id);
+            usersRepository.deleteProjectSubscribersByUserIdOnly(id);
+            usersRepository.deleteUserProjectLikesByUserId(id);
+            usersRepository.deleteUserSubscribersByUserId(id);
+            usersRepository.deleteChildCommentsByProjectUserId(id);
+            usersRepository.deleteCommentsByProjectUserId(id);
+            usersRepository.deleteMediaProjectsByUserId(id);
+            usersRepository.deleteProjectsByUserId(id);
+            usersRepository.deleteUserPreferencesByUserId(id);
+            usersRepository.deleteFavoritesByUserId(id);
+            usersRepository.deleteRefreshTokensByUserId(id);
+            usersRepository.deleteById(id);
+        } catch (DataAccessException e) {
+            throw new DataAccessException("Error occurred while deleting user with id: " + id, e) {};
         }
-        for (Project project : existingUser.getLikedProjects()){
-            project.getUserLikes().remove(existingUser);
-            projectRepository.save(project);
-        }
-        for (Project project : existingUser.getFavoriteProjects()){
-            project.getFavoriteProjects().remove(existingUser);
-            projectRepository.save(project);
-        }
-        for (Project project : existingUser.getFollowingProjects()){
-            project.getProjectFollowers().remove(existingUser);
-            projectRepository.save(project);
-        }
-
-        List<Project> projects = existingUser.getProjects();
-        for (Project project : projects){
-            List<Users> usersToUpdate = new ArrayList<>();
-            usersToUpdate.addAll(project.getProjectFollowers());
-            usersToUpdate.addAll(project.getFavoriteProjects());
-            usersToUpdate.addAll(project.getUserLikes());
-
-            for (Users user : usersToUpdate) {
-                user.getFollowingProjects().remove(project);
-                user.getFavoriteProjects().remove(project);
-                user.getLikedProjects().remove(project);
-                usersRepository.save(user);
-            }
-            projectRepository.delete(project);
-        }
-        usersRepository.deleteById(id);
     }
 
     @Override

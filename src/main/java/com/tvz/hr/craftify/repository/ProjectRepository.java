@@ -2,9 +2,11 @@ package com.tvz.hr.craftify.repository;
 import com.tvz.hr.craftify.model.Project;
 import com.tvz.hr.craftify.service.dto.ProjectGetDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,4 +27,19 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findByFilters(@Param("nameOrUser") String nameOrUser,
                                       @Param("categoryId") Long categoryId,
                                       @Param("complexityId") Long complexityId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM favorites WHERE project_id = :id", nativeQuery = true)
+    void deleteFavoritesByProjectId(@Param("id") Long id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM project_subscribers WHERE project_id = :id", nativeQuery = true)
+    void deleteProjectSubscribersByProjectId(@Param("id") Long id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM user_project_likes WHERE project_id = :id", nativeQuery = true)
+    void deleteUserProjectLikesByProjectId(@Param("id") Long id);
 }

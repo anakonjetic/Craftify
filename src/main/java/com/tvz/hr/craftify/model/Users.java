@@ -96,7 +96,7 @@ public class Users {
     //List of projects who this user follows
     @ManyToMany(targetEntity = Project.class)
     @JoinTable(
-            name = "projectSubscribers",
+            name = "project_subscribers",
             joinColumns = { @JoinColumn(name = "user_id") },
             inverseJoinColumns = { @JoinColumn(name = "project_id") }
     )

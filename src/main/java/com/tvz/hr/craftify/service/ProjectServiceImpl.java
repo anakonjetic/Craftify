@@ -146,21 +146,13 @@ public class ProjectServiceImpl implements ProjectService{
 
     @Override
     public void deleteProject(Long id) {
-        Optional<Project> optionalProject = projectRepository.findById(id);
-        if (optionalProject.isPresent()) {
-            Project projectToDelete = optionalProject.get();
-            List<Users> usersToUpdate = new ArrayList<>();
-            usersToUpdate.addAll(projectToDelete.getProjectFollowers());
-            usersToUpdate.addAll(projectToDelete.getFavoriteProjects());
-            usersToUpdate.addAll(projectToDelete.getUserLikes());
-
-            for (Users user : usersToUpdate) {
-                user.getFollowingProjects().remove(projectToDelete);
-                user.getFavoriteProjects().remove(projectToDelete);
-                user.getLikedProjects().remove(projectToDelete);
-                usersRepository.save(user);
-            }
-            projectRepository.delete(projectToDelete);
+        try {
+            projectRepository.deleteFavoritesByProjectId(id);
+            projectRepository.deleteProjectSubscribersByProjectId(id);
+            projectRepository.deleteUserProjectLikesByProjectId(id);
+            projectRepository.deleteById(id);
+        } catch (DataAccessException e) {
+            throw new DataAccessException("Error occurred while deleting project with id: " + id, e) {};
         }
     }
 
