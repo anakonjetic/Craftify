@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.tvz.hr.craftify.service.PasswordService.*;
+import static com.tvz.hr.craftify.utilities.MapToDTOHelper.mapToUserDTO;
 import static com.tvz.hr.craftify.utilities.MapToDTOHelper.mapToUsersGetDTO;
 
 @Service
@@ -52,6 +53,11 @@ public class UsersServiceImpl implements UsersService{
             return usersRepository.findByUsername(user.getUsername());
         }
         return null;
+    }
+
+    @Override
+    public UserDTO getUserByUsername(String username) {
+        return mapToUserDTO(usersRepository.findByUsername(username));
     }
 
     @Override

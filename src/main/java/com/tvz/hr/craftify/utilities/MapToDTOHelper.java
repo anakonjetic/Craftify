@@ -58,7 +58,8 @@ public class MapToDTOHelper {
         return new UserDTO(
                 user.getId(),
                 user.getName(),
-                user.getUsername()
+                user.getUsername(),
+                user.isAdmin()
         );
     }
 

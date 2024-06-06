@@ -12,6 +12,7 @@ public interface UsersService {
     Optional<UsersGetDTO> getUser(Long id);
     void checkAuthorization(Long userId);
     Users getLoggedInUser();
+    UserDTO getUserByUsername(String username);
     UsersGetDTO createUser(UsersPutPostDTO user);
     UsersGetDTO updateUser(UsersPutPostDTO user, Long id);
     UsersGetDTO changeUserPassword(String newPassword, Long id);

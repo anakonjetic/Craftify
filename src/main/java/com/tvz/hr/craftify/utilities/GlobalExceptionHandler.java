@@ -43,7 +43,6 @@ public class GlobalExceptionHandler{
 
     @ExceptionHandler(MalformedJwtException.class)
     public ResponseEntity<Object> handleMalformedJwtException(MalformedJwtException ex, WebRequest request) {
-        // Customize the response as needed
         return new ResponseEntity<>("Invalid JWT token", HttpStatus.BAD_REQUEST);
     }
 
