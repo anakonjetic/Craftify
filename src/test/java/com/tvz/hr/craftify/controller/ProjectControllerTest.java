@@ -54,7 +54,7 @@ public class ProjectControllerTest {
     public void getProject_ValidId_ReturnsProject() throws Exception {
         long projectId = 1L;
         ProjectDTO project = new ProjectDTO();
-        project.setId(projectId); // Set the ID to match the expected response
+        project.setId(projectId);
 
         when(projectService.getProjectById(projectId)).thenReturn(Optional.of(project));
 
