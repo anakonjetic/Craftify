@@ -9,8 +9,10 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
@@ -21,6 +23,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
 @Component
+@ComponentScan("com.tvz.hr.craftify.service")
 public class JwtService {
     private ConcurrentMap<String, Boolean> revokedTokens = new ConcurrentHashMap<>();
     public static final String SECRET = "D1E2F3A4B5C6D7E8F9E0D1C2B3A4F5E6D7C8B9A0E1F2D3C4B5A6D7E8F9E0D1C2";
