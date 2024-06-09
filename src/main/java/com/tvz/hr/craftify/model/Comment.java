@@ -1,5 +1,6 @@
 package com.tvz.hr.craftify.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,6 +9,9 @@ import lombok.NoArgsConstructor;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
+
+import static jakarta.persistence.CascadeType.ALL;
 
 @Data
 @AllArgsConstructor
@@ -34,6 +38,10 @@ public class Comment {
     @JoinColumn(name = "parent_comment_id")
     private Comment parentComment;
 
+    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Comment> childComments;
+
     private LocalDateTime commentTime;
 
     public Comment(Long id, String comment, Users user, Project project, LocalDateTime commentTime){
@@ -41,6 +49,14 @@ public class Comment {
         this.comment = comment;
         this.user = user;
         this.project = project;
+        this.commentTime = commentTime;
+    }
+    public Comment(Long id, String comment, Users user, Project project, Comment parentComment, LocalDateTime commentTime){
+        this.id = id;
+        this.comment = comment;
+        this.user = user;
+        this.project = project;
+        this.parentComment = parentComment;
         this.commentTime = commentTime;
     }
 }

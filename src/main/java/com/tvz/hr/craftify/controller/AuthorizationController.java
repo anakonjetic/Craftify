@@ -12,6 +12,7 @@ import com.tvz.hr.craftify.service.dto.UserDTO;
 import com.tvz.hr.craftify.service.dto.UsersGetDTO;
 import com.tvz.hr.craftify.utilities.MapToDTOHelper;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -72,8 +73,8 @@ public class AuthorizationController {
 
     // Endpoint for logging out a user by access token
     @PostMapping("/logout")
-    public void logout(){
-        refreshTokenService.removeToken();
+    public void logout(HttpServletRequest request){
+        refreshTokenService.removeToken(request);
     }
 
 

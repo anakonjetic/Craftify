@@ -2,6 +2,7 @@ package com.tvz.hr.craftify.service;
 
 import com.tvz.hr.craftify.model.*;
 import com.tvz.hr.craftify.repository.ProjectRepository;
+import com.tvz.hr.craftify.repository.UsersRepository;
 import com.tvz.hr.craftify.service.dto.UsersGetDTO;
 import com.tvz.hr.craftify.service.dto.*;
 import com.tvz.hr.craftify.utilities.MapToDTOHelper;
@@ -23,6 +24,7 @@ public class ProjectServiceImpl implements ProjectService{
     private ProjectRepository projectRepository;
     private CategoryService categoryService;
     private UsersService usersService;
+    private UsersRepository usersRepository;
     private ComplexityService complexityService;
     private MediaService mediaService;
 
@@ -144,7 +146,14 @@ public class ProjectServiceImpl implements ProjectService{
 
     @Override
     public void deleteProject(Long id) {
-        projectRepository.deleteById(id);
+        try {
+            projectRepository.deleteFavoritesByProjectId(id);
+            projectRepository.deleteProjectSubscribersByProjectId(id);
+            projectRepository.deleteUserProjectLikesByProjectId(id);
+            projectRepository.deleteById(id);
+        } catch (DataAccessException e) {
+            throw new DataAccessException("Error occurred while deleting project with id: " + id, e) {};
+        }
     }
 
     @Override

@@ -17,8 +17,6 @@ public interface UsersService {
     UsersGetDTO updateUser(UsersPutPostDTO user, Long id);
     UsersGetDTO changeUserPassword(String newPassword, Long id);
     Optional<List<CommentDTO>> getUserComments(Long id);
-    Optional<List<ProjectDTO>> getFavoriteProjects(Long userId);
-    Optional<List<ProjectDTO>> getLikedProjects(Long userId);
     Optional<List<ProjectDTO>> getUserProjects(Long userId);
     UsersGetDTO setUserPreference(List<Long> categories, Long userId);
     UsersGetDTO changeUserInfoVisibility(boolean isPrivate, Long id);

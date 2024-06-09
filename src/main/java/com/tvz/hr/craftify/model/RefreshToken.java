@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
+import static jakarta.persistence.CascadeType.ALL;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

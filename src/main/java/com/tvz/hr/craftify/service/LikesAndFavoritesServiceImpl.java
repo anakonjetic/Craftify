@@ -4,6 +4,8 @@ import com.tvz.hr.craftify.model.Project;
 import com.tvz.hr.craftify.model.Users;
 import com.tvz.hr.craftify.repository.ProjectRepository;
 import com.tvz.hr.craftify.repository.UsersRepository;
+import com.tvz.hr.craftify.service.dto.ProjectDTO;
+import com.tvz.hr.craftify.utilities.MapToDTOHelper;
 import com.tvz.hr.craftify.utilities.exceptions.ApplicationException;
 import com.tvz.hr.craftify.utilities.exceptions.DatabaseOperationException;
 import jakarta.persistence.EntityNotFoundException;
@@ -11,19 +13,24 @@ import lombok.AllArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 @AllArgsConstructor
 public class LikesAndFavoritesServiceImpl implements LikesAndFavoritesService {
     private UsersRepository usersRepository;
+    private UsersService usersService;
     private ProjectRepository projectRepository;
     @Override
     public void addToFavorites(Long userId, Long projectId) {
         try {
             Users user = usersRepository.findById(userId)
                     .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+            usersService.checkAuthorization(userId);
             Project project = projectRepository.findById(projectId)
                     .orElseThrow(() -> new EntityNotFoundException("Project not found with ID: " + projectId));
-
             if (!user.getFavoriteProjects().contains(project)) {
                 user.getFavoriteProjects().add(project);
                 usersRepository.save(user);
@@ -42,6 +49,7 @@ public class LikesAndFavoritesServiceImpl implements LikesAndFavoritesService {
         try {
             Users user = usersRepository.findById(userId)
                     .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+            usersService.checkAuthorization(userId);
             boolean removed = user.getFavoriteProjects().removeIf(project -> project.getId().equals(projectId));
 
             if (removed) {
@@ -60,6 +68,7 @@ public class LikesAndFavoritesServiceImpl implements LikesAndFavoritesService {
     public void userLikeAction(Long userId, Long projectId) {
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        usersService.checkAuthorization(userId);
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
         if (!project.getUserLikes().contains(user)) {
@@ -72,7 +81,24 @@ public class LikesAndFavoritesServiceImpl implements LikesAndFavoritesService {
     public void userDislikeAction(Long userId, Long projectId) {
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        usersService.checkAuthorization(userId);
         user.getLikedProjects().removeIf(pr -> pr.getId().equals(projectId));
         usersRepository.save(user);
+    }
+
+    @Override
+    public Optional<List<ProjectDTO>> getFavoriteProjects(Long userId) {
+        Optional<Users> userOptional = usersRepository.findById(userId);
+        return userOptional.map(user -> user.getFavoriteProjects().stream()
+                .map(MapToDTOHelper::mapToProjectDTO)
+                .collect(Collectors.toList()));
+    }
+
+    @Override
+    public Optional<List<ProjectDTO>> getLikedProjects(Long userId) {
+        Optional<Users> userOptional = usersRepository.findById(userId);
+        return userOptional.map(user -> user.getLikedProjects().stream()
+                .map(MapToDTOHelper::mapToProjectDTO)
+                .collect(Collectors.toList()));
     }
 }
