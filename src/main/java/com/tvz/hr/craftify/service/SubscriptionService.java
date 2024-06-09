@@ -3,10 +3,12 @@ package com.tvz.hr.craftify.service;
 import com.tvz.hr.craftify.service.dto.ProjectDTO;
 import com.tvz.hr.craftify.service.dto.SubscriptionDTO;
 import com.tvz.hr.craftify.service.dto.UserDTO;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public interface SubscriptionService {
     Optional<List<UserDTO>> getUserFollowers(Long userId);
     Optional<List<UserDTO>> getUserFollowings(Long userId);

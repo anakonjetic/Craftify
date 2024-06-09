@@ -67,6 +67,8 @@ public class SecurityConfiguration{
         http.authorizeHttpRequests(auth -> auth
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("users/login").permitAll()
+                        .requestMatchers("/auth/login", "/auth/refreshToken").permitAll()  // Allow unauthenticated access to these endpoints
+                        .requestMatchers("/auth/logout/**").authenticated()
                         .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated())
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))

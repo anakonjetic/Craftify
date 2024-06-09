@@ -51,12 +51,10 @@ public class TutorialControllerTest {
 
     @Test
     public void getAllTutorials_ReturnsTutorialList() throws Exception {
-        // Arrange
         TutorialDTO tutorial1 = new TutorialDTO(1L, "Title1", "Description1", null, null, null, null);
         TutorialDTO tutorial2 = new TutorialDTO(2L, "Title2", "Description2", null, null, null, null);
         when(tutorialService.getAllTutorials()).thenReturn(Arrays.asList(tutorial1, tutorial2));
 
-        // Act & Assert
         mockMvc.perform(get("/tutorial/all")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -68,11 +66,9 @@ public class TutorialControllerTest {
 
     @Test
     public void getTutorialById_TutorialExists_ReturnsTutorial() throws Exception {
-        // Arrange
         TutorialDTO tutorial = new TutorialDTO(1L, "Title1", "Description1", null, null, null, null);
         when(tutorialService.getTutorialById(1L)).thenReturn(Optional.of(tutorial));
 
-        // Act & Assert
         mockMvc.perform(get("/tutorial/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -82,10 +78,8 @@ public class TutorialControllerTest {
 
     @Test
     public void getTutorialById_TutorialDoesNotExist_ReturnsNotFound() throws Exception {
-        // Arrange
         when(tutorialService.getTutorialById(1L)).thenReturn(Optional.empty());
 
-        // Act & Assert
         mockMvc.perform(get("/tutorial/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -94,12 +88,10 @@ public class TutorialControllerTest {
     @Test
     @WithMockUser(roles = {"USER", "ADMIN"})
     public void createTutorial_ValidInput_ReturnsCreatedTutorial() throws Exception {
-        // Arrange
         TutorialPostDTO tutorialPostDTO = new TutorialPostDTO(null, "Title1", "Description1", 1L, 1L, 1L, null);
         TutorialDTO tutorialDTO = new TutorialDTO(1L, "Title1", "Description1", null, null, null, null);
         when(tutorialService.createTutorial(any(TutorialPostDTO.class))).thenReturn(tutorialDTO);
 
-        // Act & Assert
         mockMvc.perform(post("/tutorial")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\":\"Title1\",\"content\":\"Description1\",\"userId\":1,\"categoryId\":1,\"complexityId\":1}"))
@@ -111,12 +103,10 @@ public class TutorialControllerTest {
     @Test
     @WithMockUser(roles = {"USER", "ADMIN"})
     public void updateTutorial_ValidId_ReturnsUpdatedTutorial() throws Exception {
-        // Arrange
         TutorialPutDTO tutorialPutDTO = new TutorialPutDTO(1L, "UpdatedTitle", "UpdatedDescription", 1L, 1L);
         TutorialDTO tutorialDTO = new TutorialDTO(1L, "UpdatedTitle", "UpdatedDescription", null, null, null, null);
         when(tutorialService.updateTutorial(any(TutorialPutDTO.class), anyLong())).thenReturn(tutorialDTO);
 
-        // Act & Assert
         mockMvc.perform(put("/tutorial/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"id\":1,\"title\":\"UpdatedTitle\",\"content\":\"UpdatedDescription\",\"categoryId\":1,\"complexityId\":1}"))
@@ -128,11 +118,9 @@ public class TutorialControllerTest {
     @Test
     @WithMockUser(roles = {"USER", "ADMIN"})
     public void updateTutorial_InvalidId_ReturnsNotFound() throws Exception {
-        // Arrange
         TutorialPutDTO tutorialPutDTO = new TutorialPutDTO(1L, "UpdatedTitle", "UpdatedDescription", 1L, 1L);
         when(tutorialService.updateTutorial(any(TutorialPutDTO.class), anyLong())).thenThrow(new RuntimeException("Tutorial not found"));
 
-        // Act & Assert
         mockMvc.perform(put("/tutorial/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"id\":1,\"title\":\"UpdatedTitle\",\"content\":\"UpdatedDescription\",\"categoryId\":1,\"complexityId\":1}"))
@@ -142,11 +130,9 @@ public class TutorialControllerTest {
     @Test
     @WithMockUser(roles = {"USER", "ADMIN"})
     public void deleteTutorial_ValidId_ReturnsNoContent() throws Exception {
-        // Act & Assert
         mockMvc.perform(delete("/tutorial/1"))
                 .andExpect(status().isNoContent());
 
-        // Verify
         verify(tutorialService, times(1)).deleteTutorialById(1L);
     }
 }
