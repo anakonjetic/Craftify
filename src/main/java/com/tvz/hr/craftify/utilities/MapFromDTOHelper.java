@@ -60,9 +60,11 @@ public class MapFromDTOHelper {
         news.setId(newsDTO.getId());
         news.setTitle(newsDTO.getTitle());
         news.setContent(newsDTO.getContent());
-        Category category = new Category();
-        category.setId(newsDTO.getCategory().getId());
-        news.setCategory(category);
+        if (newsDTO.getCategory() != null) {
+            Category category = new Category();
+            category.setId(newsDTO.getCategory().getId());
+            news.setCategory(category);
+        }
         news.setImageUrl(newsDTO.getImageUrl());
         return news;
     }

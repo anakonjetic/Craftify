@@ -102,24 +102,35 @@ public class MapToDTOHelper {
     }
 
     public static NewsDTO mapToNewsDTO(News news) {
+        if (news.getCategory() == null) {
+            return null;
+        }
+
+        CategoryDTO categoryDTO = mapToCategoryDTO(news.getCategory());
+
         return new NewsDTO(
                 news.getId(),
                 news.getTitle(),
                 news.getContent(),
-                mapToCategoryDTO(news.getCategory()), // Assuming category is not null
+                categoryDTO,
                 news.getImageUrl()
         );
     }
 
     public static NewsPostPutDTO mapToNewsPostPutDTO(News news) {
+        Long categoryId = null;
+        if (news.getCategory() != null) {
+            categoryId = news.getCategory().getId();
+        }
         return new NewsPostPutDTO(
                 news.getId(),
                 news.getTitle(),
                 news.getContent(),
-                news.getCategory().getId(), // Assuming category is not null
+                categoryId,
                 news.getImageUrl()
         );
     }
+
 
     public static CategoryGetDTO mapToCategoryGetDTO(Category category){
         List<UserDTO> users = category.getUserPreferences() != null ?
