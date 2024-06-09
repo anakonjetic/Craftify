@@ -68,7 +68,10 @@ public class NewsServiceImpl implements NewsService{
                     .map(MapToDTOHelper::mapToNewsDTO)
                     .collect(Collectors.toList());
         } else {
-            return getAllNews();
+            List<News> allNews = newsRepository.findAll();
+            return allNews.stream()
+                    .map(MapToDTOHelper::mapToNewsDTO)
+                    .collect(Collectors.toList());
         }
     }
 }
