@@ -2,10 +2,12 @@ package com.tvz.hr.craftify.service;
 
 import com.tvz.hr.craftify.model.Project;
 import com.tvz.hr.craftify.service.dto.*;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public interface ProjectService {
     List<ProjectDTO> getAllProjects();
     Optional<ProjectDTO> getProjectById(Long id);

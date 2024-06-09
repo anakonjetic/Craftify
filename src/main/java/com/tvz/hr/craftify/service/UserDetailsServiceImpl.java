@@ -20,6 +20,7 @@ import java.util.Optional;
 import static com.tvz.hr.craftify.service.PasswordService.isPasswordMatching;
 import static com.tvz.hr.craftify.utilities.MapToDTOHelper.mapToUsersGetDTO;
 @Configuration
+@Service
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UsersRepository usersRepository;
