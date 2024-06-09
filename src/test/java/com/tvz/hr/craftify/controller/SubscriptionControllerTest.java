@@ -38,7 +38,6 @@ public class SubscriptionControllerTest {
     @MockBean
     private SubscriptionService subscriptionService;
 
-
     @MockBean
     private UsersService userService;
 
