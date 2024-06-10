@@ -18,7 +18,13 @@ public class Users {
     private Long id;
 
     @Column(nullable = false)
-    private String name, username, email, password;
+    private String name;
+    @Column(nullable = false, unique = true)
+    private String username;
+    @Column(nullable = false, unique = true)
+    private String email;
+    @Column(nullable = false)
+    private String password;
     @Column(columnDefinition = "BIT", nullable = false)
     @JoinColumn(name = "is_admin")
     private boolean isAdmin;

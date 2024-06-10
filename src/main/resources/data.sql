@@ -21,6 +21,8 @@ INSERT INTO users(name, username, email, password, is_admin, is_private) VALUES 
 INSERT INTO users(name, username, email, password, is_admin, is_private) VALUES ('Bob Marley','bob_marley', 'bob@example.com', '$2a$10$AI4p3eAvDflvwMAcKwvFfeT0rsv9CC5U8ewX1lk/KLuvoDe5GU5Ae', false, false);
 INSERT INTO users(name, username, email, password, is_admin, is_private) VALUES ('Emma Jones','emma_jones', 'emma@example.com', '$2a$10$AI4p3eAvDflvwMAcKwvFfeT0rsv9CC5U8ewX1lk/KLuvoDe5GU5Ae', false, true);
 
+
+
 INSERT INTO project (title, user_id, category_id, complexity_id, description, content)
 VALUES ('DIY Mason Jar Lanterns', 1, 1, 1, 'Create beautiful lanterns using mason jars',
         'To make DIY Mason Jar Lanterns, start by cleaning the mason jars thoroughly and letting them dry ' ||
@@ -37,6 +39,7 @@ VALUES ('DIY Fabric Wall Art', 2, 3, 2, 'Create unique fabric wall art to add pe
         'art using picture hooks or adhesive strips. Enjoy your personalized wall decor!');
 
 insert into favorites(user_id, project_id) VALUES(2,1);
+insert into favorites(user_id, project_id) VALUES(1,2);
 
 insert into user_preferences(user_id, category_id) VALUES(1,2);
 insert into user_preferences(user_id, category_id) VALUES(1,3);
@@ -96,4 +99,6 @@ INSERT INTO tutorial (title, content, user_id, category_id, complexity_id) VALUE
 
 INSERT INTO media (media, media_order, project_id, tutorial_id) VALUES
         ('https://www.12x12cardstock.shop/cdn/shop/articles/paper_flowers_by_rosy_46939f0d-f9bf-4d17-873b-5dfb34bc087b_1400x.jpg?v=1650583476', 1, NULL, 1),
-        ('https://www.wainfleetradingpost.com/cdn/shop/files/barnbirdhouse-h_1500x1500.png?v=1698630725', 1, NULL, 2)
+        ('https://www.wainfleetradingpost.com/cdn/shop/files/barnbirdhouse-h_1500x1500.png?v=1698630725', 1, NULL, 2),
+        ('https://www.valopark.net/wp-content/uploads/2017/04/Blog6.jpg',1,1,NULL),
+        ('https://diyprojects.com/wp-content/uploads/2015/03/wall-art.png',1,2,NULL)
