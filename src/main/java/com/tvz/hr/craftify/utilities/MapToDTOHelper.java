@@ -72,6 +72,10 @@ public class MapToDTOHelper {
     }
 
     public static MediaDTO mapToMediaDTO(Media media) {
+        if (media == null) {
+            return null;
+        }
+
         return new MediaDTO(
                 media.getId(),
                 media.getMedia(),
