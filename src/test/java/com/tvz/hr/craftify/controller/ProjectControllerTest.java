@@ -1,5 +1,6 @@
 package com.tvz.hr.craftify.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tvz.hr.craftify.service.JwtService;
 import com.tvz.hr.craftify.service.ProjectService;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
@@ -62,6 +64,38 @@ public class ProjectControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(projectId));
+    }
+
+    @Test
+    @WithMockUser(roles = {"USER"})
+    void getProjects_ReturnsOk() throws Exception {
+        List<ProjectDTO> projectDTOList = new ArrayList<>();
+
+        when(projectService.getAllProjects()).thenReturn(projectDTOList);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/project/all"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray());
+
+        verify(projectService, times(1)).getAllProjects();
+    }
+
+    @Test
+    @WithMockUser(roles = {"USER"})
+    void updateProject_ValidInput_ReturnsOk() throws Exception {
+        ProjectPutDTO projectPutDTO = new ProjectPutDTO();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/project/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(projectPutDTO)))
+                .andExpect(status().isOk());
+
+        verify(projectService, times(1)).updateProject(any(ProjectPutDTO.class), eq(1L));
+    }
+
+    private String asJsonString(Object obj) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(obj);
     }
 
     @Test
