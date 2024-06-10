@@ -3,10 +3,12 @@ package com.tvz.hr.craftify.service;
 import com.tvz.hr.craftify.model.Users;
 import com.tvz.hr.craftify.service.dto.*;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public interface UsersService {
     List<UsersGetDTO> getAllUsers();
     Optional<UsersGetDTO> getUser(Long id);
