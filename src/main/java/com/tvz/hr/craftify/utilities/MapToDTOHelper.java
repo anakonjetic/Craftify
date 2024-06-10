@@ -40,6 +40,7 @@ public class MapToDTOHelper {
     }
 
     public static TutorialDTO mapToTutorialDTO(Tutorial tutorial){
+        if (tutorial == null) return null;
         List<MediaDTO> mediaDTO = tutorial.getMediaList() != null ?
                 tutorial.getMediaList().stream().map(MapToDTOHelper::mapToMediaDTO).collect(Collectors.toList()) : null;
 
@@ -55,6 +56,9 @@ public class MapToDTOHelper {
     }
 
     public static UserDTO mapToUserDTO(Users user) {
+        if (user == null) {
+            return null; // or handle the null case accordingly
+        }
         return new UserDTO(
                 user.getId(),
                 user.getName(),
@@ -95,6 +99,9 @@ public class MapToDTOHelper {
     }
 
     public static CategoryDTO mapToCategoryDTO(Category category){
+        if (category == null) {
+            return null;
+        }
         return new CategoryDTO(
                 category.getId(),
                 category.getName()
@@ -154,6 +161,9 @@ public class MapToDTOHelper {
         );
     }
     public static ComplexityDTO mapToComplexityDTO(Complexity complexity){
+        if (complexity == null) {
+            return null;
+        }
         return new ComplexityDTO(
                 complexity.getId(),
                 complexity.getName()

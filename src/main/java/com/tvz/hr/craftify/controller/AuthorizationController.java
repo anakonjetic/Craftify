@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -65,10 +66,17 @@ public class AuthorizationController {
                 }).orElseThrow(() ->new RuntimeException("Refresh Token is not in Database!"));
     }
 
-    // Endpoint for logging out a user by user ID
-    @PostMapping("/logout/{id}")
-    public void logout(@PathVariable Long id){
-        refreshTokenService.removeToken(id);
+    @PostMapping("/logout/{userId}")
+    public ResponseEntity<?> logout(@PathVariable Long userId) {
+        System.out.println("Logout called with userId: " + userId); // Add logging
+        try {
+            refreshTokenService.removeToken(userId);
+            System.out.println("Token removed for userId: " + userId); // Add logging
+            return ResponseEntity.ok("Logged out successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Logout failed");
+        }
     }
 
     // Endpoint for logging out a user by access token
