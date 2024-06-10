@@ -15,10 +15,10 @@ public class NewsRepositoryTest {
     private NewsRepository newsRepository;
 
     @Test
-    public void findByCategoryId() {
+    public void testFindByCategoryId() {
         List<News> news = newsRepository.findByCategoryId(2L);
         assertNotNull(news);
         assertFalse(news.isEmpty());
-        assertEquals(news.getFirst().getTitle(),"New DIY Project: Transform Your Living Space with Upcycled Decor");
+        assertEquals("New DIY Project: Transform Your Living Space with Upcycled Decor", news.getFirst().getTitle());
     }
 }
