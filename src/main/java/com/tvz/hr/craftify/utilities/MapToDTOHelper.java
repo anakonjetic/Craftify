@@ -28,6 +28,10 @@ public class MapToDTOHelper {
 
 
     public static ProjectGetDTO mapToProjectGetDTO(Project project) {
+        if (project == null){
+            return null;
+        }
+
         return new ProjectGetDTO(
                 project.getId(),
                 project.getTitle(),
