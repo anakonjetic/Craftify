@@ -28,6 +28,10 @@ public class MapToDTOHelper {
 
 
     public static ProjectGetDTO mapToProjectGetDTO(Project project) {
+        if (project == null){
+            return null;
+        }
+
         return new ProjectGetDTO(
                 project.getId(),
                 project.getTitle(),
@@ -68,6 +72,10 @@ public class MapToDTOHelper {
     }
 
     public static MediaDTO mapToMediaDTO(Media media) {
+        if (media == null) {
+            return null;
+        }
+
         return new MediaDTO(
                 media.getId(),
                 media.getMedia(),
