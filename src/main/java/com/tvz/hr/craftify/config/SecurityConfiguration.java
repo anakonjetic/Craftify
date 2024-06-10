@@ -3,6 +3,7 @@ package com.tvz.hr.craftify.config;
 import com.tvz.hr.craftify.filter.JwtAuthFilter;
 import com.tvz.hr.craftify.filter.LoggingFilter;
 import com.tvz.hr.craftify.filter.XSSFilter;
+import com.tvz.hr.craftify.repository.UsersRepository;
 import com.tvz.hr.craftify.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -37,6 +38,7 @@ public class SecurityConfiguration{
 
     @Autowired
     private JwtAuthFilter jwtAuthFilter;
+
 
     @Bean
     public CorsFilter corsFilter() {
