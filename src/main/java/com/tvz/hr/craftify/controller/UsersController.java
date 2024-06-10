@@ -4,6 +4,7 @@ import com.tvz.hr.craftify.service.LikesAndFavoritesService;
 import com.tvz.hr.craftify.service.SubscriptionService;
 import com.tvz.hr.craftify.service.dto.*;
 import com.tvz.hr.craftify.service.UsersService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -85,9 +86,12 @@ public class UsersController {
         try {
             UsersGetDTO updatedUser = usersService.changeUserPassword(newPassword, id);
             return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
+
     }
 
     //JSON: { "private" : true }

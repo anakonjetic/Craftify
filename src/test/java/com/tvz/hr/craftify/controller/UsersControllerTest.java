@@ -3,6 +3,7 @@ package com.tvz.hr.craftify.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tvz.hr.craftify.service.*;
 import com.tvz.hr.craftify.service.dto.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -20,7 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -68,8 +69,8 @@ public class UsersControllerTest {
 
     @Test
     @WithMockUser(username="john_doe", roles={"USER"})
-    public void getUserById_ReturnsUser() throws Exception{
-        long userId = 1;
+    public void getUserById_ValidUserId_ReturnsUser() throws Exception{
+        long userId = 1L;
         UsersGetDTO user = new UsersGetDTO();
         user.setId(userId);
         when(usersService.getUser(userId)).thenReturn(Optional.of(user));
@@ -78,6 +79,17 @@ public class UsersControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userId))
                 .andExpect(jsonPath("$.username").value(user.getUsername()));
+    }
+
+    @Test
+    @WithMockUser(username="john_doe", roles={"USER"})
+    public void getUserById_InvalidUserId_ReturnsUser() throws Exception{
+        long userId = 999L;
+        UsersGetDTO user = new UsersGetDTO();
+        user.setId(userId);
+        when(usersService.getUser(userId)).thenReturn(Optional.empty());
+        mockMvc.perform(get("/users/{id}",userId))
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -92,7 +104,7 @@ public class UsersControllerTest {
 
     @Test
     @WithMockUser(username="john_doe", password = "newPassword123", roles = {"USER"})
-    public void updateUser_ReturnsUpdatedUser() throws Exception{
+    public void updateUser_ValidUserId_ReturnsUpdatedUser() throws Exception{
         long userId = 1L;
         UsersPutPostDTO usersPutDTO = new UsersPutPostDTO();
 
@@ -100,6 +112,19 @@ public class UsersControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(usersPutDTO)))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username="john_doe", password = "newPassword123", roles = {"USER"})
+    public void updateUser_InvalidUserId_ReturnsNotFound() throws Exception{
+        long userId = 999L;
+        UsersPutPostDTO usersPutDTO = new UsersPutPostDTO();
+        when(usersService.updateUser(usersPutDTO, userId)).thenThrow(new IllegalArgumentException());
+
+        mockMvc.perform(put("/users/{id}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(usersPutDTO)))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -112,7 +137,7 @@ public class UsersControllerTest {
 
     @Test
     @WithMockUser(username="john_doe", roles={"USER"})
-    public void setUserPreference_ReturnsUpdatedUser() throws Exception {
+    public void setUserPreference_ValidUserId_ReturnsUpdatedUser() throws Exception {
         long userId = 1L;
         String jsonRequest = "{\"categories\": [1, 2, 3]}";
 
@@ -124,7 +149,21 @@ public class UsersControllerTest {
 
     @Test
     @WithMockUser(username="john_doe", roles={"USER"})
-    public void changePassword_ReturnsUpdatedUser() throws Exception{
+    public void setUserPreference_InvalidUserId_ReturnsNotFound() throws Exception {
+        long userId = 999L;
+        String jsonRequest = "{\"categories\": [1, 2, 3]}";
+        String expectedErrorMessage = "User not found with ID: " + userId;
+        when(usersService.setUserPreference(Arrays.asList(1L,2L,3L), userId)).thenThrow(new EntityNotFoundException(expectedErrorMessage));
+
+        mockMvc.perform(put("/users/change-preference/{id}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username="john_doe", roles={"USER"})
+    public void changePassword_ValidPassword_ReturnsUpdatedUser() throws Exception{
         long userId = 1L;
         String jsonRequest = "{ \"newPassword\" : \"novaLozinka123\" }";
         String newPassword = "novaLozinka123";
@@ -144,7 +183,37 @@ public class UsersControllerTest {
 
     @Test
     @WithMockUser(username="john_doe", roles={"USER"})
-    public void setUserInfoVisibility_ReturnsUpdatedUser() throws Exception{
+    public void changePassword_InvalidPassword_ReturnsBadRequest() throws Exception{
+        long userId = 1L;
+        String jsonRequest = "{ \"newPassword\" : \"novaLozinka\" }";
+        String newPassword = "novaLozinka";
+        String expectedErrorMessage = "Password "+ newPassword + " is not strong enough";
+        when(usersService.changeUserPassword(newPassword, userId)).thenThrow(new IllegalArgumentException(expectedErrorMessage));
+
+        mockMvc.perform(put("/users/change-password/{id}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username="john_doe", roles={"USER"})
+    public void changePassword_InvalidUserId_ReturnsNotFound() throws Exception{
+        long userId = 999L;
+        String jsonRequest = "{ \"newPassword\" : \"novaLozinka123\" }";
+        String newPassword = "novaLozinka123";
+        String expectedErrorMessage = "User not found with ID: " + userId;
+        when(usersService.changeUserPassword(newPassword, userId)).thenThrow(new EntityNotFoundException(expectedErrorMessage));
+
+        mockMvc.perform(put("/users/change-password/{id}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username="john_doe", roles={"USER"})
+    public void setUserInfoVisibility_ValidUserId_ReturnsUpdatedUser() throws Exception{
         long userId = 1L;
         String jsonRequest = "{ \"private\" : true }";
         UsersGetDTO updatedUser = new UsersGetDTO();
@@ -160,6 +229,21 @@ public class UsersControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(userId))
                 .andExpect(jsonPath("$.private").value(true));
+    }
+    @Test
+    @WithMockUser(username = "john_doe", roles = {"USER"})
+    public void setUserInfoVisibility_InvalidUserId_ReturnsNotFound() throws Exception {
+        long userId = 999L;
+        Map<String, Boolean> request = new HashMap<>();
+        request.put("private", true);
+        String expectedErrorMessage = "User not found with ID: " + userId;
+        when(usersService.changeUserInfoVisibility(true, userId)).thenThrow(new IllegalArgumentException(expectedErrorMessage));
+
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/profile-visibility/{id}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"private\": true}"))
+                .andExpect(status().isNotFound());
     }
 
     @Test
