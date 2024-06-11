@@ -8,7 +8,6 @@ import com.tvz.hr.craftify.service.JwtService;
 import com.tvz.hr.craftify.service.RefreshTokenService;
 import com.tvz.hr.craftify.service.UserDetailsServiceImpl;
 import com.tvz.hr.craftify.service.UsersService;
-import com.tvz.hr.craftify.service.dto.LoginDTO;
 import com.tvz.hr.craftify.service.dto.UserDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +27,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
@@ -83,6 +81,7 @@ public class AuthorizationControllerTest {
 
         Users user = new Users();
         user.setId(1L);
+        user.setUsername("john@example.com");  // Ensure the username is set
         UserDTO userDTO = new UserDTO();
         when(usersService.getUserByUsername(anyString())).thenReturn(userDTO);
 
@@ -105,6 +104,7 @@ public class AuthorizationControllerTest {
         verify(refreshTokenService, times(1)).createRefreshToken(anyString());
     }
 
+
     @Test
     public void authenticateAndGetToken_InvalidLogin_ThrowsException() throws Exception {
         when(authenticationManager.authenticate(any())).thenThrow(new UsernameNotFoundException("Invalid user request"));
@@ -124,6 +124,7 @@ public class AuthorizationControllerTest {
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setToken("testRefreshToken");
         Users user = new Users();
+        user.setUsername("john_doe");
         refreshToken.setUser(user);
         when(refreshTokenService.findByToken(anyString())).thenReturn(Optional.of(refreshToken));
         when(refreshTokenService.verifyExpiration(refreshToken)).thenReturn(refreshToken);
