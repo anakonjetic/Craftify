@@ -8,7 +8,6 @@ import com.tvz.hr.craftify.service.JwtService;
 import com.tvz.hr.craftify.service.RefreshTokenService;
 import com.tvz.hr.craftify.service.UserDetailsServiceImpl;
 import com.tvz.hr.craftify.service.UsersService;
-import com.tvz.hr.craftify.service.dto.LoginDTO;
 import com.tvz.hr.craftify.service.dto.UserDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +27,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
@@ -75,24 +73,31 @@ public class AuthorizationControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "john_doe", password = "newPassword123", roles = {"USER"})
     public void authenticateAndGetToken_ValidLogin_ReturnsJwtResponseDTO() throws Exception {
-        UserDetails userDetails = new User("john@example.com", "newPassword123", Collections.emptyList());
+        UserDetails userDetails = new User("john_doe", "newPassword123", Collections.emptyList());
         when(userDetailsService.loadUserByUsername(anyString())).thenReturn(userDetails);
         when(authenticationManager.authenticate(any())).thenReturn(new UsernamePasswordAuthenticationToken(userDetails, "newPassword123", userDetails.getAuthorities()));
         when(jwtService.generateToken(anyString())).thenReturn("testAccessToken");
 
         Users user = new Users();
         user.setId(1L);
+        user.setUsername("john_doe");
         UserDTO userDTO = new UserDTO();
+
+        usersRepository.save(user);
+
+
         when(usersService.getUserByUsername(anyString())).thenReturn(userDTO);
 
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setToken("testRefreshToken");
+        refreshToken.setUser(user);
         when(refreshTokenService.createRefreshToken(anyString())).thenReturn(refreshToken);
 
         mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"usernameOrEmail\":\"john@example.com\",\"password\":\"newPassword123\"}"))
+                        .content("{\"usernameOrEmail\":\"john_doe\",\"password\":\"newPassword123\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").value("testAccessToken"))
                 .andExpect(jsonPath("$.token").value("testRefreshToken"))
@@ -104,6 +109,7 @@ public class AuthorizationControllerTest {
         verify(usersService, times(1)).getUserByUsername(anyString());
         verify(refreshTokenService, times(1)).createRefreshToken(anyString());
     }
+
 
     @Test
     public void authenticateAndGetToken_InvalidLogin_ThrowsException() throws Exception {
@@ -124,6 +130,7 @@ public class AuthorizationControllerTest {
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setToken("testRefreshToken");
         Users user = new Users();
+        user.setUsername("john_doe");
         refreshToken.setUser(user);
         when(refreshTokenService.findByToken(anyString())).thenReturn(Optional.of(refreshToken));
         when(refreshTokenService.verifyExpiration(refreshToken)).thenReturn(refreshToken);

@@ -118,31 +118,35 @@ public class ProjectServiceImpl implements ProjectService{
             projectToUpdate.setTitle(projectPutDTO.getTitle());
             projectToUpdate.setDescription(projectPutDTO.getDescription());
             projectToUpdate.setContent(projectPutDTO.getContent());
-            Category category = categoryService.getCategoryById(projectPutDTO.getCategoryId()).orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
+            Category category = categoryService.getCategoryById(projectPutDTO.getCategoryId())
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
             projectToUpdate.setCategory(category);
             Optional<ComplexityGetDTO> complexityDTO = complexityService.getComplexityById(projectPutDTO.getComplexityId());
             if (complexityDTO.isPresent()) {
                 Complexity complexity = new Complexity(complexityDTO.get().getId(), complexityDTO.get().getName());
                 projectToUpdate.setComplexity(complexity);
-            } else{
+            } else {
                 throw new RuntimeException("Complexity with ID: " + projectPutDTO.getComplexityId() + " not found");
             }
-            List<Long> mediaToRemove = projectToUpdate.getMediaList().stream().map(Media::getId).toList();
-            mediaToRemove.forEach(
-                    m -> {
-                        mediaService.deleteMedia(m);
-                    }
-            );
-            List<MediaPutPostDTO> mediaPost = projectPutDTO.getMediaList();
+
+            List<Long> mediaToRemove = Optional.ofNullable(projectToUpdate.getMediaList()).orElse(Collections.emptyList())
+                    .stream().map(Media::getId).collect(Collectors.toList());
+
+            mediaToRemove.forEach(m -> mediaService.deleteMedia(m));
+
+            List<MediaPutPostDTO> mediaPost = Optional.ofNullable(projectPutDTO.getMediaList()).orElse(Collections.emptyList());
             mediaPost.forEach(media -> {
                 media.setProjectId(projectToUpdate.getId());
                 mediaService.addMedia(media);
             });
+
             return projectRepository.save(projectToUpdate);
         } else {
             throw new RuntimeException("Project with ID: " + id + " not found");
         }
     }
+
+
 
     @Override
     public void deleteProject(Long id) {
@@ -219,6 +223,8 @@ public class ProjectServiceImpl implements ProjectService{
             throw new ApplicationException("An unexpected error occurred while filtering projects", ex);
         }
     }
+
+
 
 
 }

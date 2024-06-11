@@ -69,15 +69,6 @@ public class MapFromDTOHelper {
         return news;
     }
 
-    public static Category mapCategoryGetDTOToCategoryDTO(CategoryGetDTO category){
-        return new Category(
-                category.getId(),
-                category.getName(),
-                category.getUsers().stream().map(MapFromDTOHelper::mapUserDTOToUsers).collect(Collectors.toList()),
-                category.getProjects().stream().map(MapFromDTOHelper::mapProjectGetDTOToProject).collect(Collectors.toList()),
-                category.getTutorials().stream().map(MapFromDTOHelper::mapTutorialDTOToTutorial).collect(Collectors.toList())
-        );
-    }
 
     public static Users mapUsersGetDTOToUsers(UsersGetDTO user){
         return new Users(
@@ -116,16 +107,6 @@ public class MapFromDTOHelper {
                 media.getId(),
                 media.getMedia(),
                 media.getMediaOrder()
-        );
-    }
-
-    public static Media mapMediaGetDTOToMedia(MediaGetDTO media){
-        return new Media(
-                media.getId(),
-                media.getMedia(),
-                media.getMediaOrder(),
-                mapProjectGetDTOToProject(media.getProject()),
-                mapTutorialDTOToTutorial(media.getTutorial())
         );
     }
 
