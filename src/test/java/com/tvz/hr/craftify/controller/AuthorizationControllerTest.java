@@ -73,25 +73,31 @@ public class AuthorizationControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "john_doe", password = "newPassword123", roles = {"USER"})
     public void authenticateAndGetToken_ValidLogin_ReturnsJwtResponseDTO() throws Exception {
-        UserDetails userDetails = new User("john@example.com", "newPassword123", Collections.emptyList());
+        UserDetails userDetails = new User("john_doe", "newPassword123", Collections.emptyList());
         when(userDetailsService.loadUserByUsername(anyString())).thenReturn(userDetails);
         when(authenticationManager.authenticate(any())).thenReturn(new UsernamePasswordAuthenticationToken(userDetails, "newPassword123", userDetails.getAuthorities()));
         when(jwtService.generateToken(anyString())).thenReturn("testAccessToken");
 
         Users user = new Users();
         user.setId(1L);
-        user.setUsername("john@example.com");  // Ensure the username is set
+        user.setUsername("john_doe");
         UserDTO userDTO = new UserDTO();
+
+        usersRepository.save(user);
+
+
         when(usersService.getUserByUsername(anyString())).thenReturn(userDTO);
 
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setToken("testRefreshToken");
+        refreshToken.setUser(user);
         when(refreshTokenService.createRefreshToken(anyString())).thenReturn(refreshToken);
 
         mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"usernameOrEmail\":\"john@example.com\",\"password\":\"newPassword123\"}"))
+                        .content("{\"usernameOrEmail\":\"john_doe\",\"password\":\"newPassword123\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").value("testAccessToken"))
                 .andExpect(jsonPath("$.token").value("testRefreshToken"))

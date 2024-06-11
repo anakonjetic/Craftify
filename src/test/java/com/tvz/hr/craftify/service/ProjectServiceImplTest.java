@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.TransientDataAccessException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -294,6 +295,4 @@ class ProjectServiceImplTest {
         assertThrows(ApplicationException.class, () -> {
             projectService.getProjectsByUserPreference(1L);
         });
-    }
-
-}
+    }}
