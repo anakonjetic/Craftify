@@ -87,11 +87,11 @@ public class UsersServiceImpl implements UsersService{
     };
     @Override
     public UsersGetDTO updateUser(UsersPutPostDTO user, Long id) {
-        checkAuthorization(id);
         Optional<Users> optionalUser = usersRepository.findById(id);
         if (optionalUser.isEmpty()) {
             return null;
         }
+        checkAuthorization(id);
         Users existingUser = optionalUser.get();
 
         List<Category> categories = existingUser.getUserPreferences();
