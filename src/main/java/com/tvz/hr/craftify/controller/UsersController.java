@@ -52,7 +52,7 @@ public class UsersController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-    public ResponseEntity<UsersGetDTO> updateUser(@RequestBody UsersPutPostDTO user,
+    public ResponseEntity<UsersGetDTO> updateUser(@RequestBody UsersPutDTO user,
                                                   @PathVariable Long id)
     {
         try {

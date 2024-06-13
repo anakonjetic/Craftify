@@ -118,7 +118,7 @@ public class UsersControllerTest {
     @WithMockUser(username="john_doe", password = "newPassword123", roles = {"USER"})
     public void updateUser_InvalidUserId_ReturnsNotFound() throws Exception{
         long userId = 999L;
-        UsersPutPostDTO usersPutDTO = new UsersPutPostDTO();
+        UsersPutDTO usersPutDTO = new UsersPutDTO();
         when(usersService.updateUser(usersPutDTO, userId)).thenThrow(new IllegalArgumentException());
 
         mockMvc.perform(put("/users/{id}", userId)
