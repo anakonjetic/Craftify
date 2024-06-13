@@ -86,7 +86,7 @@ public class UsersServiceImpl implements UsersService{
         return mapToUsersGetDTO(usersRepository.save(newUser));
     };
     @Override
-    public UsersGetDTO updateUser(UsersPutPostDTO user, Long id) {
+    public UsersGetDTO updateUser(UsersPutDTO user, Long id) {
         Optional<Users> optionalUser = usersRepository.findById(id);
         if (optionalUser.isEmpty()) {
             return null;
@@ -94,7 +94,7 @@ public class UsersServiceImpl implements UsersService{
         checkAuthorization(id);
         Users existingUser = optionalUser.get();
 
-        List<Category> categories = existingUser.getUserPreferences();
+        /*List<Category> categories = existingUser.getUserPreferences();
         List<Long> categoryIds = user.getUserPreferences().stream().distinct().toList();
         if(!categoryIds.isEmpty()) {
             categories = categoryIds.stream()
@@ -108,13 +108,13 @@ public class UsersServiceImpl implements UsersService{
             }
             String newPassword = hashPassword(user.getPassword());
             existingUser.setPassword(newPassword);
-        }
+        }*/
         existingUser.setName(user.getName());
         existingUser.setUsername(user.getUsername());
         existingUser.setEmail(user.getEmail());
-        existingUser.setAdmin(user.isAdmin());
+        /*existingUser.setAdmin(user.isAdmin());
         existingUser.setPrivate(user.isPrivate());
-        existingUser.setUserPreferences(categories);
+        existingUser.setUserPreferences(categories);*/
 
         return mapToUsersGetDTO(usersRepository.save(existingUser));
     };

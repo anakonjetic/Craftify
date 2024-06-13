@@ -193,14 +193,14 @@ public class UsersServiceImplTest {
         existingUser.setId(1L);
         existingUser.setUsername("user1");
 
-        UsersPutPostDTO userDTO = new UsersPutPostDTO();
+        UsersPutDTO userDTO = new UsersPutDTO();
         userDTO.setName("updatedName");
         userDTO.setUsername("updatedUsername");
         userDTO.setEmail("updated@example.com");
-        userDTO.setPassword("UpdatedPassword1!");
+        /*userDTO.setPassword("UpdatedPassword1!");
         userDTO.setAdmin(false);
         userDTO.setPrivate(false);
-        userDTO.setUserPreferences(new ArrayList<>());
+        userDTO.setUserPreferences(new ArrayList<>());*/
 
         when(usersRepository.findById(1L)).thenReturn(Optional.of(existingUser));
         when(usersRepository.save(any(Users.class))).thenAnswer(i -> i.getArguments()[0]);
@@ -220,7 +220,7 @@ public class UsersServiceImplTest {
 
         when(usersRepository.findByUsername("john_doe")).thenReturn(loggedInUser);
 
-        UsersPutPostDTO userDTO = new UsersPutPostDTO();
+        UsersPutDTO userDTO = new UsersPutDTO();
         when(usersRepository.findById(999L)).thenReturn(Optional.empty());
 
         UsersGetDTO updatedUser = usersService.updateUser(userDTO, 999L);
@@ -229,7 +229,7 @@ public class UsersServiceImplTest {
         verify(usersRepository, times(1)).findById(999L);
     }
 
-    @Test
+    /*@Test
     void updateUser_WeakPassword_ThrowsException() {
         Users loggedInUser = new Users();
         loggedInUser.setId(1L);
@@ -237,7 +237,7 @@ public class UsersServiceImplTest {
 
         when(usersRepository.findByUsername("john_doe")).thenReturn(loggedInUser);
 
-        UsersPutPostDTO userDTO = new UsersPutPostDTO();
+        UsersPutDTO userDTO = new UsersPutDTO();
         userDTO.setName("Updated Name");
         userDTO.setPassword("weak");
         userDTO.setUserPreferences(new ArrayList<>());
@@ -254,7 +254,7 @@ public class UsersServiceImplTest {
 
         assertEquals("Password is not strong enough", exception.getMessage());
         verify(usersRepository, never()).save(existingUser);
-    }
+    }*/
 
     @Test
     void changeUserPassword_ValidPassword_ReturnsUpdatedUser() {

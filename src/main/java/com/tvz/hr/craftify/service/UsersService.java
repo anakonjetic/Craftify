@@ -16,7 +16,7 @@ public interface UsersService {
     Users getLoggedInUser();
     UserDTO getUserByUsername(String username);
     UsersGetDTO createUser(UsersPutPostDTO user);
-    UsersGetDTO updateUser(UsersPutPostDTO user, Long id);
+    UsersGetDTO updateUser(UsersPutDTO user, Long id);
     UsersGetDTO changeUserPassword(String newPassword, Long id);
     Optional<List<CommentDTO>> getUserComments(Long id);
     Optional<List<ProjectDTO>> getUserProjects(Long userId);
