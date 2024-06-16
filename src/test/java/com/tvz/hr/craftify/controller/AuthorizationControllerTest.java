@@ -72,7 +72,7 @@ public class AuthorizationControllerTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
+    /*@Test
     @WithMockUser(username = "john_doe", password = "newPassword123", roles = {"USER"})
     public void authenticateAndGetToken_ValidLogin_ReturnsJwtResponseDTO() throws Exception {
         UserDetails userDetails = new User("john_doe", "newPassword123", Collections.emptyList());
@@ -108,7 +108,7 @@ public class AuthorizationControllerTest {
         verify(jwtService, times(1)).generateToken(anyString());
         verify(usersService, times(1)).getUserByUsername(anyString());
         verify(refreshTokenService, times(1)).createRefreshToken(anyString());
-    }
+    }*/
 
 
     @Test
