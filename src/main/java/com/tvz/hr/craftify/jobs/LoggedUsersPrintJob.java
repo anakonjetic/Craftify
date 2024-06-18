@@ -4,6 +4,7 @@ import com.tvz.hr.craftify.model.RefreshToken;
 import com.tvz.hr.craftify.repository.ProjectRepository;
 import com.tvz.hr.craftify.repository.RefreshTokenRepository;
 import com.tvz.hr.craftify.repository.UsersRepository;
+import com.tvz.hr.craftify.service.JwtService;
 import com.tvz.hr.craftify.service.RefreshTokenService;
 import com.tvz.hr.craftify.service.dto.UserDTO;
 import com.tvz.hr.craftify.utilities.MapToDTOHelper;
@@ -11,6 +12,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import java.time.Instant;
@@ -26,6 +28,7 @@ public class LoggedUsersPrintJob extends QuartzJobBean {
     private Logger log = LoggerFactory.getLogger(LoggedUsersPrintJob.class);
     private final RefreshTokenRepository refreshTokenRepository;
     private final RefreshTokenService refreshTokenService;
+
     public LoggedUsersPrintJob(RefreshTokenRepository refreshTokenRepository,RefreshTokenService refreshTokenService) {
         this.refreshTokenRepository = refreshTokenRepository;
         this.refreshTokenService = refreshTokenService;
@@ -33,9 +36,6 @@ public class LoggedUsersPrintJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        ZoneId zoneId = ZoneId.systemDefault();
-        Instant startOfDay = LocalDate.now().atStartOfDay(zoneId).toInstant();
-        Instant endOfDay = LocalDate.now().atTime(23, 59, 59).atZone(zoneId).toInstant();
 
         final List<RefreshToken> tokens = refreshTokenRepository.findAll();
         List<UserDTO> todaysLoggedUsers = new ArrayList<>();
@@ -45,6 +45,7 @@ public class LoggedUsersPrintJob extends QuartzJobBean {
                         try {
                             return refreshTokenService.verifyExpiration(token);
                         } catch (RuntimeException ex) {
+                            log.info("Refresh token for user {} has expired.", token.getUser().getUsername());
                             return null;
                         }
                     })
@@ -57,7 +58,7 @@ public class LoggedUsersPrintJob extends QuartzJobBean {
         if(!todaysLoggedUsers.isEmpty()){
             log.info("These are the users who are currently logged in.");
             log.info("---------------------------------------");
-            todaysLoggedUsers.forEach(user -> log.info(user.toString()));
+            todaysLoggedUsers.forEach(user -> log.info("Id=" + user.getId() + ", user=" + user.getName() + ", username=" + user.getUsername()));
             log.info("---------------------------------------");
         } else {
             log.info("There are no users currently logged in.");
