@@ -46,6 +46,12 @@ class ProjectServiceImplTest {
     @Mock
     private UserAuthorizationService userAuthorizationService;
 
+    @Mock
+    private LoggedUserContentService loggedUserContentService;
+
+    @Mock
+    private GuestUserContentService guestUserContentService;
+
     @InjectMocks
     private ProjectServiceImpl projectService;
 
@@ -54,7 +60,7 @@ class ProjectServiceImplTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
+    /*@Test
     void getAllProjects() {
         List<Project> projects = List.of(new Project(), new Project());
         projects.get(0).setMediaList(new ArrayList<>());
@@ -73,6 +79,40 @@ class ProjectServiceImplTest {
 
         assertEquals(2, result.size());
         verify(projectRepository, times(1)).findAll();
+    }*/
+
+    @Test
+    public void testGetAllProjects_loggedInUser() {
+        Users loggedInUser = new Users();
+        loggedInUser.setId(1L);
+        ContentService mockContentService = mock(ContentService.class);
+        List<ProjectDTO> expectedProjects = new ArrayList<>();
+
+        when(mockContentService.getAllProjects()).thenReturn(expectedProjects);
+        when(userAuthorizationService.getLoggedInUser()).thenReturn(loggedInUser);
+        when(loggedUserContentService.getAllProjects()).thenReturn(expectedProjects);
+
+        List<ProjectDTO> actualProjects = projectService.getAllProjects();
+
+        assertEquals(expectedProjects.size(), actualProjects.size());
+        verify(loggedUserContentService, times(1)).getAllProjects();
+        verify(guestUserContentService, never()).getAllProjects();
+    }
+
+    @Test
+    public void testGetAllProjects_guestUser() {
+        ContentService mockContentService = mock(ContentService.class);
+        List<ProjectDTO> expectedProjects = new ArrayList<>();
+
+        when(mockContentService.getAllProjects()).thenReturn(expectedProjects);
+        when(userAuthorizationService.getLoggedInUser()).thenReturn(null);
+        when(guestUserContentService.getAllProjects()).thenReturn(expectedProjects);
+
+        List<ProjectDTO> actualProjects = projectService.getAllProjects();
+
+        assertEquals(expectedProjects.size(), actualProjects.size());
+        verify(loggedUserContentService, never()).getAllProjects();
+        verify(guestUserContentService, times(1)).getAllProjects();
     }
 
     @Test

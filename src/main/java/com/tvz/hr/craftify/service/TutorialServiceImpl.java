@@ -23,15 +23,24 @@ public class TutorialServiceImpl implements TutorialService {
     private UsersService usersService;
     private ComplexityService complexityService;
     private MediaRepository mediaRepository;
+    private final LoggedUserContentService loggedUserContentService;
+    private final GuestUserContentService guestUserContentService;
     private final UserAuthorizationService userAuthorizationService;
 
 
     @Override
     public List<TutorialDTO> getAllTutorials() {
-        List<Tutorial> tutorials = tutorialRepository.findAll();
+        /*List<Tutorial> tutorials = tutorialRepository.findAll();
         return tutorials.stream()
                 .map(MapToDTOHelper::mapToTutorialDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
+        Users user = userAuthorizationService.getLoggedInUser();
+        ContentService contentService;
+        if (user != null)
+            contentService = loggedUserContentService;
+        else
+            contentService = guestUserContentService;
+        return contentService.getAllTutorials();
     }
 
     @Override

@@ -45,4 +45,11 @@ public class TutorialRepositoryTest {
         assertFalse(tutorialList.isEmpty());
         assertEquals(1L, tutorialList.getFirst().getId());
     }
+    @Test
+    public void testFindByCategory_Id(){
+        List<Tutorial> tutorialList = tutorialRepository.findByCategory_Id(1L);
+        assertNotNull(tutorialList);
+        assertFalse(tutorialList.isEmpty());
+        assertEquals("DIY Paper Flowers",tutorialList.getFirst().getTitle());
+    }
 }

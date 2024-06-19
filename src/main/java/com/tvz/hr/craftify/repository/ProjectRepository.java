@@ -17,6 +17,11 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findByCategory_Id(Long id);
     List<Project> findByComplexity_Id(Long id);
     List<Project> findByUser_id(Long id);
+    @Query("SELECT p FROM Project p LEFT JOIN FETCH p.userLikes ul GROUP BY p ORDER BY SIZE(ul) DESC")
+    List<Project> getAllProjectsAndOrderByUserLikes();
+
+    @Query("SELECT p FROM Project p LEFT JOIN FETCH p.userLikes ul WHERE p.category.id = :categoryId GROUP BY p ORDER BY SIZE(ul) DESC")
+    List<Project> getAllProjectsByCategoryIdAndOrderByUserLikes(@Param("categoryId") Long categoryId);
 
     @Query("SELECT p FROM Project p JOIN p.user u " +
             "WHERE (:nameOrUser IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :nameOrUser, '%')) " +

@@ -40,6 +40,13 @@ public class TutorialServiceImplTest {
 
     @Mock
     private UserAuthorizationService userAuthorizationService;
+
+    @Mock
+    private LoggedUserContentService loggedUserContentService;
+
+    @Mock
+    private GuestUserContentService guestUserContentService;
+
     @InjectMocks
     private TutorialServiceImpl tutorialService;
 
@@ -48,7 +55,7 @@ public class TutorialServiceImplTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
+    /*@Test
     public void testGetAllTutorials() {
         // Given
         List<Tutorial> tutorials = new ArrayList<>();
@@ -60,6 +67,37 @@ public class TutorialServiceImplTest {
 
         // Then
         assertEquals(1, tutorialDTOs.size());
+    }*/
+    @Test
+    public void testGetAllTutorials_loggedInUser() {
+        Users loggedInUser = new Users();
+        loggedInUser.setId(1L);
+        ContentService mockContentService = mock(ContentService.class);
+        List<TutorialDTO> expectedTutorials = new ArrayList<>();
+
+        when(mockContentService.getAllTutorials()).thenReturn(expectedTutorials);
+        when(userAuthorizationService.getLoggedInUser()).thenReturn(loggedInUser);
+
+        List<TutorialDTO> actualTutorials = tutorialService.getAllTutorials();
+
+        assertEquals(expectedTutorials.size(), actualTutorials.size());
+        verify(loggedUserContentService, times(1)).getAllTutorials();
+        verify(guestUserContentService, never()).getAllProjects();
+    }
+
+    @Test
+    public void testGetAllTutorials_guestUser() {
+        ContentService mockContentService = mock(ContentService.class);
+        List<TutorialDTO> expectedTutorials = new ArrayList<>();
+
+        when(mockContentService.getAllTutorials()).thenReturn(expectedTutorials);
+        when(userAuthorizationService.getLoggedInUser()).thenReturn(null);
+
+        List<TutorialDTO> actualTutorials = tutorialService.getAllTutorials();
+
+        assertEquals(expectedTutorials.size(), actualTutorials.size());
+        verify(loggedUserContentService, never()).getAllProjects();
+        verify(guestUserContentService, times(1)).getAllTutorials();
     }
 
     @Test

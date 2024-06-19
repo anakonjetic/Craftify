@@ -11,4 +11,5 @@ import java.util.List;
 public interface TutorialRepository  extends JpaRepository<Tutorial, Long> {
     List<Tutorial> findByCategory(Category category);
     List<Tutorial> findByComplexity(Complexity complexity);
+    List<Tutorial> findByCategory_Id(Long id);
 }

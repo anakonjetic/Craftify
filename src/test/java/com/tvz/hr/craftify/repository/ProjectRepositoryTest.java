@@ -69,6 +69,22 @@ public class ProjectRepositoryTest {
     }
 
     @Test
+    public void testGetAllProjectsAndOrderByUserLikes() {
+        List<Project> projects = projectRepository.getAllProjectsAndOrderByUserLikes();
+        assertNotNull(projects);
+        assertFalse(projects.isEmpty());
+        assertEquals(2L, projects.getFirst().getId());
+    }
+
+    @Test
+    public void testGetAllProjectsByCategoryIdAndOrderByUserLikes() {
+        Long categoryId = 1L;
+        List<Project> projects = projectRepository.getAllProjectsByCategoryIdAndOrderByUserLikes(categoryId);
+        assertNotNull(projects);
+        assertFalse(projects.isEmpty());
+    }
+
+    @Test
     public void testDeleteFavoritesByProjectId() {
         projectRepository.deleteFavoritesByProjectId(1L);
     }
