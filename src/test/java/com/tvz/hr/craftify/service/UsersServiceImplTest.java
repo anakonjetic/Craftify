@@ -3,18 +3,13 @@ package com.tvz.hr.craftify.service;
 import com.tvz.hr.craftify.model.*;
 import com.tvz.hr.craftify.repository.CategoryRepository;
 import com.tvz.hr.craftify.repository.CommentRepository;
-import com.tvz.hr.craftify.repository.ProjectRepository;
 import com.tvz.hr.craftify.repository.UsersRepository;
 import com.tvz.hr.craftify.service.dto.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -274,7 +269,6 @@ public class UsersServiceImplTest {
         UsersGetDTO result = usersService.changeUserPassword("NewPassword1!", 1L);
 
         assertNotNull(result);
-        //assertTrue(isPasswordMatching("NewPassword1!", result.getPassword()));
     }
 
     @Test
