@@ -19,7 +19,6 @@ import java.util.Optional;
 @CrossOrigin(origins = {"http://test-craftify.vercel.app", "http://localhost:4200"})
 public class UsersController {
     private UsersService usersService;
-    private UserAuthorizationService userAuthorizationService;
     private UserInfoService userInfoService;
     private UserActivityService userActivityService;
     private LikesAndFavoritesService likesAndFavoritesService;

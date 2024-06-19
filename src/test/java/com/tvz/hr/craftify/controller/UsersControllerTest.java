@@ -42,8 +42,6 @@ public class UsersControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @MockBean
-    private UserAuthorizationService userAuthorizationService;
-    @MockBean
     private UserInfoService userInfoService;
     @MockBean
     private UserActivityService userActivityService;
@@ -51,7 +49,7 @@ public class UsersControllerTest {
     private UserDetailsServiceImpl userDetailsService;
 
     @BeforeEach
-    public void setup() { mockMvc = MockMvcBuilders.standaloneSetup(new UsersController(usersService,userAuthorizationService, userInfoService, userActivityService, likesAndFavoritesService,subscriptionService)).build();
+    public void setup() { mockMvc = MockMvcBuilders.standaloneSetup(new UsersController(usersService, userInfoService, userActivityService, likesAndFavoritesService,subscriptionService)).build();
     }
 
     @Test
