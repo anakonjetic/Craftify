@@ -32,6 +32,8 @@ class RefreshTokenServiceTest {
 
     @Mock
     private JwtService jwtService;
+    @Mock
+    private UserAuthorizationService userAuthorizationService;
 
     @InjectMocks
     private RefreshTokenService refreshTokenService;
@@ -102,7 +104,7 @@ class RefreshTokenServiceTest {
         user.setId(1L);
         String token = "mockAccessToken";
         HttpServletRequest request = mock(HttpServletRequest.class);
-        when(usersService.getLoggedInUser()).thenReturn(user);
+        when(userAuthorizationService.getLoggedInUser()).thenReturn(user);
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer " + token);
         when(refreshTokenRepository.findByUser_id(user.getId())).thenReturn(Optional.of(new RefreshToken()));
 

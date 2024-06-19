@@ -1,13 +1,19 @@
 package com.tvz.hr.craftify.service;
 
+import com.tvz.hr.craftify.jobs.LoggedUsersPrintJob;
 import com.tvz.hr.craftify.model.*;
 import com.tvz.hr.craftify.repository.ProjectRepository;
+import com.tvz.hr.craftify.repository.RefreshTokenRepository;
 import com.tvz.hr.craftify.repository.UsersRepository;
 import com.tvz.hr.craftify.service.dto.UsersGetDTO;
 import com.tvz.hr.craftify.service.dto.*;
 import com.tvz.hr.craftify.utilities.MapToDTOHelper;
 import com.tvz.hr.craftify.utilities.exceptions.ApplicationException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +33,23 @@ public class ProjectServiceImpl implements ProjectService{
     private UsersRepository usersRepository;
     private ComplexityService complexityService;
     private MediaService mediaService;
+    private UserAuthorizationService userAuthorizationService;
+    private LoggedUserContentService loggedUserContentService;
+    private GuestUserContentService guestUserContentService;
 
     @Override
     public List<ProjectDTO> getAllProjects() {
-        List<Project> projects = projectRepository.findAll();
+        /*List<Project> projects = projectRepository.findAll();
         return projects.stream()
                 .map(MapToDTOHelper::mapToProjectDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
+        ContentService contentService;
+        Users user = userAuthorizationService.getLoggedInUser();
+        if (user != null)
+            contentService = loggedUserContentService;
+        else
+            contentService = guestUserContentService;
+        return contentService.getAllProjects();
     }
 
     @Override
@@ -114,7 +130,7 @@ public class ProjectServiceImpl implements ProjectService{
         Optional<Project> optionalProject = projectRepository.findById(id);
         if (optionalProject.isPresent()) {
             Project projectToUpdate = optionalProject.get();
-            usersService.checkAuthorization(projectToUpdate.getUser().getId());
+            userAuthorizationService.checkAuthorization(projectToUpdate.getUser().getId());
             projectToUpdate.setTitle(projectPutDTO.getTitle());
             projectToUpdate.setDescription(projectPutDTO.getDescription());
             projectToUpdate.setContent(projectPutDTO.getContent());

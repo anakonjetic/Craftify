@@ -2,9 +2,7 @@ package com.tvz.hr.craftify.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tvz.hr.craftify.service.JwtService;
-import com.tvz.hr.craftify.service.ProjectService;
-import com.tvz.hr.craftify.service.UserDetailsServiceImpl;
+import com.tvz.hr.craftify.service.*;
 import com.tvz.hr.craftify.service.dto.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +31,14 @@ public class ProjectControllerTest {
 
     @MockBean
     private ProjectService projectService;
+
+    @MockBean
+    private LoggedUserContentService loggedUserContentService;
+
+    @MockBean
+    private GuestUserContentService guestUserContentService;
+    @MockBean
+    private UserAuthorizationService userAuthorizationService;
 
     @Autowired
     private MockMvc mockMvc;

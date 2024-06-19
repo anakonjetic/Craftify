@@ -42,10 +42,16 @@ public class UsersControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @MockBean
+    private UserAuthorizationService userAuthorizationService;
+    @MockBean
+    private UserInfoService userInfoService;
+    @MockBean
+    private UserActivityService userActivityService;
+    @MockBean
     private UserDetailsServiceImpl userDetailsService;
 
     @BeforeEach
-    public void setup() { mockMvc = MockMvcBuilders.standaloneSetup(new UsersController(usersService,likesAndFavoritesService,subscriptionService)).build();
+    public void setup() { mockMvc = MockMvcBuilders.standaloneSetup(new UsersController(usersService,userAuthorizationService, userInfoService, userActivityService, likesAndFavoritesService,subscriptionService)).build();
     }
 
     @Test
@@ -153,7 +159,7 @@ public class UsersControllerTest {
         long userId = 999L;
         String jsonRequest = "{\"categories\": [1, 2, 3]}";
         String expectedErrorMessage = "User not found with ID: " + userId;
-        when(usersService.setUserPreference(Arrays.asList(1L,2L,3L), userId)).thenThrow(new EntityNotFoundException(expectedErrorMessage));
+        when(userInfoService.setUserPreference(Arrays.asList(1L,2L,3L), userId)).thenThrow(new EntityNotFoundException(expectedErrorMessage));
 
         mockMvc.perform(put("/users/change-preference/{id}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -171,7 +177,7 @@ public class UsersControllerTest {
         updatedUser.setId(userId);
         updatedUser.setPassword(newPassword);
 
-        Mockito.when(usersService.changeUserPassword(newPassword, userId)).thenReturn(updatedUser);
+        Mockito.when(userInfoService.changeUserPassword(newPassword, userId)).thenReturn(updatedUser);
 
         mockMvc.perform(put("/users/change-password/{id}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -188,7 +194,7 @@ public class UsersControllerTest {
         String jsonRequest = "{ \"newPassword\" : \"novaLozinka\" }";
         String newPassword = "novaLozinka";
         String expectedErrorMessage = "Password "+ newPassword + " is not strong enough";
-        when(usersService.changeUserPassword(newPassword, userId)).thenThrow(new IllegalArgumentException(expectedErrorMessage));
+        when(userInfoService.changeUserPassword(newPassword, userId)).thenThrow(new IllegalArgumentException(expectedErrorMessage));
 
         mockMvc.perform(put("/users/change-password/{id}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -203,7 +209,7 @@ public class UsersControllerTest {
         String jsonRequest = "{ \"newPassword\" : \"novaLozinka123\" }";
         String newPassword = "novaLozinka123";
         String expectedErrorMessage = "User not found with ID: " + userId;
-        when(usersService.changeUserPassword(newPassword, userId)).thenThrow(new EntityNotFoundException(expectedErrorMessage));
+        when(userInfoService.changeUserPassword(newPassword, userId)).thenThrow(new EntityNotFoundException(expectedErrorMessage));
 
         mockMvc.perform(put("/users/change-password/{id}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -220,7 +226,7 @@ public class UsersControllerTest {
         updatedUser.setId(userId);
         updatedUser.setPrivate(true);
 
-        Mockito.when(usersService.changeUserInfoVisibility(true, userId)).thenReturn(updatedUser);
+        Mockito.when(userInfoService.changeUserInfoVisibility(true, userId)).thenReturn(updatedUser);
 
         mockMvc.perform(put("/users/profile-visibility/{id}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -237,7 +243,7 @@ public class UsersControllerTest {
         Map<String, Boolean> request = new HashMap<>();
         request.put("private", true);
         String expectedErrorMessage = "User not found with ID: " + userId;
-        when(usersService.changeUserInfoVisibility(true, userId)).thenThrow(new IllegalArgumentException(expectedErrorMessage));
+        when(userInfoService.changeUserInfoVisibility(true, userId)).thenThrow(new IllegalArgumentException(expectedErrorMessage));
 
 
         mockMvc.perform(MockMvcRequestBuilders.put("/users/profile-visibility/{id}", userId)
@@ -255,7 +261,7 @@ public class UsersControllerTest {
         comment.setId(1L);
         comments.add(comment);
 
-        Mockito.when(usersService.getUserComments(1L)).thenReturn(Optional.of(comments));
+        Mockito.when(userActivityService.getUserComments(1L)).thenReturn(Optional.of(comments));
 
         mockMvc.perform(get("/users/comments/{id}", userId))
                 .andExpect(status().isOk())
@@ -307,7 +313,7 @@ public class UsersControllerTest {
         project.setId(1L);
         projects.add(project);
 
-        Mockito.when(usersService.getUserProjects(1L)).thenReturn(Optional.of(projects));
+        Mockito.when(userActivityService.getUserProjects(1L)).thenReturn(Optional.of(projects));
 
         mockMvc.perform(get("/users/projects/1"))
                 .andExpect(status().isOk())

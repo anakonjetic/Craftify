@@ -7,6 +7,7 @@ import com.tvz.hr.craftify.repository.UsersRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -21,6 +22,10 @@ public class RefreshTokenService {
     UsersRepository usersRepository;
     @Autowired
     UsersService usersService;
+    @Autowired
+    UserDetailsService userDetailsService;
+    @Autowired
+    UserAuthorizationService userAuthorizationService;
     @Autowired
     JwtService jwtService;
 
@@ -51,7 +56,7 @@ public class RefreshTokenService {
     }
 
     public void removeToken(HttpServletRequest request){
-        Users user = usersService.getLoggedInUser();
+        Users user = userAuthorizationService.getLoggedInUser();
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (header != null && header.startsWith("Bearer ")) {
             String accessToken = header.substring(7);
