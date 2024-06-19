@@ -44,7 +44,7 @@ public class NewsServiceImpl implements NewsService{
     @Override
     public NewsPostPutDTO updateNews(Long id, NewsDTO newsDTO) {
         if (!newsRepository.existsById(id)) {
-            throw new EntityNotFoundException("News with id " + id + " not found");
+            throw new EntityNotFoundException("News with id " + id + " not found", new RuntimeException("No News with ID: " + id));
         }
         newsDTO.setId(id);
         News news = MapFromDTOHelper.mapNewsDTOToNews(newsDTO);
@@ -55,7 +55,7 @@ public class NewsServiceImpl implements NewsService{
     @Override
     public void deleteNews(Long id) {
         if (!newsRepository.existsById(id)) {
-            throw new EntityNotFoundException("News with id " + id + " not found");
+            throw new EntityNotFoundException("News with id " + id + " not found", new RuntimeException("No News with ID: " + id));
         }
         newsRepository.deleteById(id);
     }

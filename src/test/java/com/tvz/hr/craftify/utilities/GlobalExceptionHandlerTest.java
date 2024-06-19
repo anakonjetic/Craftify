@@ -16,7 +16,7 @@ class GlobalExceptionHandlerTest {
     @Test
     void handleEntityNotFoundException() {
         GlobalExceptionHandler handler = new GlobalExceptionHandler();
-        EntityNotFoundException exception = new EntityNotFoundException("Entity not found");
+        EntityNotFoundException exception = new EntityNotFoundException("Entity not found", new RuntimeException("Entity not found"));
 
         ResponseEntity<ErrorResponse> responseEntity = handler.handleEntityNotFoundException(exception, null);
 
@@ -88,7 +88,7 @@ class GlobalExceptionHandlerTest {
     @Test
     void handleTokenExpiredException() {
         GlobalExceptionHandler handler = new GlobalExceptionHandler();
-        TokenExpiredException exception = new TokenExpiredException("Token expired");
+        TokenExpiredException exception = new TokenExpiredException("Token expired", new RuntimeException("Token expired due to inactivity"));
 
         ResponseEntity<ErrorResponse> responseEntity = handler.handleTokenExpiredException(exception, null);
 
