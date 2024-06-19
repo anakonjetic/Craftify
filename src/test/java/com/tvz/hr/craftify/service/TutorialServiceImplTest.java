@@ -38,6 +38,8 @@ public class TutorialServiceImplTest {
     @Mock
     private MediaRepository mediaRepository;
 
+    @Mock
+    private UserAuthorizationService userAuthorizationService;
     @InjectMocks
     private TutorialServiceImpl tutorialService;
 

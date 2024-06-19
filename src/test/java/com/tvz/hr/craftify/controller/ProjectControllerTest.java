@@ -34,6 +34,8 @@ public class ProjectControllerTest {
     @MockBean
     private ProjectService projectService;
 
+    @MockBean
+    private UserAuthorizationService userAuthorizationService;
     @Autowired
     private MockMvc mockMvc;
 

@@ -10,6 +10,7 @@ import com.tvz.hr.craftify.utilities.exceptions.ApplicationException;
 import com.tvz.hr.craftify.utilities.exceptions.DatabaseOperationException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +24,14 @@ public class LikesAndFavoritesServiceImpl implements LikesAndFavoritesService {
     private UsersRepository usersRepository;
     private UsersService usersService;
     private ProjectRepository projectRepository;
+    @Autowired
+    private UserAuthorizationService userAuthorizationService;
     @Override
     public void addToFavorites(Long userId, Long projectId) {
         try {
             Users user = usersRepository.findById(userId)
                     .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
-            usersService.checkAuthorization(userId);
+            userAuthorizationService.checkAuthorization(userId);
             Project project = projectRepository.findById(projectId)
                     .orElseThrow(() -> new EntityNotFoundException("Project not found with ID: " + projectId));
             if (!user.getFavoriteProjects().contains(project)) {
@@ -49,7 +52,7 @@ public class LikesAndFavoritesServiceImpl implements LikesAndFavoritesService {
         try {
             Users user = usersRepository.findById(userId)
                     .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
-            usersService.checkAuthorization(userId);
+            userAuthorizationService.checkAuthorization(userId);
             boolean removed = user.getFavoriteProjects().removeIf(project -> project.getId().equals(projectId));
 
             if (removed) {
@@ -68,7 +71,7 @@ public class LikesAndFavoritesServiceImpl implements LikesAndFavoritesService {
     public void userLikeAction(Long userId, Long projectId) {
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        usersService.checkAuthorization(userId);
+        userAuthorizationService.checkAuthorization(userId);
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
         if (!project.getUserLikes().contains(user)) {
@@ -81,7 +84,7 @@ public class LikesAndFavoritesServiceImpl implements LikesAndFavoritesService {
     public void userDislikeAction(Long userId, Long projectId) {
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        usersService.checkAuthorization(userId);
+        userAuthorizationService.checkAuthorization(userId);
         user.getLikedProjects().removeIf(pr -> pr.getId().equals(projectId));
         usersRepository.save(user);
     }

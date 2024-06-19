@@ -38,6 +38,8 @@ class LikesAndFavoritesServiceImplTest {
 
     @Mock
     private JwtService jwtService;
+    @Mock
+    private UserAuthorizationService userAuthorizationService;
 
     @InjectMocks
     private UserDetailsServiceImpl userDetailsService;

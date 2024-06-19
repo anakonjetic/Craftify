@@ -1,9 +1,7 @@
 package com.tvz.hr.craftify.controller;
 
-import com.tvz.hr.craftify.service.LikesAndFavoritesService;
-import com.tvz.hr.craftify.service.SubscriptionService;
+import com.tvz.hr.craftify.service.*;
 import com.tvz.hr.craftify.service.dto.*;
-import com.tvz.hr.craftify.service.UsersService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +19,9 @@ import java.util.Optional;
 @CrossOrigin(origins = {"http://test-craftify.vercel.app", "http://localhost:4200"})
 public class UsersController {
     private UsersService usersService;
+    private UserAuthorizationService userAuthorizationService;
+    private UserInfoService userInfoService;
+    private UserActivityService userActivityService;
     private LikesAndFavoritesService likesAndFavoritesService;
     private SubscriptionService subscriptionService;
 
@@ -70,7 +71,7 @@ public class UsersController {
     {
         List<Long> categoryIds = request.get("categories");
         try {
-            UsersGetDTO updatedUser = usersService.setUserPreference(categoryIds, id);
+            UsersGetDTO updatedUser = userInfoService.setUserPreference(categoryIds, id);
             return new ResponseEntity<>(updatedUser, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -84,7 +85,7 @@ public class UsersController {
     {
         String newPassword = request.get("newPassword");
         try {
-            UsersGetDTO updatedUser = usersService.changeUserPassword(newPassword, id);
+            UsersGetDTO updatedUser = userInfoService.changeUserPassword(newPassword, id);
             return new ResponseEntity<>(updatedUser, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -102,7 +103,7 @@ public class UsersController {
     {
         Boolean isPrivate = request.get("private");
         try {
-            UsersGetDTO updatedUser = usersService.changeUserInfoVisibility(isPrivate, id);
+            UsersGetDTO updatedUser = userInfoService.changeUserInfoVisibility(isPrivate, id);
             return new ResponseEntity<>(updatedUser, HttpStatus.OK);
         }
         catch (Exception e) {
@@ -120,7 +121,7 @@ public class UsersController {
     @GetMapping("/comments/{id}")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<CommentDTO>> getUserComments(@PathVariable long id) {
-        Optional<List<CommentDTO>> userCommentsOptional = usersService.getUserComments(id);
+        Optional<List<CommentDTO>> userCommentsOptional = userActivityService.getUserComments(id);
         return userCommentsOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
     @GetMapping("/favorite/{id}")
@@ -139,7 +140,7 @@ public class UsersController {
 
     @GetMapping("/projects/{id}")
     public ResponseEntity<List<ProjectDTO>> getUserProjects(@PathVariable long id) {
-        Optional<List<ProjectDTO>> userProjectsOptional = usersService.getUserProjects(id);
+        Optional<List<ProjectDTO>> userProjectsOptional = userActivityService.getUserProjects(id);
         return userProjectsOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
 

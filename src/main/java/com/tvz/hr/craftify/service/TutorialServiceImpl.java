@@ -23,6 +23,7 @@ public class TutorialServiceImpl implements TutorialService {
     private UsersService usersService;
     private ComplexityService complexityService;
     private MediaRepository mediaRepository;
+    private final UserAuthorizationService userAuthorizationService;
 
 
     @Override

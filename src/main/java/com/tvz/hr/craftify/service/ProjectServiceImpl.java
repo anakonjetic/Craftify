@@ -27,6 +27,7 @@ public class ProjectServiceImpl implements ProjectService{
     private UsersRepository usersRepository;
     private ComplexityService complexityService;
     private MediaService mediaService;
+    private UserAuthorizationService userAuthorizationService;
 
     @Override
     public List<ProjectDTO> getAllProjects() {
@@ -114,7 +115,7 @@ public class ProjectServiceImpl implements ProjectService{
         Optional<Project> optionalProject = projectRepository.findById(id);
         if (optionalProject.isPresent()) {
             Project projectToUpdate = optionalProject.get();
-            usersService.checkAuthorization(projectToUpdate.getUser().getId());
+            userAuthorizationService.checkAuthorization(projectToUpdate.getUser().getId());
             projectToUpdate.setTitle(projectPutDTO.getTitle());
             projectToUpdate.setDescription(projectPutDTO.getDescription());
             projectToUpdate.setContent(projectPutDTO.getContent());

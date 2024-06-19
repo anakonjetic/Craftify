@@ -3,7 +3,6 @@ package com.tvz.hr.craftify.service;
 import com.tvz.hr.craftify.model.*;
 import com.tvz.hr.craftify.repository.CategoryRepository;
 import com.tvz.hr.craftify.repository.CommentRepository;
-import com.tvz.hr.craftify.repository.ProjectRepository;
 import com.tvz.hr.craftify.repository.UsersRepository;
 import com.tvz.hr.craftify.service.dto.UsersGetDTO;
 import com.tvz.hr.craftify.service.dto.*;
@@ -28,12 +27,10 @@ import static com.tvz.hr.craftify.utilities.MapToDTOHelper.mapToUsersGetDTO;
 
 @Service
 @AllArgsConstructor
-public class UsersServiceImpl implements UsersService{
+public class UsersServiceImpl implements UsersService, UserAuthorizationService, UserInfoService, UserActivityService{
     private CommentRepository commentRepository;
     private UsersRepository usersRepository;
-    private UserDetailsServiceImpl userDetailsService;
     private CategoryRepository categoryRepository;
-    private ProjectRepository projectRepository;
 
     @Override
     public List<UsersGetDTO> getAllUsers() {
@@ -94,27 +91,9 @@ public class UsersServiceImpl implements UsersService{
         checkAuthorization(id);
         Users existingUser = optionalUser.get();
 
-        /*List<Category> categories = existingUser.getUserPreferences();
-        List<Long> categoryIds = user.getUserPreferences().stream().distinct().toList();
-        if(!categoryIds.isEmpty()) {
-            categories = categoryIds.stream()
-                    .map(categoryId -> categoryRepository.findById(categoryId))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get).collect(Collectors.toList());
-        }
-        if(!user.getPassword().isEmpty()) {
-            if (!isPasswordStrong(user.getPassword())) {
-                throw new IllegalArgumentException("Password is not strong enough");
-            }
-            String newPassword = hashPassword(user.getPassword());
-            existingUser.setPassword(newPassword);
-        }*/
         existingUser.setName(user.getName());
         existingUser.setUsername(user.getUsername());
         existingUser.setEmail(user.getEmail());
-        /*existingUser.setAdmin(user.isAdmin());
-        existingUser.setPrivate(user.isPrivate());
-        existingUser.setUserPreferences(categories);*/
 
         return mapToUsersGetDTO(usersRepository.save(existingUser));
     };

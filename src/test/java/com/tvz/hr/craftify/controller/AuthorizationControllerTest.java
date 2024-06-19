@@ -4,10 +4,7 @@ import com.tvz.hr.craftify.config.SecurityConfiguration;
 import com.tvz.hr.craftify.model.RefreshToken;
 import com.tvz.hr.craftify.model.Users;
 import com.tvz.hr.craftify.repository.UsersRepository;
-import com.tvz.hr.craftify.service.JwtService;
-import com.tvz.hr.craftify.service.RefreshTokenService;
-import com.tvz.hr.craftify.service.UserDetailsServiceImpl;
-import com.tvz.hr.craftify.service.UsersService;
+import com.tvz.hr.craftify.service.*;
 import com.tvz.hr.craftify.service.dto.UserDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +19,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -67,17 +65,21 @@ public class AuthorizationControllerTest {
     @MockBean
     private UserDetailsServiceImpl userDetailsServiceImpl;
 
+    @MockBean
+    UserAuthorizationService userAuthorizationService;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
-    /*@Test
+    @Test
     @WithMockUser(username = "john_doe", password = "newPassword123", roles = {"USER"})
     public void authenticateAndGetToken_ValidLogin_ReturnsJwtResponseDTO() throws Exception {
         UserDetails userDetails = new User("john_doe", "newPassword123", Collections.emptyList());
-        when(userDetailsService.loadUserByUsername(anyString())).thenReturn(userDetails);
-        when(authenticationManager.authenticate(any())).thenReturn(new UsernamePasswordAuthenticationToken(userDetails, "newPassword123", userDetails.getAuthorities()));
+        when(userDetailsServiceImpl.loadUserByUsername(anyString())).thenReturn(userDetails);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "newPassword123", userDetails.getAuthorities());
+        when(authenticationManager.authenticate(any())).thenReturn(authentication);
         when(jwtService.generateToken(anyString())).thenReturn("testAccessToken");
 
         Users user = new Users();
@@ -103,12 +105,12 @@ public class AuthorizationControllerTest {
                 .andExpect(jsonPath("$.token").value("testRefreshToken"))
                 .andExpect(jsonPath("$.user").exists());
 
-        verify(userDetailsService, times(1)).loadUserByUsername(anyString());
+        verify(userDetailsServiceImpl, times(1)).loadUserByUsername(anyString());
         verify(authenticationManager, times(1)).authenticate(any());
         verify(jwtService, times(1)).generateToken(anyString());
         verify(usersService, times(1)).getUserByUsername(anyString());
         verify(refreshTokenService, times(1)).createRefreshToken(anyString());
-    }*/
+    }
 
 
     @Test

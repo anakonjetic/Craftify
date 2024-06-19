@@ -43,6 +43,8 @@ class ProjectServiceImplTest {
 
     @Mock
     private MediaService mediaService;
+    @Mock
+    private UserAuthorizationService userAuthorizationService;
 
     @InjectMocks
     private ProjectServiceImpl projectService;
