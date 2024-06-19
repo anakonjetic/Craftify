@@ -60,9 +60,9 @@ public class SubscriptionServiceImpl implements SubscriptionService{
     public void followUser(SubscriptionDTO sub){
         try {
             Users user = usersRepository.findById(sub.getUserId())
-                    .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + sub.getUserId()));
+                    .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + sub.getUserId(), new RuntimeException("No Users with ID: " + sub.getUserId())));
             Users followedUser = usersRepository.findById(sub.getFollowingId())
-                    .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + sub.getFollowingId()));
+                    .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + sub.getFollowingId(), new RuntimeException("No Users with ID: " + sub.getUserId())));
             List<Users> followingUsers = user.getFollowedUsers();
 
             if (followingUsers.contains(followedUser)) {
@@ -81,9 +81,9 @@ public class SubscriptionServiceImpl implements SubscriptionService{
     public void unfollowUser(SubscriptionDTO sub){
         try {
             Users user = usersRepository.findById(sub.getUserId())
-                    .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + sub.getUserId()));
+                    .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + sub.getUserId(), new RuntimeException("No Users with ID: " + sub.getUserId())));
             Users followedUser = usersRepository.findById(sub.getFollowingId())
-                    .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + sub.getFollowingId()));
+                    .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + sub.getFollowingId(), new RuntimeException("No Users with ID: " + sub.getUserId())));
             List<Users> followingUsers = user.getFollowedUsers();
 
             if (!followingUsers.contains(followedUser)) {
@@ -101,9 +101,9 @@ public class SubscriptionServiceImpl implements SubscriptionService{
     @Override
     public void followProject(SubscriptionDTO sub){
         Users user = usersRepository.findById(sub.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + sub.getUserId()));
+                .orElseThrow(() -> new EntityNotFoundException("Project not found with ID: " + sub.getFollowingId(), new RuntimeException("No Users with ID: " + sub.getUserId())));
         Project followedProject = projectRepository.findById(sub.getFollowingId())
-                .orElseThrow(() -> new EntityNotFoundException("Project not found with ID: " + sub.getFollowingId()));
+                .orElseThrow(() -> new EntityNotFoundException("Project not found with ID: " + sub.getFollowingId(), new RuntimeException("No Users with ID: " + sub.getUserId())));
         List<Project> followingProjects = user.getFollowingProjects();
 
         if (followingProjects.contains(followedProject)) {
@@ -122,9 +122,9 @@ public class SubscriptionServiceImpl implements SubscriptionService{
     @Override
     public void unfollowProject(SubscriptionDTO sub){
         Users user = usersRepository.findById(sub.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + sub.getUserId()));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + sub.getUserId(), new RuntimeException("No Users with ID: " + sub.getUserId())));
         Project followedProject = projectRepository.findById(sub.getFollowingId())
-                .orElseThrow(() -> new EntityNotFoundException("Project not found with ID: " + sub.getFollowingId()));
+                .orElseThrow(() -> new EntityNotFoundException("Project not found with ID: " + sub.getFollowingId(), new RuntimeException("No Users with ID: " + sub.getUserId())));
         List<Project> followingProjects = user.getFollowingProjects();
 
         if (!followingProjects.contains(followedProject)) {
