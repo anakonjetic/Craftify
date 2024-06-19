@@ -33,12 +33,11 @@ public class Users {
     @JoinColumn(name = "is_private")
     private boolean isPrivate;
 
-    public Users(Long id, String name, String username, String email, String password, boolean isAdmin, boolean isPrivate, List<Category> userPreferences) {
+    public Users(Long id, String name, String username, String email, boolean isAdmin, boolean isPrivate, List<Category> userPreferences) {
         this.id = id;
         this.name = name;
         this.username = username;
         this.email = email;
-        this.password = password;
         this.isAdmin = isAdmin;
         this.isPrivate = isPrivate;
         this.userPreferences = userPreferences;
@@ -128,7 +127,6 @@ public class Users {
         user.setId(request.getId());
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
         user.setAdmin(request.isAdmin());
         return user;
     }

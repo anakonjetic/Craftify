@@ -175,7 +175,6 @@ public class UsersControllerTest {
         String newPassword = "novaLozinka123";
         UsersGetDTO updatedUser = new UsersGetDTO();
         updatedUser.setId(userId);
-        updatedUser.setPassword(newPassword);
 
         Mockito.when(userInfoService.changeUserPassword(newPassword, userId)).thenReturn(updatedUser);
 

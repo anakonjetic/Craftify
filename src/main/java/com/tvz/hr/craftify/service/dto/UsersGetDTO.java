@@ -12,7 +12,6 @@ public class UsersGetDTO {
     private String name;
     private String username;
     private String email;
-    private String password;
     private boolean isAdmin;
     private boolean isPrivate;
     private List<CategoryDTO> userPreferences;

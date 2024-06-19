@@ -203,7 +203,6 @@ public class MapToDTOHelper {
                 user.getName(),
                 user.getUsername(),
                 user.getEmail(),
-                user.getPassword(),
                 user.isAdmin(),
                 user.isPrivate(),
                 category
