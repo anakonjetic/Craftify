@@ -30,10 +30,6 @@ public class TutorialServiceImpl implements TutorialService {
 
     @Override
     public List<TutorialDTO> getAllTutorials() {
-        /*List<Tutorial> tutorials = tutorialRepository.findAll();
-        return tutorials.stream()
-                .map(MapToDTOHelper::mapToTutorialDTO)
-                .collect(Collectors.toList());*/
         Users user = userAuthorizationService.getLoggedInUser();
         ContentService contentService;
         if (user != null)
